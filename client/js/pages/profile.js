@@ -85,11 +85,9 @@ export const ProfilePage = {
             </div>
           </div>
 
-          <!-- Live AI Enrichment Status Banner -->
-          ${renderEnrichmentBanner(college.id, college.data_status === 'enriching' ? 'running' : 'completed', '', college.last_gemini_enrichment)}
-
           <!-- Key Stats Strip -->
           <div class="profile-stats-strip">
+
             ${renderMetricCard('Enrollment', college.summary?.enrollment ?? college.overview?.enrollment ?? college.undergrad_size, 'count')}
             ${renderMetricCard('Acceptance Rate', college.summary?.acceptance_rate ?? college.admissions?.acceptance_rate ?? college.acceptance_rate, 'percent')}
             ${renderMetricCard('Graduation Rate', college.summary?.graduation_rate ?? college.outcomes?.graduation_rate ?? college.outcomes?.completion_rate_6yr, 'percent')}
@@ -375,26 +373,9 @@ export const ProfilePage = {
         if (activePanel) activePanel.classList.add('active');
       });
     });
-
-    // Refresh AI Intelligence Button
-    const refreshBtn = container.querySelector(`#refresh-ai-btn-${college.id}`);
-    if (refreshBtn) {
-      refreshBtn.addEventListener('click', async () => {
-        refreshBtn.disabled = true;
-        refreshBtn.innerHTML = '<div class="spinner spinner-sm"></div> Analyzing…';
-        try {
-          await API.refreshCollege(college.id, true);
-          window.app.showToast('College data successfully refreshed and logged to master ledger!', 'success');
-          // Re-render
-          ProfilePage.render(container, state, college.id);
-        } catch (err) {
-          window.app.showToast(`Refresh note: ${err.message}`, 'warning');
-          ProfilePage.render(container, state, college.id);
-        }
-      });
-    }
   }
 };
+
 
 function renderDimensionBars(dimensions) {
   if (!dimensions || typeof dimensions !== 'object') {

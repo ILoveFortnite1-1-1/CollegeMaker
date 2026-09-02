@@ -28,6 +28,7 @@ async def _get_guest_preferences(request: Request) -> Optional[StudentPreference
 async def list_colleges(
     request: Request,
     q: Optional[str] = Query(None, description="Search term for name, alias, or city"),
+    query: Optional[str] = Query(None, description="Alternative alias for search query term"),
     state: Optional[str] = Query(None, description="2-letter state code filter"),
     control: Optional[str] = Query(None, description="public, private_nonprofit, or any"),
     type: Optional[str] = Query(None, description="public, private, or any"),
@@ -43,6 +44,8 @@ async def list_colleges(
     offset: Optional[int] = Query(None, description="Pagination offset"),
 ):
     """Search and filter colleges with pagination and dynamic student fit scoring."""
+    search_term = q or query
+
     prefs = await _get_guest_preferences(request)
 
     # Normalize control / type filter
@@ -86,7 +89,7 @@ async def list_colleges(
         effective_page = (offset // actual_page_size) + 1
 
     colleges, total = await scorecard_service.search_colleges(
-        query=q,
+        query=search_term,
         state=state,
         control=filter_control,
         max_cost=max_cost,
