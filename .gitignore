@@ -1,0 +1,25 @@
+# Python / virtual-env
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+*.egg
+
+# SQLite DB (keep it local, not public)
+data/college_portfolio.db
+
+# Secrets / environment files
+.env
+*.env
+.secret*
+*.key
+
+# OS / editor cruft
+.DS_Store
+.idea/
+.vscode/
+
+# Logs
+*.log
