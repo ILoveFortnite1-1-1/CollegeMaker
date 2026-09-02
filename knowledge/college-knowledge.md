@@ -8566,3 +8566,524 @@ This document is an append-only, human-readable audit log tracking all data prov
 - **Status**: success_seed
 - **Fields Updated**: qualitative.strengths, qualitative.upsides, qualitative.tradeoffs
 
+
+## College: Harvard University (166027)
+- **Timestamp**: 2026-09-02T23:24:02.039780+00:00
+- **Enrichment**: Gemini 3.5 Flash (run run_8cca6a3261)
+- **Status**: success_seed
+- **Fields Updated**: qualitative.strengths, qualitative.upsides, qualitative.tradeoffs
+
+| 2026-09-02T23:24:02.500774+00:00 | Test University (`test_school`) | `admissions.acceptance_rate` | `0.25` &rarr; `0.22` | government (Scorecard Ingestion) | reported |
+
+## College: Ohio State University-Main Campus (204796)
+- **Timestamp**: 2026-09-02T23:24:05.437818+00:00
+- **Enrichment**: Gemini 3.5 Flash (run run_e326d9000e)
+- **Status**: success_seed
+- **Fields Updated**: qualitative.strengths, qualitative.upsides, qualitative.tradeoffs
+
+
+## College: Massachusetts Institute of Technology (166683)
+- **Timestamp**: 2026-09-02T23:24:05.480412+00:00
+- **Enrichment**: Gemini 3.5 Flash (run run_a8a25e6526)
+- **Status**: success_seed
+- **Fields Updated**: qualitative.strengths, qualitative.upsides, qualitative.tradeoffs
+
+
+## College: Stanford University (243744)
+- **Timestamp**: 2026-09-02T23:24:05.605198+00:00
+- **Enrichment**: Gemini 3.5 Flash (run run_758bb53a15)
+- **Status**: success_seed
+- **Fields Updated**: qualitative.strengths, qualitative.upsides, qualitative.tradeoffs
+
+
+## College: Ohio State University-Main Campus (204796)
+- **Timestamp**: 2026-09-02T23:24:05.665984+00:00
+- **Enrichment**: Gemini 3.5 Flash (run run_76441c48ce)
+- **Status**: success_seed
+- **Fields Updated**: qualitative.strengths, qualitative.upsides, qualitative.tradeoffs
+
+
+## College: Harvard University (166027)
+- **Timestamp**: 2026-09-02T23:24:06.078707+00:00
+- **Enrichment**: Gemini 3.5 Flash (run run_46c8449c0c)
+- **Status**: success_seed
+- **Fields Updated**: qualitative.strengths, qualitative.upsides, qualitative.tradeoffs
+
+
+## College: Massachusetts Institute of Technology (166683)
+- **Timestamp**: 2026-09-02T23:24:06.112118+00:00
+- **Enrichment**: Gemini 3.5 Flash (run run_b0acdeac33)
+- **Status**: success_seed
+- **Fields Updated**: qualitative.strengths, qualitative.upsides, qualitative.tradeoffs
+
+
+## College: Stanford University (243744)
+- **Timestamp**: 2026-09-02T23:24:19.853824+00:00
+- **Enrichment**: Gemini 3.5 Flash (run run_f423c873b1)
+- **Status**: success_seed
+- **Fields Updated**: qualitative.strengths, qualitative.upsides, qualitative.tradeoffs
+
+
+## College: University of California-Berkeley (110635)
+- **Timestamp**: 2026-09-02T23:24:19.878279+00:00
+- **Enrichment**: Gemini 3.5 Flash (run run_3124377b65)
+- **Status**: success_seed
+- **Fields Updated**: qualitative.strengths, qualitative.upsides, qualitative.tradeoffs
+
+
+## College: Massachusetts Institute of Technology (166683)
+- **Timestamp**: 2026-09-02T23:24:20.715102+00:00
+- **Enrichment**: Gemini 3.5 Flash (run run_14206c26d7)
+- **Status**: success_seed
+- **Fields Updated**: qualitative.strengths, qualitative.upsides, qualitative.tradeoffs
+
+
+## College: Massachusetts Institute of Technology (166683)
+- **Timestamp**: 2026-09-02T23:24:23.029603+00:00
+- **Enrichment**: Gemini 3.5 Flash (run run_d63270675c)
+- **Status**: success_seed
+- **Fields Updated**: qualitative.strengths, qualitative.upsides, qualitative.tradeoffs
+
+
+## College: Stanford University (243744)
+- **Timestamp**: 2026-09-02T23:24:23.052538+00:00
+- **Enrichment**: Gemini 3.5 Flash (run run_3e6d9934d6)
+- **Status**: success_seed
+- **Fields Updated**: qualitative.strengths, qualitative.upsides, qualitative.tradeoffs
+
+
+## College: Massachusetts Institute of Technology (166683)
+- **Timestamp**: 2026-09-02T23:24:24.797668+00:00
+- **Enrichment**: Gemini 3.5 Flash (run run_79be01aa5a)
+- **Status**: success_seed
+- **Fields Updated**: qualitative.strengths, qualitative.upsides, qualitative.tradeoffs
+
+
+## College: Stress Test College 0 (stress_test_0)
+- **Timestamp**: 2026-09-02T23:25:21.106971+00:00
+- **Enrichment**: StressTestBot (run run_stress_0)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.106950+00:00 | Stress Test College 0 (`stress_test_0`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.2` | ai_extracted (stress_source_0) | qualitative |
+
+## College: Stress Test College 1 (stress_test_1)
+- **Timestamp**: 2026-09-02T23:25:21.107027+00:00
+- **Enrichment**: StressTestBot (run run_stress_1)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.107015+00:00 | Stress Test College 1 (`stress_test_1`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.201` | ai_extracted (stress_source_1) | qualitative |
+
+## College: Stress Test College 2 (stress_test_2)
+- **Timestamp**: 2026-09-02T23:25:21.107072+00:00
+- **Enrichment**: StressTestBot (run run_stress_2)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.107062+00:00 | Stress Test College 2 (`stress_test_2`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.202` | ai_extracted (stress_source_2) | qualitative |
+
+## College: Stress Test College 3 (stress_test_3)
+- **Timestamp**: 2026-09-02T23:25:21.107114+00:00
+- **Enrichment**: StressTestBot (run run_stress_3)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.107104+00:00 | Stress Test College 3 (`stress_test_3`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.203` | ai_extracted (stress_source_3) | qualitative |
+
+## College: Stress Test College 4 (stress_test_4)
+- **Timestamp**: 2026-09-02T23:25:21.107156+00:00
+- **Enrichment**: StressTestBot (run run_stress_4)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.107146+00:00 | Stress Test College 4 (`stress_test_4`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.20400000000000001` | ai_extracted (stress_source_4) | qualitative |
+
+## College: Stress Test College 0 (stress_test_0)
+- **Timestamp**: 2026-09-02T23:25:21.107199+00:00
+- **Enrichment**: StressTestBot (run run_stress_5)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.107189+00:00 | Stress Test College 0 (`stress_test_0`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.20500000000000002` | ai_extracted (stress_source_5) | qualitative |
+
+## College: Stress Test College 1 (stress_test_1)
+- **Timestamp**: 2026-09-02T23:25:21.107239+00:00
+- **Enrichment**: StressTestBot (run run_stress_6)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.107229+00:00 | Stress Test College 1 (`stress_test_1`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.20600000000000002` | ai_extracted (stress_source_6) | qualitative |
+
+## College: Stress Test College 2 (stress_test_2)
+- **Timestamp**: 2026-09-02T23:25:21.107280+00:00
+- **Enrichment**: StressTestBot (run run_stress_7)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.107270+00:00 | Stress Test College 2 (`stress_test_2`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.20700000000000002` | ai_extracted (stress_source_7) | qualitative |
+
+## College: Stress Test College 3 (stress_test_3)
+- **Timestamp**: 2026-09-02T23:25:21.107321+00:00
+- **Enrichment**: StressTestBot (run run_stress_8)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.107311+00:00 | Stress Test College 3 (`stress_test_3`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.20800000000000002` | ai_extracted (stress_source_8) | qualitative |
+
+## College: Stress Test College 4 (stress_test_4)
+- **Timestamp**: 2026-09-02T23:25:21.107368+00:00
+- **Enrichment**: StressTestBot (run run_stress_9)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.107358+00:00 | Stress Test College 4 (`stress_test_4`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.20900000000000002` | ai_extracted (stress_source_9) | qualitative |
+
+## College: Stress Test College 0 (stress_test_0)
+- **Timestamp**: 2026-09-02T23:25:21.107411+00:00
+- **Enrichment**: StressTestBot (run run_stress_10)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.107401+00:00 | Stress Test College 0 (`stress_test_0`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.21000000000000002` | ai_extracted (stress_source_10) | qualitative |
+
+## College: Stress Test College 1 (stress_test_1)
+- **Timestamp**: 2026-09-02T23:25:21.107451+00:00
+- **Enrichment**: StressTestBot (run run_stress_11)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.107441+00:00 | Stress Test College 1 (`stress_test_1`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.21100000000000002` | ai_extracted (stress_source_11) | qualitative |
+
+## College: Stress Test College 2 (stress_test_2)
+- **Timestamp**: 2026-09-02T23:25:21.107492+00:00
+- **Enrichment**: StressTestBot (run run_stress_12)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.107482+00:00 | Stress Test College 2 (`stress_test_2`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.21200000000000002` | ai_extracted (stress_source_12) | qualitative |
+
+## College: Stress Test College 3 (stress_test_3)
+- **Timestamp**: 2026-09-02T23:25:21.107531+00:00
+- **Enrichment**: StressTestBot (run run_stress_13)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.107521+00:00 | Stress Test College 3 (`stress_test_3`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.21300000000000002` | ai_extracted (stress_source_13) | qualitative |
+
+## College: Stress Test College 4 (stress_test_4)
+- **Timestamp**: 2026-09-02T23:25:21.107571+00:00
+- **Enrichment**: StressTestBot (run run_stress_14)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.107561+00:00 | Stress Test College 4 (`stress_test_4`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.21400000000000002` | ai_extracted (stress_source_14) | qualitative |
+
+## College: Stress Test College 0 (stress_test_0)
+- **Timestamp**: 2026-09-02T23:25:21.107610+00:00
+- **Enrichment**: StressTestBot (run run_stress_15)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.107601+00:00 | Stress Test College 0 (`stress_test_0`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.21500000000000002` | ai_extracted (stress_source_15) | qualitative |
+
+## College: Stress Test College 1 (stress_test_1)
+- **Timestamp**: 2026-09-02T23:25:21.107650+00:00
+- **Enrichment**: StressTestBot (run run_stress_16)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.107640+00:00 | Stress Test College 1 (`stress_test_1`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.21600000000000003` | ai_extracted (stress_source_16) | qualitative |
+
+## College: Stress Test College 2 (stress_test_2)
+- **Timestamp**: 2026-09-02T23:25:21.107690+00:00
+- **Enrichment**: StressTestBot (run run_stress_17)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.107680+00:00 | Stress Test College 2 (`stress_test_2`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.21700000000000003` | ai_extracted (stress_source_17) | qualitative |
+
+## College: Stress Test College 3 (stress_test_3)
+- **Timestamp**: 2026-09-02T23:25:21.107729+00:00
+- **Enrichment**: StressTestBot (run run_stress_18)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.107719+00:00 | Stress Test College 3 (`stress_test_3`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.21800000000000003` | ai_extracted (stress_source_18) | qualitative |
+
+## College: Stress Test College 4 (stress_test_4)
+- **Timestamp**: 2026-09-02T23:25:21.107768+00:00
+- **Enrichment**: StressTestBot (run run_stress_19)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.107759+00:00 | Stress Test College 4 (`stress_test_4`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.219` | ai_extracted (stress_source_19) | qualitative |
+
+## College: Stress Test College 0 (stress_test_0)
+- **Timestamp**: 2026-09-02T23:25:21.107808+00:00
+- **Enrichment**: StressTestBot (run run_stress_20)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.107798+00:00 | Stress Test College 0 (`stress_test_0`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.22` | ai_extracted (stress_source_20) | qualitative |
+
+## College: Stress Test College 1 (stress_test_1)
+- **Timestamp**: 2026-09-02T23:25:21.107848+00:00
+- **Enrichment**: StressTestBot (run run_stress_21)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.107839+00:00 | Stress Test College 1 (`stress_test_1`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.221` | ai_extracted (stress_source_21) | qualitative |
+
+## College: Stress Test College 2 (stress_test_2)
+- **Timestamp**: 2026-09-02T23:25:21.107887+00:00
+- **Enrichment**: StressTestBot (run run_stress_22)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.107877+00:00 | Stress Test College 2 (`stress_test_2`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.222` | ai_extracted (stress_source_22) | qualitative |
+
+## College: Stress Test College 3 (stress_test_3)
+- **Timestamp**: 2026-09-02T23:25:21.107927+00:00
+- **Enrichment**: StressTestBot (run run_stress_23)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.107917+00:00 | Stress Test College 3 (`stress_test_3`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.223` | ai_extracted (stress_source_23) | qualitative |
+
+## College: Stress Test College 4 (stress_test_4)
+- **Timestamp**: 2026-09-02T23:25:21.107967+00:00
+- **Enrichment**: StressTestBot (run run_stress_24)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.107957+00:00 | Stress Test College 4 (`stress_test_4`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.224` | ai_extracted (stress_source_24) | qualitative |
+
+## College: Stress Test College 0 (stress_test_0)
+- **Timestamp**: 2026-09-02T23:25:21.108007+00:00
+- **Enrichment**: StressTestBot (run run_stress_25)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.107997+00:00 | Stress Test College 0 (`stress_test_0`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.225` | ai_extracted (stress_source_25) | qualitative |
+
+## College: Stress Test College 1 (stress_test_1)
+- **Timestamp**: 2026-09-02T23:25:21.108046+00:00
+- **Enrichment**: StressTestBot (run run_stress_26)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.108036+00:00 | Stress Test College 1 (`stress_test_1`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.226` | ai_extracted (stress_source_26) | qualitative |
+
+## College: Stress Test College 2 (stress_test_2)
+- **Timestamp**: 2026-09-02T23:25:21.108085+00:00
+- **Enrichment**: StressTestBot (run run_stress_27)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.108075+00:00 | Stress Test College 2 (`stress_test_2`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.227` | ai_extracted (stress_source_27) | qualitative |
+
+## College: Stress Test College 3 (stress_test_3)
+- **Timestamp**: 2026-09-02T23:25:21.108125+00:00
+- **Enrichment**: StressTestBot (run run_stress_28)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.108115+00:00 | Stress Test College 3 (`stress_test_3`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.228` | ai_extracted (stress_source_28) | qualitative |
+
+## College: Stress Test College 4 (stress_test_4)
+- **Timestamp**: 2026-09-02T23:25:21.108164+00:00
+- **Enrichment**: StressTestBot (run run_stress_29)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.108155+00:00 | Stress Test College 4 (`stress_test_4`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.229` | ai_extracted (stress_source_29) | qualitative |
+
+## College: Stress Test College 0 (stress_test_0)
+- **Timestamp**: 2026-09-02T23:25:21.108203+00:00
+- **Enrichment**: StressTestBot (run run_stress_30)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.108194+00:00 | Stress Test College 0 (`stress_test_0`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.23` | ai_extracted (stress_source_30) | qualitative |
+
+## College: Stress Test College 1 (stress_test_1)
+- **Timestamp**: 2026-09-02T23:25:21.108242+00:00
+- **Enrichment**: StressTestBot (run run_stress_31)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.108233+00:00 | Stress Test College 1 (`stress_test_1`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.231` | ai_extracted (stress_source_31) | qualitative |
+
+## College: Stress Test College 2 (stress_test_2)
+- **Timestamp**: 2026-09-02T23:25:21.108282+00:00
+- **Enrichment**: StressTestBot (run run_stress_32)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.108272+00:00 | Stress Test College 2 (`stress_test_2`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.232` | ai_extracted (stress_source_32) | qualitative |
+
+## College: Stress Test College 3 (stress_test_3)
+- **Timestamp**: 2026-09-02T23:25:21.108321+00:00
+- **Enrichment**: StressTestBot (run run_stress_33)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.108312+00:00 | Stress Test College 3 (`stress_test_3`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.233` | ai_extracted (stress_source_33) | qualitative |
+
+## College: Stress Test College 4 (stress_test_4)
+- **Timestamp**: 2026-09-02T23:25:21.108361+00:00
+- **Enrichment**: StressTestBot (run run_stress_34)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.108351+00:00 | Stress Test College 4 (`stress_test_4`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.234` | ai_extracted (stress_source_34) | qualitative |
+
+## College: Stress Test College 0 (stress_test_0)
+- **Timestamp**: 2026-09-02T23:25:21.108400+00:00
+- **Enrichment**: StressTestBot (run run_stress_35)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.108391+00:00 | Stress Test College 0 (`stress_test_0`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.23500000000000001` | ai_extracted (stress_source_35) | qualitative |
+
+## College: Stress Test College 1 (stress_test_1)
+- **Timestamp**: 2026-09-02T23:25:21.108440+00:00
+- **Enrichment**: StressTestBot (run run_stress_36)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.108430+00:00 | Stress Test College 1 (`stress_test_1`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.23600000000000002` | ai_extracted (stress_source_36) | qualitative |
+
+## College: Stress Test College 2 (stress_test_2)
+- **Timestamp**: 2026-09-02T23:25:21.108479+00:00
+- **Enrichment**: StressTestBot (run run_stress_37)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.108469+00:00 | Stress Test College 2 (`stress_test_2`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.23700000000000002` | ai_extracted (stress_source_37) | qualitative |
+
+## College: Stress Test College 3 (stress_test_3)
+- **Timestamp**: 2026-09-02T23:25:21.108517+00:00
+- **Enrichment**: StressTestBot (run run_stress_38)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.108508+00:00 | Stress Test College 3 (`stress_test_3`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.23800000000000002` | ai_extracted (stress_source_38) | qualitative |
+
+## College: Stress Test College 4 (stress_test_4)
+- **Timestamp**: 2026-09-02T23:25:21.108557+00:00
+- **Enrichment**: StressTestBot (run run_stress_39)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.108547+00:00 | Stress Test College 4 (`stress_test_4`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.23900000000000002` | ai_extracted (stress_source_39) | qualitative |
+
+## College: Stress Test College 0 (stress_test_0)
+- **Timestamp**: 2026-09-02T23:25:21.108596+00:00
+- **Enrichment**: StressTestBot (run run_stress_40)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.108587+00:00 | Stress Test College 0 (`stress_test_0`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.24000000000000002` | ai_extracted (stress_source_40) | qualitative |
+
+## College: Stress Test College 1 (stress_test_1)
+- **Timestamp**: 2026-09-02T23:25:21.108637+00:00
+- **Enrichment**: StressTestBot (run run_stress_41)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.108627+00:00 | Stress Test College 1 (`stress_test_1`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.24100000000000002` | ai_extracted (stress_source_41) | qualitative |
+
+## College: Stress Test College 2 (stress_test_2)
+- **Timestamp**: 2026-09-02T23:25:21.108677+00:00
+- **Enrichment**: StressTestBot (run run_stress_42)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.108667+00:00 | Stress Test College 2 (`stress_test_2`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.24200000000000002` | ai_extracted (stress_source_42) | qualitative |
+
+## College: Stress Test College 3 (stress_test_3)
+- **Timestamp**: 2026-09-02T23:25:21.108716+00:00
+- **Enrichment**: StressTestBot (run run_stress_43)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.108707+00:00 | Stress Test College 3 (`stress_test_3`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.24300000000000002` | ai_extracted (stress_source_43) | qualitative |
+
+## College: Stress Test College 4 (stress_test_4)
+- **Timestamp**: 2026-09-02T23:25:21.108821+00:00
+- **Enrichment**: StressTestBot (run run_stress_44)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.108757+00:00 | Stress Test College 4 (`stress_test_4`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.244` | ai_extracted (stress_source_44) | qualitative |
+
+## College: Stress Test College 0 (stress_test_0)
+- **Timestamp**: 2026-09-02T23:25:21.108918+00:00
+- **Enrichment**: StressTestBot (run run_stress_45)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.108904+00:00 | Stress Test College 0 (`stress_test_0`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.245` | ai_extracted (stress_source_45) | qualitative |
+
+## College: Stress Test College 1 (stress_test_1)
+- **Timestamp**: 2026-09-02T23:25:21.109210+00:00
+- **Enrichment**: StressTestBot (run run_stress_46)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.109198+00:00 | Stress Test College 1 (`stress_test_1`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.246` | ai_extracted (stress_source_46) | qualitative |
+
+## College: Stress Test College 2 (stress_test_2)
+- **Timestamp**: 2026-09-02T23:25:21.109255+00:00
+- **Enrichment**: StressTestBot (run run_stress_47)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.109245+00:00 | Stress Test College 2 (`stress_test_2`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.247` | ai_extracted (stress_source_47) | qualitative |
+
+## College: Stress Test College 3 (stress_test_3)
+- **Timestamp**: 2026-09-02T23:25:21.109297+00:00
+- **Enrichment**: StressTestBot (run run_stress_48)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.109287+00:00 | Stress Test College 3 (`stress_test_3`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.248` | ai_extracted (stress_source_48) | qualitative |
+
+## College: Stress Test College 4 (stress_test_4)
+- **Timestamp**: 2026-09-02T23:25:21.109337+00:00
+- **Enrichment**: StressTestBot (run run_stress_49)
+- **Status**: success
+- **Fields Updated**: admissions.acceptance_rate
+
+| 2026-09-02T23:25:21.109327+00:00 | Stress Test College 4 (`stress_test_4`) | `admissions.acceptance_rate` | `0.2` &rarr; `0.249` | ai_extracted (stress_source_49) | qualitative |
+
+## College: Massachusetts Institute of Technology (166683)
+- **Timestamp**: 2026-09-02T23:25:21.523676+00:00
+- **Enrichment**: Gemini 3.5 Flash (run run_bd6a2aecbe)
+- **Status**: success_seed
+- **Fields Updated**: qualitative.strengths, qualitative.upsides, qualitative.tradeoffs
+
+
+## College: Massachusetts Institute of Technology (166683)
+- **Timestamp**: 2026-09-02T23:25:21.548970+00:00
+- **Enrichment**: Gemini 3.5 Flash (run run_78c9f63c50)
+- **Status**: failed
+- **Fields Updated**: None
+
+
+## College: Massachusetts Institute of Technology (166683)
+- **Timestamp**: 2026-09-02T23:25:21.582975+00:00
+- **Enrichment**: Gemini 3.5 Flash (run run_414bc9d1c2)
+- **Status**: failed
+- **Fields Updated**: None
+
+
+## College: Harvard University (166027)
+- **Timestamp**: 2026-09-02T23:31:05.673050+00:00
+- **Enrichment**: Gemini 3.5 Flash (run run_dd844dbbb1)
+- **Status**: success_seed
+- **Fields Updated**: qualitative.strengths, qualitative.upsides, qualitative.tradeoffs
+
+| 2026-09-02T23:31:06.136359+00:00 | Test University (`test_school`) | `admissions.acceptance_rate` | `0.25` &rarr; `0.22` | government (Scorecard Ingestion) | reported |

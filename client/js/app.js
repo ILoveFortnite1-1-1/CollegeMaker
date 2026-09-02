@@ -10,6 +10,8 @@ import { ComparePage } from './pages/compare.js';
 import { TrackerPage } from './pages/tracker.js';
 import { SettingsPage } from './pages/settings.js';
 import { ProvenanceDrawer } from './components/provenance-drawer.js';
+import { SavedModal } from './components/saved-modal.js';
+
 
 class CollegePortfolioApp {
   constructor() {
@@ -213,7 +215,21 @@ class CollegePortfolioApp {
     closeBtn?.addEventListener('click', closeMenu);
     backdrop?.addEventListener('click', closeMenu);
 
+    // Header Saved Portfolio Pill Click -> Open Saved Modal
+    const savedPill = document.getElementById('saved-portfolio-pill');
+    const savedLabel = document.getElementById('saved-count-label');
+    [savedPill, savedLabel].forEach(el => {
+      if (el) {
+        el.style.cursor = 'pointer';
+        el.addEventListener('click', (e) => {
+          e.preventDefault();
+          SavedModal.open();
+        });
+      }
+    });
+
     // Global Action Delegation for Toggle Save
+
     document.addEventListener('click', async (e) => {
       const saveBtn = e.target.closest('[data-action="toggle-save"]');
       if (saveBtn) {

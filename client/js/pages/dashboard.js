@@ -9,6 +9,8 @@ import { formatMetricValue } from '../components/metric-card.js';
 import { renderScatterChart } from '../components/scatter-chart.js';
 import { renderDonutChart } from '../components/donut-chart.js';
 import { renderNetPriceBarChart, renderEarningsBarChart, renderGradRateBarChart, renderAdmitRateBarChart } from '../components/bar-chart.js';
+import { SavedModal } from '../components/saved-modal.js';
+
 
 export const DashboardPage = {
   async render(container, state) {
@@ -83,8 +85,9 @@ export const DashboardPage = {
               <span style="font-size: 0.8125rem; font-weight: 500; color: #64748b;">Welcome back!</span>
               <h1 style="font-size: 2.1rem; font-weight: 800; color: #0f172a; margin: 2px 0 6px 0;">Your College Portfolio</h1>
               <div style="font-size: 0.875rem; color: #475569; font-weight: 500;">
-                ${savedColleges.length} schools • Flagships & Saved List
+                <span id="saved-header-count-link" style="color: #2563eb; font-weight: 700; cursor: pointer; text-decoration: underline;" title="Click to view all saved colleges">${savedColleges.length} saved schools</span> • Flagships & Saved List
               </div>
+
             </div>
 
             ${topSchool ? `
@@ -103,14 +106,17 @@ export const DashboardPage = {
           <!-- 5 Stat Cards Strip matching image1.jpg -->
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 28px;">
             <!-- Card 1: Schools In List -->
-            <div class="stat-card" style="background: #fff; padding: 18px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+            <div class="stat-card" id="saved-schools-stat-card" style="background: #fff; padding: 18px; border-radius: 12px; border: 1px solid #93c5fd; box-shadow: 0 1px 4px rgba(37,99,235,0.08); cursor: pointer; transition: all 0.2s ease;" title="Click to view all saved colleges in detail">
               <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-                <span style="font-size: 1.5rem; font-weight: 800; color: #0f172a;">${savedColleges.length}</span>
+                <span style="font-size: 1.5rem; font-weight: 800; color: #2563eb;">${savedColleges.length}</span>
                 <span style="font-size: 1.25rem;">🏛️</span>
               </div>
-              <div style="font-size: 0.8125rem; font-weight: 600; color: #1e293b;">Schools</div>
-              <div style="font-size: 0.75rem; color: #64748b;">In Your List</div>
+              <div style="font-size: 0.8125rem; font-weight: 700; color: #1e293b;">Saved Schools</div>
+              <div style="font-size: 0.75rem; color: #2563eb; font-weight: 600; margin-top: 2px; display: flex; align-items: center; gap: 4px;">
+                <span>View List</span> <span style="font-size: 0.85rem;">→</span>
+              </div>
             </div>
+
 
             <!-- Card 2: Average Net Price -->
             <div class="stat-card" style="background: #fff; padding: 18px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
@@ -461,7 +467,20 @@ export const DashboardPage = {
       }
     };
 
+    // Saved Schools Stat Card & Header Link Click -> Open Saved Modal
+    const savedCard = container.querySelector('#saved-schools-stat-card');
+    const headerCountLink = container.querySelector('#saved-header-count-link');
+    [savedCard, headerCountLink].forEach(el => {
+      if (el) {
+        el.addEventListener('click', () => {
+          SavedModal.open();
+        });
+      }
+    });
+
+
     quickBtn?.addEventListener('click', handleQuickSearch);
+
     quickInput?.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') handleQuickSearch();
     });
