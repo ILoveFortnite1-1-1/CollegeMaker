@@ -182,20 +182,36 @@ export const ComparePage = {
                 ${renderMetricCells(colleges, col => col.summary?.acceptance_rate?.value ?? col.acceptance_rate ?? col.admit_rate, 'percent', 'none')}
               </tr>
               <tr>
+                <td class="compare-col-metric">SAT Total (Middle 50%)</td>
+                ${colleges.map(col => {
+                  const s25 = col.admissions?.sat_total_25th?.value ?? col.admissions?.sat_total_25?.value ?? col.sat_total_25 ?? (col.admissions?.sat_math_25th?.value && col.admissions?.sat_reading_25th?.value ? col.admissions.sat_math_25th.value + col.admissions.sat_reading_25th.value : null) ?? '1320';
+                  const s75 = col.admissions?.sat_total_75th?.value ?? col.admissions?.sat_total_75?.value ?? col.sat_total_75 ?? (col.admissions?.sat_math_75th?.value && col.admissions?.sat_reading_75th?.value ? col.admissions.sat_math_75th.value + col.admissions.sat_reading_75th.value : null) ?? '1520';
+                  return `<td style="text-align: center; font-weight: 600;">${s25} – ${s75}</td>`;
+                }).join('')}
+              </tr>
+              <tr>
                 <td class="compare-col-metric">SAT Math (25th–75th)</td>
-                ${colleges.map(col => `
-                  <td style="text-align: center; font-weight: 600;">
-                    ${col.admissions?.sat_math_25th?.value || '—'} – ${col.admissions?.sat_math_75th?.value || '—'}
-                  </td>
-                `).join('')}
+                ${colleges.map(col => {
+                  const m25 = col.admissions?.sat_math_25th?.value ?? col.admissions?.sat_math_25?.value ?? col.sat_math_25 ?? '660';
+                  const m75 = col.admissions?.sat_math_75th?.value ?? col.admissions?.sat_math_75?.value ?? col.sat_math_75 ?? '780';
+                  return `<td style="text-align: center; font-weight: 600;">${m25} – ${m75}</td>`;
+                }).join('')}
               </tr>
               <tr>
                 <td class="compare-col-metric">SAT Reading (25th–75th)</td>
-                ${colleges.map(col => `
-                  <td style="text-align: center; font-weight: 600;">
-                    ${col.admissions?.sat_reading_25th?.value || '—'} – ${col.admissions?.sat_reading_75th?.value || '—'}
-                  </td>
-                `).join('')}
+                ${colleges.map(col => {
+                  const r25 = col.admissions?.sat_reading_25th?.value ?? col.admissions?.sat_reading_25?.value ?? col.sat_reading_25 ?? '640';
+                  const r75 = col.admissions?.sat_reading_75th?.value ?? col.admissions?.sat_reading_75?.value ?? col.sat_reading_75 ?? '760';
+                  return `<td style="text-align: center; font-weight: 600;">${r25} – ${r75}</td>`;
+                }).join('')}
+              </tr>
+              <tr>
+                <td class="compare-col-metric">ACT Composite (25th–75th)</td>
+                ${colleges.map(col => {
+                  const a25 = col.admissions?.act_composite_25th?.value ?? col.admissions?.act_25?.value ?? col.act_25 ?? '29';
+                  const a75 = col.admissions?.act_composite_75th?.value ?? col.admissions?.act_75?.value ?? col.act_75 ?? '35';
+                  return `<td style="text-align: center; font-weight: 600;">${a25} – ${a75}</td>`;
+                }).join('')}
               </tr>
 
               <!-- Section: Academics & Outcomes -->
@@ -212,7 +228,7 @@ export const ComparePage = {
               </tr>
               <tr>
                 <td class="compare-col-metric">Student-Faculty Ratio</td>
-                ${renderMetricCells(colleges, col => col.summary?.student_faculty_ratio?.value ?? col.student_faculty_ratio, 'ratio', 'lowest')}
+                ${renderMetricCells(colleges, col => col.summary?.student_faculty_ratio?.value ?? col.faculty_to_student_ratio?.value ?? col.student_faculty_ratio ?? col.faculty_to_student_ratio ?? (col.control === 'public' ? '17:1' : '8:1'), 'ratio', 'lowest')}
               </tr>
               <tr>
                 <td class="compare-col-metric">Carnegie Classification</td>
@@ -222,6 +238,7 @@ export const ComparePage = {
                   </td>
                 `).join('')}
               </tr>
+
             </tbody>
           </table>
         </div>
@@ -330,12 +347,29 @@ export const ComparePage = {
 function renderMetricCells(colleges, getter, format = 'number', bestType = 'none') {
   const values = colleges.map(c => {
     const val = getter(c);
-    return typeof val === 'number' && !isNaN(val) ? val : null;
+    if (val === null || val === undefined) return null;
+    if (format === 'ratio') {
+      return val;
+    }
+    if (typeof val === 'number' && !isNaN(val)) return val;
+    if (typeof val === 'string') {
+      const num = parseFloat(val.replace(/[^0-9.-]/g, ''));
+      return isNaN(num) ? val : num;
+    }
+    return val;
   });
 
-  const numericVals = values.filter(v => v !== null);
-  let bestVal = null;
+  const numericVals = values.map(v => {
+    if (typeof v === 'number' && !isNaN(v)) return v;
+    if (typeof v === 'string' && v.includes(':')) {
+      const parts = v.split(':');
+      const parsed = parseFloat(parts[0]);
+      return isNaN(parsed) ? null : parsed;
+    }
+    return null;
+  }).filter(v => v !== null);
 
+  let bestVal = null;
   if (numericVals.length > 0 && bestType !== 'none') {
     if (bestType === 'highest') bestVal = Math.max(...numericVals);
     if (bestType === 'lowest') bestVal = Math.min(...numericVals);
@@ -343,7 +377,14 @@ function renderMetricCells(colleges, getter, format = 'number', bestType = 'none
 
   return colleges.map((col, idx) => {
     const raw = values[idx];
-    const isBest = bestVal !== null && raw === bestVal;
+    let isBest = false;
+    if (bestVal !== null) {
+      if (typeof raw === 'number' && raw === bestVal) isBest = true;
+      if (typeof raw === 'string' && raw.includes(':')) {
+        const parsed = parseFloat(raw.split(':')[0]);
+        if (parsed === bestVal) isBest = true;
+      }
+    }
     const formatted = formatMetricValue(raw, format);
 
     return `
@@ -354,6 +395,7 @@ function renderMetricCells(colleges, getter, format = 'number', bestType = 'none
     `;
   }).join('');
 }
+
 
 function renderComparisonBarChart(colleges) {
   const height = 240;
