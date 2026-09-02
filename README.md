@@ -314,3 +314,4 @@ pytest tests/test_tier5_adversarial.py -v  # Tier 5: Security & Injection Stress
 
 ## 📄 License
 MIT License. Built for students, families, and high school counselors.
+# CollegeMaker
