@@ -20,9 +20,25 @@ from server.models.canonical import (
     SourceType,
 )
 
+US_STATE_MAP = {
+
+    "alabama": "AL", "alaska": "AK", "arizona": "AZ", "arkansas": "AR", "california": "CA",
+    "colorado": "CO", "connecticut": "CT", "delaware": "DE", "florida": "FL", "georgia": "GA",
+    "hawaii": "HI", "idaho": "ID", "illinois": "IL", "indiana": "IN", "iowa": "IA",
+    "kansas": "KS", "kentucky": "KY", "louisiana": "LA", "maine": "ME", "maryland": "MD",
+    "massachusetts": "MA", "michigan": "MI", "minnesota": "MN", "mississippi": "MS", "missouri": "MO",
+    "montana": "MT", "nebraska": "NE", "nevada": "NV", "new hampshire": "NH", "new jersey": "NJ",
+    "new mexico": "NM", "new york": "NY", "north carolina": "NC", "north dakota": "ND", "ohio": "OH",
+    "oklahoma": "OK", "oregon": "OR", "pennsylvania": "PA", "rhode island": "RI", "south carolina": "SC",
+    "south dakota": "SD", "tennessee": "TN", "texas": "TX", "utah": "UT", "vermont": "VT",
+    "virginia": "VA", "washington": "WA", "west virginia": "WV", "wisconsin": "WI", "wyoming": "WY",
+    "district of columbia": "DC", "dc": "DC"
+}
+
 
 class ScorecardService:
     """Provides resilient querying for college data with SQLite caching and seed fallback."""
+
 
     def __init__(self):
         self.db_path: Path = settings.DATABASE_PATH
@@ -192,7 +208,6 @@ class ScorecardService:
 
         return None
 
-
     async def search_colleges(
         self,
         query: Optional[str] = None,
@@ -203,17 +218,41 @@ class ScorecardService:
         max_admit_rate: Optional[float] = None,
         location_type: Optional[str] = None,
         sort_by: str = "name_asc",
+
         page: int = 1,
         page_size: int = 20,
     ) -> Tuple[List[CanonicalCollege], int]:
-        """Search and filter colleges in SQLite with pagination."""
+        """Search and filter colleges in SQLite with multi-token fuzzy matching, state expansion, and relevance ranking."""
         conditions = []
         params = []
+        order_params = []
 
-        if query:
-            q_clean = f"%{query.strip().lower()}%"
-            conditions.append("(LOWER(name) LIKE ? OR LOWER(alias) LIKE ? OR LOWER(city) LIKE ?)")
-            params.extend([q_clean, q_clean, q_clean])
+        q_clean = query.strip().lower() if query else ""
+        state_from_query = ""
+
+        if q_clean:
+            state_from_query = US_STATE_MAP.get(q_clean, "")
+            if len(q_clean) == 2 and q_clean.upper() in US_STATE_MAP.values():
+                state_from_query = q_clean.upper()
+
+            tokens = [t for t in q_clean.split() if t]
+
+            sub_conds = ["(LOWER(name) LIKE ? OR LOWER(alias) LIKE ? OR LOWER(city) LIKE ?)"]
+            sub_params = [f"%{q_clean}%", f"%{q_clean}%", f"%{q_clean}%"]
+
+            if state_from_query:
+                sub_conds.append("(UPPER(state) = ?)")
+                sub_params.append(state_from_query)
+
+            if len(tokens) > 1:
+                token_conds = []
+                for t in tokens:
+                    token_conds.append("(LOWER(name) LIKE ? OR LOWER(alias) LIKE ? OR LOWER(city) LIKE ? OR UPPER(state) LIKE ?)")
+                    sub_params.extend([f"%{t}%", f"%{t}%", f"%{t}%", f"%{t}%"])
+                sub_conds.append("(" + " AND ".join(token_conds) + ")")
+
+            conditions.append("(" + " OR ".join(sub_conds) + ")")
+            params.extend(sub_params)
 
         if state:
             conditions.append("UPPER(state) = ?")
@@ -246,13 +285,47 @@ class ScorecardService:
             "name_asc": "name ASC",
             "name_desc": "name DESC",
             "admit_asc": "acceptance_rate ASC NULLS LAST",
+            "admit_rate_asc": "acceptance_rate ASC NULLS LAST",
             "admit_desc": "acceptance_rate DESC NULLS LAST",
+            "admit_rate_desc": "acceptance_rate DESC NULLS LAST",
             "cost_asc": "net_price_average ASC NULLS LAST",
+            "net_price_asc": "net_price_average ASC NULLS LAST",
             "cost_desc": "net_price_average DESC NULLS LAST",
+            "net_price_desc": "net_price_average DESC NULLS LAST",
             "earnings_desc": "median_earnings_10yr DESC NULLS LAST",
+            "earnings_asc": "median_earnings_10yr ASC NULLS LAST",
             "size_desc": "undergrad_size DESC NULLS LAST",
+            "size_asc": "undergrad_size ASC NULLS LAST",
         }
-        order_clause = f"ORDER BY {sort_map.get(sort_by, 'name ASC')}"
+
+        if q_clean and (not sort_by or sort_by in ["name_asc", "relevance"]):
+            order_clause = """
+            ORDER BY 
+              CASE
+                WHEN LOWER(alias) = ? OR LOWER(alias) LIKE ? OR LOWER(alias) LIKE ? OR LOWER(alias) LIKE ? THEN 1
+                WHEN LOWER(name) = ? THEN 2
+                WHEN LOWER(name) LIKE ? THEN 3
+                WHEN LOWER(name) LIKE ? THEN 4
+                WHEN LOWER(alias) LIKE ? THEN 5
+                WHEN ? != '' AND UPPER(state) = ? THEN 6
+                WHEN LOWER(city) LIKE ? THEN 7
+                ELSE 8
+              END ASC,
+              undergrad_size DESC,
+              name ASC
+            """
+            order_params = [
+                q_clean, f"{q_clean}, %", f"%, {q_clean}, %", f"%, {q_clean}",
+                q_clean,
+                f"{q_clean}%",
+                f"%{q_clean}%",
+                f"%{q_clean}%",
+                state_from_query, state_from_query,
+                f"%{q_clean}%"
+            ]
+        else:
+            order_clause = f"ORDER BY {sort_map.get(sort_by, 'name ASC')}"
+            order_params = []
 
         offset = max(0, (page - 1) * page_size)
         limit_clause = f"LIMIT ? OFFSET ?"
@@ -264,8 +337,9 @@ class ScorecardService:
             total_count = cursor.fetchone()["total"]
 
             data_query = f"SELECT data_json FROM colleges {where_clause} {order_clause} {limit_clause}"
-            cursor.execute(data_query, params + [page_size, offset])
+            cursor.execute(data_query, params + order_params + [page_size, offset])
             rows = cursor.fetchall()
+
 
             colleges = []
             for row in rows:
@@ -278,6 +352,7 @@ class ScorecardService:
                 return [live_record], 1
 
         return colleges, total_count
+
 
 
     async def save_college(self, college: CanonicalCollege) -> None:

@@ -101,6 +101,15 @@ class ApiClient {
   }
 
   /**
+   * Search colleges (alias for getColleges)
+   * @param {Object} params - { q, state, type, max_net_price, min_admit_rate, max_admit_rate, limit, offset, sort }
+   */
+  async searchColleges(params = {}) {
+    return this.getColleges(params);
+  }
+
+
+  /**
    * Get single college detailed profile
    * @param {string} id - College UnitID or slug
    * @param {boolean} calculateFit - Whether to calculate student fit score

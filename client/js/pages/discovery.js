@@ -22,7 +22,7 @@ export const DiscoveryPage = {
     max_net_price: '',
     min_admit_rate: '',
     max_admit_rate: '',
-    sort: 'name_asc',
+    sort: 'relevance',
     limit: 12,
     offset: 0
   },
@@ -33,8 +33,8 @@ export const DiscoveryPage = {
     container.innerHTML = `
       <div class="page-header">
         <div class="page-title-group">
-          <h1>Explore Flagship Colleges</h1>
-          <p class="page-subtitle">Search 50+ flagship universities with verified Scorecard data and multi-dimensional fit scoring.</p>
+          <h1>Explore Premier Colleges</h1>
+          <p class="page-subtitle">Search 165+ premier universities across all D1 FBS conferences and Florida with verified Scorecard data and multi-dimensional fit scoring.</p>
         </div>
       </div>
 
@@ -47,7 +47,7 @@ export const DiscoveryPage = {
               type="text" 
               id="discovery-search" 
               class="input-text" 
-              placeholder="Search by college name, city, or alias (e.g. MIT, Berkeley, Florida)..." 
+              placeholder="Search by college name, alias, city, or state (e.g. FSU, UCF, Bama, Florida, Michigan)..." 
               value="${this.params.q}"
               style="width: 100%; padding: 12px 16px 12px 42px; font-size: 1rem;"
             />
@@ -79,6 +79,7 @@ export const DiscoveryPage = {
             <div class="form-group" style="margin-bottom: 0;">
               <label for="filter-sort" class="form-label">Sort By</label>
               <select id="filter-sort" class="select-input">
+                <option value="relevance" ${this.params.sort === 'relevance' || !this.params.sort ? 'selected' : ''}>Relevance / Featured</option>
                 <option value="name_asc" ${this.params.sort === 'name_asc' ? 'selected' : ''}>Name (A–Z)</option>
                 <option value="name_desc" ${this.params.sort === 'name_desc' ? 'selected' : ''}>Name (Z–A)</option>
                 <option value="net_price_asc" ${this.params.sort === 'net_price_asc' ? 'selected' : ''}>Net Price (Low–High)</option>
@@ -88,6 +89,7 @@ export const DiscoveryPage = {
                 <option value="admit_rate_desc" ${this.params.sort === 'admit_rate_desc' ? 'selected' : ''}>Admit Rate (Least Selective)</option>
               </select>
             </div>
+
 
             <div class="form-group" style="margin-bottom: 0;">
               <div style="display: flex; gap: 8px;">
@@ -176,7 +178,7 @@ export const DiscoveryPage = {
     const admitValBadge = container.querySelector('#admit-slider-val');
     const resetBtn = container.querySelector('#reset-filters-btn');
 
-    // Debounced Search
+    // Debounced Search & Instant Enter
     searchInput?.addEventListener('input', (e) => {
       clearTimeout(this.debounceTimer);
       this.debounceTimer = setTimeout(() => {
@@ -185,6 +187,16 @@ export const DiscoveryPage = {
         this.fetchResults(container, state);
       }, 250);
     });
+
+    searchInput?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        clearTimeout(this.debounceTimer);
+        this.params.q = e.target.value.trim();
+        this.params.offset = 0;
+        this.fetchResults(container, state);
+      }
+    });
+
 
     stateSelect?.addEventListener('change', (e) => {
       this.params.state = e.target.value;
@@ -272,8 +284,9 @@ export const DiscoveryPage = {
       const total = data.total || items.length;
 
       if (countLabel) {
-        countLabel.textContent = `Showing ${items.length} of ${total} Flagship Institutions`;
+        countLabel.textContent = `Showing ${items.length} of ${total} Colleges`;
       }
+
 
       if (items.length === 0) {
         grid.innerHTML = `

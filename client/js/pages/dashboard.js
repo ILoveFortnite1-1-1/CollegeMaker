@@ -481,9 +481,27 @@ export const DashboardPage = {
 
     quickBtn?.addEventListener('click', handleQuickSearch);
 
-    quickInput?.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') handleQuickSearch();
+    let quickDebounce = null;
+    quickInput?.addEventListener('input', () => {
+      clearTimeout(quickDebounce);
+      const val = quickInput.value.trim();
+      if (!val) {
+        if (quickResults) {
+          quickResults.style.display = 'none';
+          quickResults.innerHTML = '';
+        }
+        return;
+      }
+      quickDebounce = setTimeout(handleQuickSearch, 250);
     });
+
+    quickInput?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        clearTimeout(quickDebounce);
+        handleQuickSearch();
+      }
+    });
+
 
     // Delegate Quick Add click
     quickResults?.addEventListener('click', async (e) => {

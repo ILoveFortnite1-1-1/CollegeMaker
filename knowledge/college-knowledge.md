@@ -9087,3 +9087,11 @@ This document is an append-only, human-readable audit log tracking all data prov
 - **Fields Updated**: qualitative.strengths, qualitative.upsides, qualitative.tradeoffs
 
 | 2026-09-02T23:31:06.136359+00:00 | Test University (`test_school`) | `admissions.acceptance_rate` | `0.25` &rarr; `0.22` | government (Scorecard Ingestion) | reported |
+
+## College: Harvard University (166027)
+- **Timestamp**: 2026-09-02T23:41:41.131482+00:00
+- **Enrichment**: Gemini 3.5 Flash (run run_9238bba6c0)
+- **Status**: success_seed
+- **Fields Updated**: qualitative.strengths, qualitative.upsides, qualitative.tradeoffs
+
+| 2026-09-02T23:41:41.587296+00:00 | Test University (`test_school`) | `admissions.acceptance_rate` | `0.25` &rarr; `0.22` | government (Scorecard Ingestion) | reported |

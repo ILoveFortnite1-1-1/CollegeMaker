@@ -27,16 +27,19 @@ async def _get_guest_preferences(request: Request) -> Optional[StudentPreference
 @router.get("")
 async def list_colleges(
     request: Request,
-    q: Optional[str] = Query(None, description="Search term for name, alias, or city"),
+    q: Optional[str] = Query(None, description="Search term for name, alias, city, or state"),
     query: Optional[str] = Query(None, description="Alternative alias for search query term"),
+    search: Optional[str] = Query(None, description="Alternative alias for search query term"),
     state: Optional[str] = Query(None, description="2-letter state code filter"),
     control: Optional[str] = Query(None, description="public, private_nonprofit, or any"),
     type: Optional[str] = Query(None, description="public, private, or any"),
     max_cost: Optional[int] = Query(None, description="Maximum average annual net price"),
+    max_net_price: Optional[int] = Query(None, description="Alternative alias for max net price"),
     min_admit_rate: Optional[float] = Query(None, description="Minimum acceptance rate (0.0 - 1.0)"),
     max_admit_rate: Optional[float] = Query(None, description="Maximum acceptance rate (0.0 - 1.0)"),
     location_type: Optional[str] = Query(None, description="Urban, Suburban, Rural, Town"),
-    sort_by: str = Query("name_asc", description="Sort criteria: name_asc, name_desc, cost_asc, admit_asc, earnings_desc, name, net_price"),
+    sort: Optional[str] = Query(None, description="Alternative alias for sort criteria"),
+    sort_by: str = Query("name_asc", description="Sort criteria"),
     order: Optional[str] = Query(None, description="asc or desc"),
     page: int = Query(1, description="Page number"),
     page_size: int = Query(20, description="Page size"),
@@ -44,7 +47,8 @@ async def list_colleges(
     offset: Optional[int] = Query(None, description="Pagination offset"),
 ):
     """Search and filter colleges with pagination and dynamic student fit scoring."""
-    search_term = q or query
+    search_term = q or query or search
+    effective_max_cost = max_cost if max_cost is not None else max_net_price
 
     prefs = await _get_guest_preferences(request)
 
@@ -57,19 +61,20 @@ async def list_colleges(
             filter_control = "private_nonprofit"
 
     # Normalize sort criteria
-    effective_sort = sort_by
+    effective_sort = sort or sort_by
     if order:
         ord_lower = order.lower()
-        if sort_by in ["name", "canonical_name"]:
+        if effective_sort in ["name", "canonical_name"]:
             effective_sort = "name_asc" if ord_lower == "asc" else "name_desc"
-        elif sort_by in ["net_price", "cost"]:
+        elif effective_sort in ["net_price", "cost"]:
             effective_sort = "cost_asc" if ord_lower == "asc" else "cost_desc"
-        elif sort_by in ["admissions", "acceptance_rate", "admit_rate"]:
+        elif effective_sort in ["admissions", "acceptance_rate", "admit_rate"]:
             effective_sort = "admit_asc" if ord_lower == "asc" else "admit_desc"
-        elif sort_by in ["earnings", "median_earnings"]:
+        elif effective_sort in ["earnings", "median_earnings"]:
             effective_sort = "earnings_desc" if ord_lower == "desc" else "earnings_asc"
 
     actual_page_size = limit if limit is not None else page_size
+
     if actual_page_size < 0:
         raise HTTPException(status_code=400, detail="Limit must be non-negative.")
     if actual_page_size == 0:
@@ -92,8 +97,9 @@ async def list_colleges(
         query=search_term,
         state=state,
         control=filter_control,
-        max_cost=max_cost,
+        max_cost=effective_max_cost,
         min_admit_rate=min_admit_rate,
+
         max_admit_rate=max_admit_rate,
         location_type=location_type,
         sort_by=effective_sort,
