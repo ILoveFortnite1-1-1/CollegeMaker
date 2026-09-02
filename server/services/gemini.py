@@ -32,8 +32,8 @@ class GeminiEnrichmentService:
 
     def __init__(self):
         self.api_key: Optional[str] = settings.GEMINI_API_KEY
-        self.model_name: str = "Gemini 2.5 Flash"
-        self.endpoint_url: str = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
+        self.model_name: str = "Gemini 3.5 Flash"
+        self.endpoint_url: str = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent"
 
     async def enrich_college(
         self,
