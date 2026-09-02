@@ -1,0 +1,423 @@
+COLLEGE PORTFOLIO
+Design DocStudent College Planning Platform
+Generic product specification derived from the supplied reference UI
+v1.0
+Includes:• reusable college profiles• saved colleges via first-party cookie• server-side AI enrichment• append-only master knowledge document
+Reference treatment  Use the supplied screenshot as a visual direction only. Institution names, numbers, rankings, and conclusions shown in the screenshot are sample content and must not be hard-coded into the product.
+1. Product intent
+Goal. Give any student a focused workspace to discover colleges, compare them, understand fit/tradeoffs, estimate costs, review outcomes, and save a personalized list without requiring an account.
+Core experience
+Dashboard-first: a student sees their saved colleges, high-level portfolio signals, and the next decision to make.
+College profile: each institution has a consistent, scannable structure regardless of school type or size.
+Compare: students can place multiple colleges side-by-side using the same normalized fields.
+Explain, do not decide: fit scores and recommendations are transparent and adjustable rather than absolute.
+Freshness by design: new or missing college data can be enriched on demand by a server-side model call, with every pulled fact added to the shared master knowledge document.
+2. Design language
+Element
+Direction
+Rationale
+Navigation
+Dark navy top bar, compact labels, clear active state.
+Preserves the strong information architecture of the reference while remaining neutral to any school.
+Cards
+White cards on a very light neutral background; medium corner radius; subtle border/shadow.
+Creates modular, reusable surfaces for different data densities.
+Typography
+High-contrast display heading + compact body text; large numerals for key metrics.
+Supports fast scanning without making the interface feel dashboard-heavy.
+Data semantics
+Reported / Estimated / Projected / Qualitative badges.
+Makes uncertainty visible instead of presenting all facts as equally certain.
+Charts
+Simple radar, bar, donut, and scatter views with labeled legends and hover details.
+Visualize comparisons, not decorative stories.
+Actions
+Primary = blue; positive = green; warning/tradeoff = amber; destructive = red.
+Gives action priority a stable meaning across screens.
+3. Reference UI mapped to a generic product
+Figure 1. Supplied reference image. Reuse the information hierarchy and visual rhythm, not the sample institution-specific values.
+Reference area
+Generic product component
+Required behavior
+Portfolio header
+Student portfolio summary
+Shows saved college count, average net-price estimate, typical early-career earning estimate, overall admit-rate mix, and target-school status.
+School cards
+College list card
+Name, location, type, category, key metrics, portfolio tag (Reach/Target/Likely or custom), fit score, save/compare actions.
+Insights row
+Portfolio analytics
+Cost vs. earnings, fit ranking, academic/career mix, and editable student priorities.
+Profile hero
+College detail hero
+Institution name, location, type, enrollment, acceptance and graduation rates, plus save/add-to-compare.
+Tabs
+Profile sections
+Overview, upside, tradeoffs, ROI & cost, career outcomes, admissions, academics, student life.
+Bottom modules
+Evidence + decision support
+Cost estimate, earnings, recruiting industries, investment thesis, source/freshness metadata.
+4. Information architecture
+Route
+Purpose
+Primary actions
+/
+Portfolio dashboard
+Search/add college, filter list, open profile, compare, adjust weights.
+/colleges
+College discovery
+Search by name, location, major, school type, cost range, selectivity, outcomes.
+/colleges/:id
+College profile
+Save, compare, request refresh/enrichment, inspect source evidence.
+/compare
+Comparison workspace
+Select 2–6 colleges, compare normalized metrics, costs, outcomes, fit, and tradeoffs.
+/settings
+Preferences
+Student priorities, data settings, cookie/privacy controls, clear saved portfolio.
+5. College profile specification
+5.1 Header
+Institution name + optional logo
+Location, school type, year founded
+Save button (star/bookmark) and Add to Compare
+Key stats strip: enrollment, acceptance rate, graduation rate, student-faculty ratio
+Last refreshed timestamp and data-status indicator
+5.2 Overview modules
+Module
+Generic fields
+Notes
+Fit score
+Overall score, label, 5–8 component scores
+Weights are student-adjustable; score is explanatory, not admissions advice.
+Score breakdown
+Academic fit, career potential, value, affordability, admissions fit, student experience, network, custom dimensions
+Store raw values + normalized 0–100 score + method version.
+Quick facts
+Location, type, founded, enrollment, business/academic strengths, finance opportunities, notable programs
+Every field carries source + freshness + confidence metadata.
+Upside
+3–7 concise benefits
+Evidence-linked claims; avoid unsourced marketing language.
+Tradeoffs
+3–7 concise risks/limitations
+Use neutral wording and show source/context.
+Best for / not best for
+Student patterns, not demographic stereotypes
+Frame as preference-based use cases: cost-sensitive, research-heavy, career-driven, large-campus, etc.
+6. Generic data model
+Source-of-truth rule  The database is the structured source of truth for runtime reads. The master knowledge document is the append-only audit/export layer that records what has ever been pulled or generated for each college.
+Entity
+Key fields
+StudentPortfolio
+id, created_at, updated_at, preferences, fit_weights, cookie_session_id
+PortfolioCollege
+portfolio_id, college_id, status, saved_at, user_note, custom_label
+College
+id, canonical_name, aliases, location, type, url, metadata, current_refresh_at
+CollegeMetric
+college_id, metric_key, value, unit, year, source_id, confidence, status
+SourceEvidence
+id, provider, source_url, retrieved_at, excerpt_or_summary, source_type
+EnrichmentRun
+id, college_id, requested_at, provider, model, prompt_version, result_hash, status, latency_ms
+KnowledgeEntry
+id, college_id, run_id, field_path, old_value, new_value, source_ids, created_at
+7. Saving colleges with cookies
+Recommended pattern. Use a first-party opaque portfolio identifier in a cookie; keep the actual saved-college list on the server. Do not place the full portfolio or sensitive student data in the cookie.
+Cookie
+Purpose
+Suggested attributes
+Lifetime
+college_portfolio_id
+Anonymous portfolio lookup key
+Secure; HttpOnly; SameSite=Lax; path=/
+Long-lived, renewable
+consent_preferences
+Stores privacy/cookie choices only
+Secure; SameSite=Lax; path=/
+Until changed/cleared
+csrf_token (only if architecture needs it)
+Request forgery defense
+Secure; SameSite=Lax; path=/
+Session / short-lived
+Save flow  Student clicks Save → client sends college ID → server creates/updates PortfolioCollege under the portfolio ID from the cookie → UI updates immediately → no login required for the initial experience.
+Cookie UX requirements
+The Save action must work for a guest immediately; account creation can be a later recovery/sync option.
+A saved-state icon must persist across reloads on the same browser.
+Provide “Remove saved colleges” and “Clear local portfolio” controls.
+State clearly that a first-party cookie is being used to remember the portfolio; do not silently stuff college details into the cookie.
+Support graceful fallback to temporary in-memory state when cookies are blocked, with an explicit message that saving across reloads is unavailable.
+8. Server-side AI college lookup
+Provider abstraction. The application should call your server, never the model vendor directly from the browser. Your server can route the enrichment request to a model such as a Gemini Flash-class model, another provider, or a later replacement without changing the frontend contract.
+8.1 Flow
+1.  Student searches for a college or opens an unknown institution.
+2.  Server checks the structured College record and freshness rules.
+3.  If data is missing/stale, server creates an EnrichmentRun and calls the configured model provider.
+4.  Model returns structured JSON only: identity, fields, values, sources, confidence, notes, and unknowns.
+5.  Server validates the response against a schema; reject or quarantine malformed/unsupported data.
+6.  Server writes normalized metrics + evidence rows to the database.
+7.  Server appends every newly pulled or changed fact to the master knowledge document with provenance.
+8.  Client receives the normalized college profile plus freshness state and refresh timestamp.
+8.2 Suggested API contract
+Endpoint
+Request
+Response
+POST /api/colleges/enrich
+{ "query": "string", "collegeId": "optional" }
+{ "enrichmentRunId": "...", "status": "queued|complete|needs_review" }
+GET /api/colleges/:id
+No body
+Normalized profile + evidence summary + freshness
+POST /api/portfolios/:id/colleges
+{ "collegeId": "...", "label": "target" }
+Saved portfolio college
+DELETE /api/portfolios/:id/colleges/:collegeId
+No body
+204 / updated portfolio
+GET /api/compare?ids=...
+College IDs
+Normalized comparison payload
+GET /api/knowledge/colleges/:id
+No body
+Master-document entries / audit history
+8.3 Model response schema
+{  "college": {    "canonicalName": "string",    "aliases": ["string"],    "location": {"city": "string", "region": "string", "country": "string"},    "type": "public|private|other",    "fields": [      {        "path": "acceptanceRate",        "value": 0.31,        "unit": "ratio",        "year": 2025,        "confidence": 0.82,        "sources": ["https://example.edu/..."],        "status": "reported|estimated|projected|qualitative"      }    ]  },  "unknowns": ["string"],  "notes": ["string"]}
+9. Master knowledge document
+Requirement. Whenever the system pulls new college information, the pulled facts must also be added to one general, human-readable document that can be exported, reviewed, indexed, and rebuilt into the database.
+9.1 File strategy
+Artifact
+Role
+Format
+college-knowledge.md
+Canonical human-readable master document, append-friendly
+Markdown
+college-knowledge.jsonl
+Machine-auditable event stream; one normalized fact per line
+JSONL
+Database tables
+Fast runtime queries and comparison calculations
+SQL/NoSQL as chosen by implementation
+9.2 Master document entry
+## College: {canonical_name}### Enrichment: {timestamp} | run {enrichment_run_id}- Provider/model: {provider} / {model}- Request: {search_query}- Status: {status}#### Facts pulled or changed- `admissions.acceptance_rate`: 0.31 [year 2025, confidence 0.82]  - Sources: source_123, source_124- `cost.net_price_estimate`: 66480 [year 2025-26, confidence 0.74]  - Sources: source_231#### Unknown / unresolved- {field}: not found / conflicting sources / requires review
+Important data rule  Never overwrite history in the master document. Append a new enrichment entry. The runtime profile can promote the newest validated value, while historical entries remain available for review and debugging.
+10. Freshness, provenance, and trust
+Requirement
+Behavior
+Source on every fact
+Each metric stores at least one source ID; derived scores store the input fact IDs and calculation version.
+Freshness
+Show Last refreshed on profiles; define configurable TTLs by field group. Admissions and cost data can expire faster than static identity data.
+Confidence
+Model-supplied confidence is advisory; server validation and source quality rules can lower or raise the final confidence band.
+Conflicts
+Do not merge conflicting values silently. Store both evidence records and mark the field “needs review” until a deterministic rule resolves it.
+Model versioning
+Persist provider, model, prompt version, schema version, and run ID for every enrichment.
+Auditability
+A staff/admin view can trace a profile field back to the enrichment run and source evidence that created it.
+11. Fit scoring model
+Use a weighted, transparent scoring system that can be edited by the student. The score should be presented as a planning aid, not as a prediction of admission or personal success.
+Dimension
+Example default weight
+Possible inputs
+Career outcomes
+25%
+Early-career earnings, placement rate, recruiting strength, industry mix
+ROI / value
+20%
+Net price, aid, outcomes, debt exposure, payback proxy
+Academic fit
+15%
+Programs, course depth, research, learning environment
+Admissions probability / fit
+10%
+Selectivity, student-entered profile alignment, admission context
+Student experience
+10%
+Campus setting, student-faculty ratio, housing, activities
+Business / academic strength
+10%
+Program reputation, employer demand, faculty/research indicators
+Location
+5%
+Urban/rural, region, travel, opportunity access
+Cost
+5%
+Total cost of attendance and affordability
+Scoring constraint  All dimensions should degrade gracefully when inputs are missing. Missing data should reduce confidence in the score, not automatically punish the college.
+12. Compare experience
+Allow 2–6 colleges in a comparison set.
+Keep row definitions identical across institutions; do not mix “reported” and “estimated” without status labels.
+Prioritize decision rows: net price, admissions rate, graduation, career outcomes, fit score, strongest programs, tradeoffs.
+Allow a student to pin rows, hide low-value rows, and export the current comparison.
+13. Accessibility and responsive behavior
+Area
+Requirement
+Keyboard
+Every save/compare/tab/filter action reachable without mouse. Visible focus state.
+Screen readers
+Semantic headings, labeled controls, accessible chart summaries, table headers, no information conveyed by color alone.
+Responsive layout
+Desktop: two-pane/profile dashboard patterns; tablet: condensed cards; mobile: single-column stacks with horizontal compare scroll.
+Contrast
+Meet WCAG AA for text and critical UI states.
+Motion
+Use brief transitions only; honor reduced-motion preferences.
+14. Security and privacy boundaries
+The model API key and provider credentials exist only on the server.
+The browser never sends arbitrary prompts directly to the model vendor.
+Treat model output as untrusted input; validate against a strict schema and sanitize rendered text/URLs.
+Rate-limit enrichment endpoints and cache repeated college lookups.
+Store the smallest amount of student data needed for portfolio behavior; keep analytics optional and separate from essential save functionality.
+Provide deletion of saved portfolio data and the associated cookie identifier.
+15. Prompt-injection resistance for college research
+Because external college pages and search results are untrusted inputs, the enrichment pipeline must explicitly defend against instructions embedded in retrieved content. Treat every page excerpt as data, not as instructions to the model.
+Control
+Implementation
+System policy
+The enrichment agent is told that retrieved web text is untrusted evidence and can never override its task or system rules.
+Structured extraction
+Ask for schema-constrained JSON rather than free-form narratives.
+Source isolation
+Place source text in clearly delimited evidence fields; do not concatenate it into control instructions.
+Tool permissions
+Model can request lookup data, but cannot directly write production records. Server validates and commits changes.
+Review queue
+Flag suspicious, contradictory, or unusually broad outputs for manual review.
+16. Performance and reliability
+Scenario
+Target behavior
+Normal college view
+Serve from database/cache without waiting on the model.
+Missing/stale college data
+Return existing profile immediately, then run enrichment asynchronously; update the UI when complete.
+Repeated query
+Deduplicate concurrent enrichment requests by canonical college ID + query fingerprint.
+Model failure
+Preserve existing known data, mark refresh as failed, and expose a Retry action.
+Partial result
+Store validated fields only; unresolved fields remain explicitly unknown.
+17. Acceptance criteria
+A new student can open the app and save a college without creating an account.
+Saved colleges persist across reloads via a first-party portfolio cookie linked to server-side data.
+A college profile uses the same generic modules regardless of institution.
+A user can compare at least two colleges using identical normalized fields.
+A missing/stale college can be enriched through a server endpoint without exposing provider credentials to the browser.
+Every enrichment creates an auditable run record with provider/model, prompt version, timestamp, and result status.
+Every new or changed fact from enrichment is appended to the master knowledge document with provenance.
+Malformed or contradictory model output cannot silently overwrite trusted structured data.
+The UI clearly labels reported, estimated, projected, and qualitative information.
+The dashboard and profile remain usable on mobile widths and with keyboard navigation.
+18. Suggested implementation sequence
+1.  Foundation: routes, design tokens, reusable cards/tables, College + Portfolio data model.
+2.  Portfolio: cookie-backed anonymous ID, save/remove college, dashboard list.
+3.  Profiles: generic college profile + source/freshness labels.
+4.  Compare: normalized comparison table and adjustable fit weights.
+5.  Enrichment: server adapter, strict schema, validation, caching, async jobs.
+6.  Knowledge ledger: append-only Markdown + JSONL writer tied to every successful enrichment.
+7.  Hardening: prompt-injection controls, rate limits, conflict handling, audit view, accessibility QA.
+19. Example product copy
+UI surface
+Copy
+Save button
+Save college
+Saved state
+Saved
+Refresh action
+Refresh college data
+Stale data badge
+Needs refresh
+AI enrichment status
+Researching current college information…
+Unknown field
+Not enough verified data
+Fit score disclaimer
+Planning estimate based on your selected priorities and available data.
+Source label
+Source + year
+20. Open decisions
+Whether “Reach / Target / Likely” is fixed or fully customizable.
+Whether account sync is introduced after guest saving or omitted entirely.
+Which external source hierarchy is trusted most for admissions, cost, outcomes, and academics.
+Which model/provider is used first and what fallback provider is available.
+Whether the master knowledge document lives in object storage, git, a document DB, or a managed knowledge base.
+Which fields require manual review before becoming visible in student-facing comparisons.
+Appendix A — One-screen component inventory
+Component
+Variants
+Key props
+MetricCard
+default / status / trend
+label, value, suffix, helper, status
+CollegeCard
+list / compact / compare
+college, fitScore, tag, saved, compareEnabled
+FitScore
+ring / large / mini
+score, confidence, label, components
+InsightCard
+chart / ranking / note
+title, data, source, action
+SourceBadge
+reported / estimated / projected / qualitative
+status, year, sourceCount
+CollegeProfileSection
+standard / evidence-heavy
+title, fields, sourceIds
+SaveButton
+save / saved / loading
+collegeId, disabled
+EnrichmentBanner
+idle / running / success / needs_review / failed
+runId, status, action
+Appendix B — File/event naming convention
+/knowledge/  college-knowledge.md        # human-readable append-only ledger  college-knowledge.jsonl     # machine-auditable fact/event streamEvent: college.fact.updatedPayload: event_id, college_id, run_id, field_path, old_value, new_value,         source_ids, confidence, status, observed_at, committed_at
+Design conclusion. Keep the student-facing experience simple and visual, keep the data layer strongly structured, and treat AI enrichment as a controlled ingestion pipeline whose output is both usable in the app and permanently auditable in the general knowledge document.
+Programmatic College Data & AI Enrichment
+A large portion of college information should be collected programmatically from structured, authoritative sources. The application should use AI as an enrichment and synthesis layer rather than as the primary source of truth.
+Recommended Data Sources
+U.S. Department of Education College Scorecard: Use for admissions, enrollment, completion, costs, financial aid, earnings, majors, and institution metadata.
+IPEDS / NCES: Use for detailed institutional statistics including enrollment, tuition, degrees, demographics, staffing, and graduation information.
+Official college websites and Common Data Set documents: Use for fields that are unavailable or inconsistent in federal datasets, especially current admissions, academics, programs, and institutional details.
+Server-side Gemini endpoint: Use for missing or qualitative information, source synthesis, classification, summaries, and extracting structured information from permitted sources.
+College Lookup Flow
+1. Check the master college database first.
+2. If the record exists and its data is sufficiently recent, return the stored record.
+3. Query College Scorecard and/or IPEDS for authoritative structured fields.
+4. Normalize external responses into the application's canonical college schema.
+5. Identify missing, stale, or qualitative fields.
+6. If necessary, call the server-side Gemini endpoint for only those remaining fields.
+7. Require structured JSON from the AI response, including source information and retrieval dates where applicable.
+8. Validate the response before accepting it.
+9. Merge accepted information into the master college record.
+10. Return the normalized college object to the frontend.
+Canonical College Record
+The master data store should use a structured record rather than relying on a free-form document as the database. Example:
+{  "id": "college-slug",  "name": "Example University",  "location": {    "city": "Example City",    "state": "EX"  },  "admissions": {    "acceptance_rate": {      "value": 0.31,      "source": "college_scorecard",      "retrieved_at": "2026-09-02"    }  },  "cost": {    "tuition_in_state": {},    "tuition_out_of_state": {},    "average_net_price": {}  },  "outcomes": {    "graduation_rate": {},    "median_earnings": {}  },  "academics": {},  "student_life": {},  "qualitative": {    "career_strengths": [],    "campus_notes": []  }}
+Shared Master Knowledge Layer
+When a lookup discovers new information, the accepted information should be written to the shared master college record. This means a lookup performed for one student can benefit later students without requiring another AI call.
+Keep the canonical structured database as the source of truth. A generated Markdown document or JSONL export can also be maintained for portability, search, auditing, or retrieval-augmented generation.
+Data Provenance and Trust
+Every non-trivial field should retain provenance. At minimum, store the value, source, retrieval/update date, and data classification.
+Reported — directly supplied by a trusted source.
+Calculated — derived from reported values using a deterministic formula.
+AI-derived — extracted, classified, or summarized by the AI service.
+Estimated — an explicit estimate rather than an observed value.
+Source Precedence
+Do not allow an AI response to silently overwrite higher-confidence data. Use a source hierarchy:
+Official government or structured institutional data.
+Official institution documents and websites.
+Other reputable primary or secondary sources.
+AI-extracted or AI-summarized information.
+Model estimates.
+Server API Architecture
+A simple server-side architecture can expose endpoints such as:
+GET  /api/colleges/:collegeIdPOST /api/colleges/:collegeId/refreshGET  /api/portfolioPOST /api/portfolio/colleges/:collegeIdDELETE /api/portfolio/colleges/:collegeIdPOST /api/ai/college-enrichment
+The frontend should never need direct access to the Gemini API key. The server calls the configured model endpoint, validates the response, applies source precedence, updates the master record, and then returns safe normalized data to the browser.
+Cookie-Based Saved Colleges
+Use a small browser cookie only as an anonymous portfolio identifier. Store the actual saved college IDs server-side rather than placing full college records in cookies.
+Cookie:student_portfolio_id=<random-opaque-id>Server-side portfolio:{  "portfolio_id": "<random-opaque-id>",  "saved_colleges": [    "college-a",    "college-b",    "college-c"  ]}
+Recommended Request Flow
+Browser → Your Server → Master College DB → Scorecard/IPEDS/official sources → Gemini only for remaining gaps → validation → master DB update → normalized response → Browser
+This design keeps the UI fast, reduces duplicate AI requests, preserves source provenance, and creates a continuously improving shared college knowledge base.

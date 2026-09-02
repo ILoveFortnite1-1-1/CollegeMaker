@@ -1,0 +1,25 @@
+# ==============================================================================
+# Render Blueprint Specification for College Portfolio Web Application
+# Free / Standard Tier Deployment
+# ==============================================================================
+services:
+  - type: web
+    name: college-portfolio
+    runtime: python
+    plan: free
+    region: oregon
+    buildCommand: pip install -r requirements.txt
+    startCommand: python run.py
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: COLLEGE_SCORECARD_API_KEY
+        sync: false
+      - key: PORT
+        value: 8000
+      - key: APP_ENV
+        value: production

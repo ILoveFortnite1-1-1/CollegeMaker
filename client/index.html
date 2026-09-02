@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="College Portfolio — Intelligent college planning, data-driven comparisons, and multi-dimensional fit scoring without requiring an account.">
+  <title>College Portfolio — Student College Planning Platform</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <!-- Cookie Privacy / Fallback Alert -->
+  <div id="cookie-banner" class="cookie-banner hidden" role="region" aria-label="Cookie Privacy Notice">
+    <div class="banner-content">
+      <span class="banner-icon">ℹ️</span>
+      <p id="cookie-banner-text">
+        College Portfolio uses an anonymous first-party cookie to securely save your college list and custom fit preferences without requiring an account.
+      </p>
+      <div class="banner-actions">
+        <a href="#/settings" class="btn btn-sm btn-ghost">Privacy Settings</a>
+        <button id="dismiss-cookie-banner" class="btn btn-sm btn-light" aria-label="Dismiss cookie notice">Got it</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Top Navigation -->
+  <header class="app-header" role="banner">
+    <div class="nav-container">
+      <a href="#/" class="nav-brand" aria-label="College Portfolio Home">
+        <span class="brand-logo">🎓</span>
+        <div class="brand-text">
+          <span class="brand-title">College Portfolio</span>
+          <span class="brand-badge">PROVENANCE AI</span>
+        </div>
+      </a>
+
+      <!-- Desktop Navigation Links -->
+      <nav class="nav-menu" id="nav-menu" role="navigation" aria-label="Main Navigation">
+        <a href="#/" class="nav-link active" data-route="dashboard" id="nav-dashboard">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+          <span>Dashboard</span>
+        </a>
+        <a href="#/colleges" class="nav-link" data-route="colleges" id="nav-colleges">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <span>Explore Colleges</span>
+        </a>
+        <a href="#/compare" class="nav-link" data-route="compare" id="nav-compare">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+          <span>Compare</span>
+          <span class="compare-badge" id="compare-count-badge">0</span>
+        </a>
+        <a href="#/tracker" class="nav-link" data-route="tracker" id="nav-tracker">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+          <span>App Tracker</span>
+        </a>
+        <a href="#/settings" class="nav-link" data-route="settings" id="nav-settings">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          <span>Preferences</span>
+        </a>
+      </nav>
+
+      <!-- Quick Action / Status -->
+      <div class="nav-actions">
+        <div class="saved-pill" id="saved-portfolio-pill" title="Saved Colleges in Portfolio">
+          <span class="saved-dot"></span>
+          <span id="saved-count-label">0 Saved</span>
+        </div>
+        <button class="menu-toggle" id="menu-toggle" aria-label="Toggle mobile menu" aria-expanded="false">
+          <span class="menu-bar"></span>
+          <span class="menu-bar"></span>
+          <span class="menu-bar"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Drawer Menu -->
+  <div class="mobile-nav-backdrop" id="mobile-nav-backdrop"></div>
+  <div class="mobile-nav" id="mobile-nav" aria-hidden="true">
+    <div class="mobile-nav-header">
+      <span class="brand-title">🎓 College Portfolio</span>
+      <button class="btn-close" id="mobile-nav-close" aria-label="Close menu">&times;</button>
+    </div>
+    <nav class="mobile-nav-links">
+      <a href="#/" class="mobile-nav-link" data-route="dashboard">Dashboard</a>
+      <a href="#/colleges" class="mobile-nav-link" data-route="colleges">Explore Colleges</a>
+      <a href="#/compare" class="mobile-nav-link" data-route="compare">Comparison Matrix</a>
+      <a href="#/settings" class="mobile-nav-link" data-route="settings">Preferences & Fit Weights</a>
+    </nav>
+  </div>
+
+  <!-- Main SPA Route Viewport -->
+  <main id="app-root" class="app-main" role="main">
+    <div class="loading-screen" id="initial-loader">
+      <div class="spinner"></div>
+      <p class="loading-text">Loading College Portfolio…</p>
+    </div>
+  </main>
+
+  <!-- Slide-in Provenance Evidence Drawer -->
+  <div id="drawer-backdrop" class="drawer-backdrop hidden"></div>
+  <aside id="provenance-drawer" class="provenance-drawer hidden" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
+    <div class="drawer-header">
+      <div class="drawer-title-group">
+        <span class="drawer-badge">AUDIT EVIDENCE</span>
+        <h3 id="drawer-title" class="drawer-title">Metric Provenance</h3>
+      </div>
+      <button id="close-drawer-btn" class="drawer-close-btn" aria-label="Close provenance drawer">&times;</button>
+    </div>
+    <div id="drawer-content" class="drawer-body">
+      <!-- Injected via provenance-drawer.js -->
+    </div>
+  </aside>
+
+  <!-- Generic Modal Container -->
+  <div id="modal-container" class="modal-backdrop hidden" role="dialog" aria-modal="true">
+    <div class="modal-dialog" id="modal-dialog">
+      <!-- Injected dynamically -->
+    </div>
+  </div>
+
+  <!-- Toast Notifications Container -->
+  <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Footer -->
+  <footer class="app-footer" role="contentinfo">
+    <div class="footer-container">
+      <div class="footer-grid">
+        <div class="footer-brand-col">
+          <div class="footer-logo">
+            <span>🎓</span> <strong>College Portfolio</strong>
+          </div>
+          <p class="footer-desc">
+            Empowering students with transparent data, verifiable provenance, and personalized 8-dimension fit scoring. No account required.
+          </p>
+          <div class="provenance-legend">
+            <span class="legend-title">Data Precedence:</span>
+            <span class="legend-chain">U.S. Dept of Ed Scorecard &gt; Official Institutional &gt; Secondary &gt; Gemini AI &gt; Model Estimate</span>
+          </div>
+        </div>
+
+        <div class="footer-links-col">
+          <h4>Navigation</h4>
+          <ul>
+            <li><a href="#/">Portfolio Dashboard</a></li>
+            <li><a href="#/colleges">Search & Discover</a></li>
+            <li><a href="#/compare">Compare Colleges</a></li>
+            <li><a href="#/settings">Fit Preferences</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <h4>Master Knowledge</h4>
+          <ul>
+            <li><a href="/api/knowledge/export?format=md" target="_blank" rel="noopener">Export Markdown Ledger</a></li>
+            <li><a href="/api/knowledge/export?format=jsonl" target="_blank" rel="noopener">Export JSONL Stream</a></li>
+            <li><a href="/api/health" target="_blank" rel="noopener">System Health & Status</a></li>
+            <li><a href="/docs" target="_blank" rel="noopener">Interactive API Docs</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p class="copyright">
+          Data sourced from the U.S. Department of Education College Scorecard &amp; IPEDS. Fit scores are educational planning aids, not admission predictions.
+        </p>
+        <p class="privacy-note">
+          Guest session persisted via secure first-party cookie. <a href="#/settings">Manage Data</a>
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- App Entrypoint Script -->
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>
