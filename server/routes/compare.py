@@ -77,9 +77,12 @@ async def compare_colleges_endpoint(
             "items": colleges_api,
             "metrics": comparison_result["metrics"],
             "matrix": comparison_result["metrics"],
+            "comparison_matrix": comparison_result["metrics"],
             "best_in_class": comparison_result["best_in_class"],
             "highlights": comparison_result["best_in_class"],
+            "summary_highlights": comparison_result["best_in_class"],
             "summary": comparison_result["summary"],
         }
+
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))

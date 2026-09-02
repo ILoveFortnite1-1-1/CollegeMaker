@@ -5,7 +5,24 @@
 import { renderSourceBadge } from './source-badge.js';
 
 export function formatMetricValue(value, format = 'number') {
-  if (value === null || value === undefined || isNaN(value)) {
+  if (value === null || value === undefined) {
+    return '—';
+  }
+
+  // If already formatted ratio or string
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    if (trimmed === '' || trimmed === '—' || trimmed === 'null' || trimmed === 'undefined') return '—';
+    if (format === 'ratio') {
+      return trimmed.includes(':') ? trimmed : `${trimmed}:1`;
+    }
+    if (format === 'text') return trimmed;
+    const num = Number(trimmed);
+    if (isNaN(num)) return trimmed;
+    value = num;
+  }
+
+  if (typeof value === 'number' && isNaN(value)) {
     return '—';
   }
 
@@ -23,15 +40,19 @@ export function formatMetricValue(value, format = 'number') {
       return `${Math.round(percentVal)}%`;
 
     case 'ratio':
-      return `${value}:1`;
+      return typeof value === 'string' && value.includes(':') ? value : `${value}:1`;
 
     case 'count':
       return new Intl.NumberFormat('en-US').format(value);
 
-    default:
+    case 'text':
       return String(value);
+
+    default:
+      return typeof value === 'number' ? new Intl.NumberFormat('en-US').format(value) : String(value);
   }
 }
+
 
 export function renderMetricCard(label, fieldData, format = 'number', helper = '') {
   const value = fieldData?.value ?? fieldData;

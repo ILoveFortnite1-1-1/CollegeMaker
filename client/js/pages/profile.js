@@ -90,12 +90,12 @@ export const ProfilePage = {
 
           <!-- Key Stats Strip -->
           <div class="profile-stats-strip">
-            ${renderMetricCard('Enrollment', college.summary?.enrollment, 'count')}
-            ${renderMetricCard('Acceptance Rate', college.summary?.acceptance_rate, 'percent')}
-            ${renderMetricCard('Graduation Rate', college.summary?.graduation_rate, 'percent')}
-            ${renderMetricCard('Student-Faculty', college.summary?.student_faculty_ratio, 'ratio')}
-            ${renderMetricCard('Avg Net Price', college.summary?.average_net_price, 'currency')}
-            ${renderMetricCard('10-Yr Earnings', college.summary?.median_earnings_10yr, 'currency')}
+            ${renderMetricCard('Enrollment', college.summary?.enrollment ?? college.overview?.enrollment ?? college.undergrad_size, 'count')}
+            ${renderMetricCard('Acceptance Rate', college.summary?.acceptance_rate ?? college.admissions?.acceptance_rate ?? college.acceptance_rate, 'percent')}
+            ${renderMetricCard('Graduation Rate', college.summary?.graduation_rate ?? college.outcomes?.graduation_rate ?? college.outcomes?.completion_rate_6yr, 'percent')}
+            ${renderMetricCard('Student-Faculty', college.summary?.student_faculty_ratio ?? college.faculty_to_student_ratio, 'ratio')}
+            ${renderMetricCard('Avg Net Price', college.summary?.average_net_price ?? college.cost?.average_net_price ?? college.cost?.net_price_average ?? college.net_price, 'currency')}
+            ${renderMetricCard('10-Yr Earnings', college.summary?.median_earnings_10yr ?? college.outcomes?.median_earnings_10yr ?? college.outcomes?.median_earnings ?? college.median_earnings, 'currency')}
           </div>
         </section>
 
@@ -125,8 +125,9 @@ export const ProfilePage = {
               </p>
 
               <div class="dimension-bar-list">
-                ${renderDimensionBars(college.fit?.dimensions)}
+                ${renderDimensionBars(college.fit?.dimensions || college.fit_breakdown?.dimensions || college.fit_breakdown)}
               </div>
+
 
               <div style="margin-top: 24px; text-align: center;">
                 <a href="#/settings" class="btn btn-sm btn-ghost">Adjust Match Weights</a>
@@ -506,14 +507,16 @@ function renderProvenanceTable(college) {
     });
   };
 
-  addRow('Acceptance Rate', college.summary?.acceptance_rate);
-  addRow('Graduation Rate', college.summary?.graduation_rate);
-  addRow('Average Net Price', college.summary?.average_net_price);
-  addRow('10-Yr Median Earnings', college.summary?.median_earnings_10yr);
-  addRow('Student-Faculty Ratio', college.summary?.student_faculty_ratio);
+  addRow('Enrollment', college.summary?.enrollment ?? college.undergrad_size);
+  addRow('Acceptance Rate', college.summary?.acceptance_rate ?? college.admissions?.acceptance_rate);
+  addRow('Graduation Rate', college.summary?.graduation_rate ?? college.outcomes?.completion_rate_6yr);
+  addRow('Average Net Price', college.summary?.average_net_price ?? college.cost?.net_price_average);
+  addRow('10-Yr Median Earnings', college.summary?.median_earnings_10yr ?? college.outcomes?.median_earnings_10yr);
+  addRow('Student-Faculty Ratio', college.summary?.student_faculty_ratio ?? college.faculty_to_student_ratio);
   addRow('Pell Grant Rate', college.cost?.pell_grant_rate);
   addRow('Qualitative Upsides', college.qualitative?.upsides);
   addRow('Qualitative Tradeoffs', college.qualitative?.tradeoffs);
+
 
   return `
     <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.8125rem;">

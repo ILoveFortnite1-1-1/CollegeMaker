@@ -124,13 +124,50 @@ class ScorecardService:
         conn.commit()
 
     async def get_college_by_id(self, college_id: str) -> Optional[CanonicalCollege]:
-        """Fetch a single college by ID (or slug/unitid) from cache, DB, or API."""
+        """Fetch a single college by ID (or slug/unitid/alias/name) from cache, DB, or API."""
         cid = str(college_id).strip()
+        if not cid or cid == "0" or cid.startswith("-") or (cid.isdigit() and int(cid) <= 0):
+            return None
 
-        # 1. Check in DB
+        cid_lower = cid.lower()
+        cid_normalized = cid_lower.replace("-", " ").replace("_", " ")
+
+
+        # 1. Check in DB by exact id, unitid, alias, name, or slug
         with self._get_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute("SELECT data_json FROM colleges WHERE id = ? OR unitid = ?", (cid, cid))
+            cursor.execute(
+                """
+                SELECT data_json FROM colleges 
+                WHERE id = ? 
+                   OR unitid = ? 
+                   OR LOWER(id) = ?
+                   OR LOWER(alias) = ? 
+                   OR LOWER(name) = ?
+                   OR LOWER(REPLACE(REPLACE(name, ' ', '-'), ',', '')) = ?
+                   OR LOWER(name) LIKE ?
+                   OR LOWER(alias) LIKE ?
+                ORDER BY 
+                   CASE WHEN id = ? THEN 1
+                        WHEN LOWER(name) = ? THEN 2
+                        WHEN LOWER(alias) = ? THEN 3
+                        ELSE 4 END
+                LIMIT 1
+                """,
+                (
+                    cid, 
+                    int(cid) if cid.isdigit() else -1, 
+                    cid_lower,
+                    cid_lower, 
+                    cid_lower, 
+                    cid_lower,
+                    f"%{cid_normalized}%", 
+                    f"%{cid_normalized}%",
+                    cid, 
+                    cid_lower, 
+                    cid_lower
+                )
+            )
             row = cursor.fetchone()
             if row:
                 data = json.loads(row["data_json"])
@@ -139,7 +176,7 @@ class ScorecardService:
         # 2. Check in scorecard_cache
         with self._get_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute("SELECT data_json, expires_at FROM scorecard_cache WHERE id = ?", (cid,))
+            cursor.execute("SELECT data_json, expires_at FROM scorecard_cache WHERE id = ? OR LOWER(id) = ?", (cid, cid_lower))
             row = cursor.fetchone()
             if row:
                 expires_at = datetime.fromisoformat(row["expires_at"])
@@ -147,14 +184,14 @@ class ScorecardService:
                     data = json.loads(row["data_json"])
                     return CanonicalCollege(**data)
 
-        # 3. If online & api key present, query live Scorecard API
-        if self.api_key:
-            live_record = await self._fetch_live_scorecard(cid)
-            if live_record:
-                await self.save_college(live_record)
-                return live_record
+        # 3. Query live Scorecard API (with API key or free DEMO_KEY)
+        live_record = await self._fetch_live_scorecard(cid)
+        if live_record:
+            await self.save_college(live_record)
+            return live_record
 
         return None
+
 
     async def search_colleges(
         self,
@@ -234,7 +271,14 @@ class ScorecardService:
             for row in rows:
                 colleges.append(CanonicalCollege(**json.loads(row["data_json"])))
 
+        if total_count == 0 and query and len(query.strip()) >= 2:
+            live_record = await self._fetch_live_scorecard(query.strip())
+            if live_record:
+                await self.save_college(live_record)
+                return [live_record], 1
+
         return colleges, total_count
+
 
     async def save_college(self, college: CanonicalCollege) -> None:
         """Persist or update a canonical college record in SQLite DB and cache."""
@@ -282,19 +326,26 @@ class ScorecardService:
 
     async def _fetch_live_scorecard(self, college_id_or_name: str) -> Optional[CanonicalCollege]:
         """Fetch raw data from US College Scorecard API and normalize."""
-        if not self.api_key:
+        if not college_id_or_name:
             return None
+        raw_str = str(college_id_or_name).strip()
+        if raw_str in ["0", "-1"] or raw_str.startswith("-") or (raw_str.isdigit() and int(raw_str) <= 0):
+            return None
+
+        api_key = self.api_key or "DEMO_KEY"
+        clean_target = raw_str.replace("-", " ").replace("_", " ")
+
 
         try:
             async with httpx.AsyncClient(timeout=10.0) as client:
                 params = {
-                    "api_key": self.api_key,
+                    "api_key": api_key,
                     "fields": "id,school.name,school.alias,school.city,school.state,school.zip,school.ownership,latest.student.size,latest.admissions.admission_rate.overall,latest.cost.tuition.in_state,latest.cost.tuition.out_of_state,latest.cost.avg_net_price.overall,latest.earnings.10_yrs_after_entry.median,latest.completion.rate_suppressed.overall",
                 }
-                if college_id_or_name.isdigit():
-                    params["id"] = college_id_or_name
+                if clean_target.isdigit():
+                    params["id"] = clean_target
                 else:
-                    params["school.name"] = college_id_or_name
+                    params["school.name"] = clean_target
 
                 resp = await client.get(self.base_url, params=params)
                 if resp.status_code != 200:
@@ -304,6 +355,7 @@ class ScorecardService:
                 results = data.get("results", [])
                 if not results:
                     return None
+
 
                 item = results[0]
                 unitid = item.get("id")
