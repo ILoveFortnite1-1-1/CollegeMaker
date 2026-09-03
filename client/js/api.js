@@ -201,6 +201,18 @@ class ApiClient {
     });
   }
 
+  /**
+   * Bulk update application milestones for ALL saved colleges
+   * @param {Object} trackerData - Application milestones (e.g. { transcripts_submitted: true })
+   */
+  async bulkUpdateApplicationTracker(trackerData = {}) {
+    return this.request('/portfolio/tracker/bulk', {
+      method: 'PUT',
+      body: trackerData
+    });
+  }
+
+
   // ==========================================
   // Multi-College Comparison
   // ==========================================

@@ -9,13 +9,16 @@ import { getCollegeImageUrl, getCampusSvgDataUri } from '../utils/college-images
 export const TrackerPage = {
 
 
-  async render(container, state) {
-    container.innerHTML = `
-      <div class="loading-screen">
-        <div class="spinner"></div>
-        <p class="loading-text">Loading application tracker…</p>
-      </div>
-    `;
+  async render(container, state, options = {}) {
+    if (!options?.silent) {
+      container.innerHTML = `
+        <div class="loading-screen">
+          <div class="spinner"></div>
+          <p class="loading-text">Loading application tracker…</p>
+        </div>
+      `;
+    }
+
 
     try {
       const portfolioData = await API.getPortfolio();
@@ -104,11 +107,11 @@ export const TrackerPage = {
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
               </div>
               <div style="display: flex; align-items: baseline; gap: 8px;">
-                <span style="font-size: 1.75rem; font-weight: 800; color: #2563eb;">${overallProgress}%</span>
-                <span style="font-size: 0.8125rem; color: #64748b;">(${totalMilestonesCompleted}/${totalMilestonesPossible} items)</span>
+                <span id="tracker-stat-overall-pct" style="font-size: 1.75rem; font-weight: 800; color: #2563eb;">${overallProgress}%</span>
+                <span id="tracker-stat-overall-count" style="font-size: 0.8125rem; color: #64748b;">(${totalMilestonesCompleted}/${totalMilestonesPossible} items)</span>
               </div>
               <div style="width: 100%; height: 6px; background: #e2e8f0; border-radius: 9999px; overflow: hidden; margin-top: 8px;">
-                <div style="width: ${overallProgress}%; height: 100%; background: #2563eb; border-radius: 9999px;"></div>
+                <div id="tracker-stat-overall-bar" style="width: ${overallProgress}%; height: 100%; background: #2563eb; border-radius: 9999px;"></div>
               </div>
             </div>
 
@@ -117,7 +120,7 @@ export const TrackerPage = {
                 <span style="font-size: 0.8125rem; font-weight: 600; color: #64748b;">Submitted</span>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
               </div>
-              <div style="font-size: 1.75rem; font-weight: 800; color: #059669;">${submittedCount} <span style="font-size: 1rem; font-weight: 500; color: #64748b;">of ${totalTracked}</span></div>
+              <div id="tracker-stat-submitted" style="font-size: 1.75rem; font-weight: 800; color: #059669;">${submittedCount} <span style="font-size: 1rem; font-weight: 500; color: #64748b;">of ${totalTracked}</span></div>
               <div style="font-size: 0.75rem; color: #059669; margin-top: 4px;">${totalTracked - submittedCount} in progress</div>
             </div>
 
@@ -126,16 +129,71 @@ export const TrackerPage = {
                 <span style="font-size: 0.8125rem; font-weight: 600; color: #64748b;">Decisions Received</span>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
               </div>
-              <div style="font-size: 1.75rem; font-weight: 800; color: #7c3aed;">${acceptedCount > 0 ? `${acceptedCount} Accepted` : 'Pending'}</div>
+              <div id="tracker-stat-decisions" style="font-size: 1.75rem; font-weight: 800; color: #7c3aed;">${acceptedCount > 0 ? `${acceptedCount} Accepted` : 'Pending'}</div>
               <div style="font-size: 0.75rem; color: #64748b; margin-top: 4px;">Record outcomes as they arrive</div>
             </div>
           </div>
 
+          <!-- Bulk Update Toolbar: Change for All -->
+          <div class="card" style="margin-bottom: 24px; padding: 18px 24px; border: 1px solid #cbd5e1; background: #f8fafc; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+              <div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="font-size: 1.15rem;">⚡</span>
+                  <h3 style="margin: 0; font-size: 1rem; font-weight: 700; color: #0f172a;">Bulk Apply Milestone to All Schools</h3>
+                </div>
+                <p style="margin: 3px 0 0 0; font-size: 0.8125rem; color: #64748b;">
+                  Sent transcripts or test scores to all schools? Click YES for all to apply at once.
+                </p>
+              </div>
+
+              <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                <select id="bulk-milestone-select" class="select-input" style="padding: 7px 12px; font-size: 0.8125rem; border-radius: 6px; border: 1px solid #cbd5e1; background: #fff; font-weight: 600; min-width: 270px;">
+                  <option value="transcripts_requested">High School Transcript Requested</option>
+                  <option value="transcripts_submitted">High School Transcript Submitted / Sent</option>
+                  <option value="test_scores_sent">Standardized Test Scores Sent (SAT/ACT)</option>
+                  <option value="counselor_rec_requested">Counselor Recommendation Requested</option>
+                  <option value="teacher_rec_requested">Teacher Recommendations Requested</option>
+                  <option value="financial_aid_submitted">Financial Aid (FAFSA / CSS) Submitted</option>
+                  <option value="research_completed">College Research &amp; Majors Completed</option>
+                  <option value="essays_completed">Application Essays Completed</option>
+                  <option value="application_fee_paid">Application Fee Paid / Waiver Sent</option>
+                  <option value="application_submitted">Application Submitted</option>
+                  <option value="portal_account_checked">Applicant Portal Account Checked</option>
+                </select>
+
+                <button type="button" id="btn-bulk-complete" class="btn btn-sm btn-primary" style="background: #10b981; border-color: #10b981; padding: 7px 14px; font-weight: 600;">
+                  ✓ Yes for All (${totalTracked})
+                </button>
+                <button type="button" id="btn-bulk-clear" class="btn btn-sm btn-secondary" style="padding: 7px 14px; font-weight: 600;">
+                  ✕ Clear for All
+                </button>
+              </div>
+            </div>
+
+            <!-- Quick Bulk Preset Chips -->
+            <div style="margin-top: 14px; padding-top: 12px; border-top: 1px dashed #e2e8f0; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <span style="font-size: 0.75rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;">Quick Presets:</span>
+              <button type="button" class="btn btn-sm btn-ghost bulk-preset-btn" data-field="transcripts_submitted" style="font-size: 0.75rem; padding: 4px 12px; background: #fff; border: 1px solid #cbd5e1; border-radius: 9999px; font-weight: 500;">
+                📄 Sent Transcripts to All
+              </button>
+              <button type="button" class="btn btn-sm btn-ghost bulk-preset-btn" data-field="test_scores_sent" style="font-size: 0.75rem; padding: 4px 12px; background: #fff; border: 1px solid #cbd5e1; border-radius: 9999px; font-weight: 500;">
+                📊 Sent SAT/ACT to All
+              </button>
+              <button type="button" class="btn btn-sm btn-ghost bulk-preset-btn" data-field="counselor_rec_requested" style="font-size: 0.75rem; padding: 4px 12px; background: #fff; border: 1px solid #cbd5e1; border-radius: 9999px; font-weight: 500;">
+                ✉️ Counselor Rec Sent to All
+              </button>
+              <button type="button" class="btn btn-sm btn-ghost bulk-preset-btn" data-field="financial_aid_submitted" style="font-size: 0.75rem; padding: 4px 12px; background: #fff; border: 1px solid #cbd5e1; border-radius: 9999px; font-weight: 500;">
+                💰 Financial Aid / FAFSA Done
+              </button>
+            </div>
+          </div>
 
           <!-- Application Cards / Table List -->
           <div style="display: flex; flex-direction: column; gap: 20px;" id="tracker-colleges-list">
             ${savedColleges.map((col, idx) => this.renderCollegeTrackerCard(col, idx)).join('')}
           </div>
+
         </div>
       `;
 
@@ -190,13 +248,14 @@ export const TrackerPage = {
           <div style="display: flex; align-items: center; gap: 16px;">
             <div style="text-align: right;">
               <div style="font-size: 0.75rem; color: #64748b; font-weight: 500;">Application Progress</div>
-              <div style="font-size: 1.1rem; font-weight: 800; color: ${completionPct >= 100 ? '#10b981' : '#2563eb'};">
+              <div class="tracker-card-pct-text" style="font-size: 1.1rem; font-weight: 800; color: ${completionPct >= 100 ? '#10b981' : '#2563eb'};">
                 ${completionPct}% Done
               </div>
             </div>
             <div style="width: 80px; height: 8px; background: #e2e8f0; border-radius: 9999px; overflow: hidden;">
-              <div style="width: ${completionPct}%; height: 100%; background: ${completionPct >= 100 ? '#10b981' : '#2563eb'}; border-radius: 9999px;"></div>
+              <div class="tracker-card-pct-bar" style="width: ${completionPct}%; height: 100%; background: ${completionPct >= 100 ? '#10b981' : '#2563eb'}; border-radius: 9999px;"></div>
             </div>
+
             <button type="button" class="btn btn-sm btn-secondary toggle-details-btn" data-college-id="${cid}" style="padding: 6px 12px;">
               Checklist & Deadlines ▾
             </button>
@@ -285,26 +344,167 @@ export const TrackerPage = {
     `;
   },
 
+  updateCardProgress(card) {
+    if (!card) return;
+    const checkboxes = card.querySelectorAll('.tracker-checkbox');
+    const checkedCount = Array.from(checkboxes).filter(c => c.checked).length;
+    const totalCount = checkboxes.length || 11;
+    const pct = Math.round((checkedCount / totalCount) * 100);
+
+    const pctText = card.querySelector('.tracker-card-pct-text');
+    const pctBar = card.querySelector('.tracker-card-pct-bar');
+    if (pctText) {
+      pctText.textContent = `${pct}% Done`;
+      pctText.style.color = pct >= 100 ? '#10b981' : '#2563eb';
+    }
+    if (pctBar) {
+      pctBar.style.width = `${pct}%`;
+      pctBar.style.background = pct >= 100 ? '#10b981' : '#2563eb';
+    }
+  },
+
+  updateTopStats(container) {
+    const cards = container.querySelectorAll('.tracker-college-card');
+    const totalTracked = cards.length;
+    let totalDone = 0;
+    const totalPossible = totalTracked * 11;
+    let submittedCount = 0;
+    let acceptedCount = 0;
+
+    cards.forEach(card => {
+      const checkedBoxes = card.querySelectorAll('.tracker-checkbox:checked');
+      totalDone += checkedBoxes.length;
+
+      const submittedBox = card.querySelector('.tracker-checkbox[data-field="application_submitted"]');
+      if (submittedBox && submittedBox.checked) {
+        submittedCount++;
+      }
+
+      const decisionSel = card.querySelector('.tracker-input-decision');
+      if (decisionSel && decisionSel.value === 'Accepted') {
+        acceptedCount++;
+      }
+    });
+
+    const pct = totalPossible > 0 ? Math.round((totalDone / totalPossible) * 100) : 0;
+
+    const pctSpan = container.querySelector('#tracker-stat-overall-pct');
+    const countSpan = container.querySelector('#tracker-stat-overall-count');
+    const bar = container.querySelector('#tracker-stat-overall-bar');
+    const subDiv = container.querySelector('#tracker-stat-submitted');
+    const decDiv = container.querySelector('#tracker-stat-decisions');
+
+    if (pctSpan) pctSpan.textContent = `${pct}%`;
+    if (countSpan) countSpan.textContent = `(${totalDone}/${totalPossible} items)`;
+    if (bar) bar.style.width = `${pct}%`;
+    if (subDiv) subDiv.innerHTML = `${submittedCount} <span style="font-size: 1rem; font-weight: 500; color: #64748b;">of ${totalTracked}</span>`;
+    if (decDiv) decDiv.textContent = acceptedCount > 0 ? `${acceptedCount} Accepted` : 'Pending';
+  },
+
+  async applyBulkMilestone(container, field, isChecked, milestoneTitle) {
+    const cards = container.querySelectorAll('.tracker-college-card');
+    if (!cards.length) return;
+
+    // 1. Optimistic instant in-place DOM updates for all checkboxes and cards
+    cards.forEach(card => {
+      const cb = card.querySelector(`.tracker-checkbox[data-field="${field}"]`);
+      if (cb) {
+        cb.checked = isChecked;
+        const label = cb.closest('label');
+        if (label) {
+          label.style.background = isChecked ? '#f0fdf4' : '#fff';
+          label.style.borderColor = isChecked ? '#bbf7d0' : '#e2e8f0';
+          label.style.color = isChecked ? '#0f172a' : '#475569';
+          const span = label.querySelector('span');
+          if (span) span.style.fontWeight = isChecked ? '600' : 'normal';
+        }
+      }
+      this.updateCardProgress(card);
+    });
+
+    // 2. Update top overview stats in place
+    this.updateTopStats(container);
+
+    // 3. Send background bulk API update (zero page refresh!)
+    try {
+      const updated = await API.bulkUpdateApplicationTracker({ [field]: isChecked });
+      if (window.app?.setPortfolio) window.app.setPortfolio(updated);
+      window.app?.showToast(
+        isChecked ? `Marked "${milestoneTitle}" complete for all schools!` : `Cleared "${milestoneTitle}" for all schools.`,
+        'success'
+      );
+    } catch (err) {
+      window.app?.showToast(`Bulk update error: ${err.message}`, 'error');
+    }
+  },
+
   bindEvents(container, state) {
-    // Checkbox toggles
+    // 1. Individual Checkbox Toggles (Instant In-Place UI Update, Zero Reload)
     container.querySelectorAll('.tracker-checkbox').forEach(cb => {
       cb.addEventListener('change', async (e) => {
         const cid = e.target.getAttribute('data-college-id');
         const field = e.target.getAttribute('data-field');
         const isChecked = e.target.checked;
 
+        // Instant label styling update
+        const label = e.target.closest('label');
+        if (label) {
+          label.style.background = isChecked ? '#f0fdf4' : '#fff';
+          label.style.borderColor = isChecked ? '#bbf7d0' : '#e2e8f0';
+          label.style.color = isChecked ? '#0f172a' : '#475569';
+          const span = label.querySelector('span');
+          if (span) span.style.fontWeight = isChecked ? '600' : 'normal';
+        }
+
+        // Instant card progress recalculation
+        const card = e.target.closest('.tracker-college-card');
+        this.updateCardProgress(card);
+
+        // Instant top stats recalculation
+        this.updateTopStats(container);
+
+        // Background API call without reloading
         try {
           const updated = await API.updateApplicationTracker(cid, { [field]: isChecked });
           if (window.app?.setPortfolio) window.app.setPortfolio(updated);
-          window.app?.showToast('Progress updated!', 'success');
-          TrackerPage.render(container, state);
+          window.app?.showToast('Progress saved', 'success');
         } catch (err) {
           window.app?.showToast(`Update error: ${err.message}`, 'error');
+          e.target.checked = !isChecked; // revert
+          this.updateCardProgress(card);
+          this.updateTopStats(container);
         }
       });
     });
 
-    // Plan dropdown
+    // 2. Bulk Action: Mark YES for All
+    const select = container.querySelector('#bulk-milestone-select');
+    container.querySelector('#btn-bulk-complete')?.addEventListener('click', async () => {
+      const field = select?.value;
+      if (!field) return;
+      const title = select.options[select.selectedIndex]?.text || 'Milestone';
+      await this.applyBulkMilestone(container, field, true, title);
+    });
+
+    // 3. Bulk Action: Clear for All
+    container.querySelector('#btn-bulk-clear')?.addEventListener('click', async () => {
+      const field = select?.value;
+      if (!field) return;
+      const title = select.options[select.selectedIndex]?.text || 'Milestone';
+      await this.applyBulkMilestone(container, field, false, title);
+    });
+
+    // 4. Quick Preset Chips (Transcripts, Test Scores, Counselor Rec, Financial Aid)
+    container.querySelectorAll('.bulk-preset-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const field = btn.getAttribute('data-field');
+        if (!field) return;
+        const title = btn.textContent.trim().replace(/^[^a-zA-Z0-9]+/, '');
+        await this.applyBulkMilestone(container, field, true, title);
+      });
+    });
+
+    // 5. Plan Dropdown (Instant In-Place)
     container.querySelectorAll('.tracker-input-plan').forEach(sel => {
       sel.addEventListener('change', async (e) => {
         const cid = e.target.getAttribute('data-college-id');
@@ -319,23 +519,23 @@ export const TrackerPage = {
       });
     });
 
-    // Decision dropdown
+    // 6. Decision Dropdown (Instant In-Place)
     container.querySelectorAll('.tracker-input-decision').forEach(sel => {
       sel.addEventListener('change', async (e) => {
         const cid = e.target.getAttribute('data-college-id');
         const val = e.target.value;
+        this.updateTopStats(container);
         try {
           const updated = await API.updateApplicationTracker(cid, { decision: val });
           if (window.app?.setPortfolio) window.app.setPortfolio(updated);
           window.app?.showToast(`Decision recorded: ${val}!`, 'success');
-          TrackerPage.render(container, state);
         } catch (err) {
           window.app?.showToast(`Error: ${err.message}`, 'error');
         }
       });
     });
 
-    // Deadlines inputs
+    // 7. Deadlines Inputs (In-Place)
     container.querySelectorAll('.tracker-input-deadline').forEach(input => {
       input.addEventListener('change', async (e) => {
         const cid = e.target.getAttribute('data-college-id');
@@ -351,7 +551,7 @@ export const TrackerPage = {
       });
     });
 
-    // Notes inputs
+    // 8. Notes Inputs (In-Place)
     container.querySelectorAll('.tracker-input-notes').forEach(input => {
       input.addEventListener('change', async (e) => {
         const cid = e.target.getAttribute('data-college-id');
@@ -366,7 +566,7 @@ export const TrackerPage = {
       });
     });
 
-    // Collapsible checklist toggles
+    // 9. Collapsible Checklist Toggles
     container.querySelectorAll('.toggle-details-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         const cid = e.target.getAttribute('data-college-id');
@@ -380,3 +580,4 @@ export const TrackerPage = {
     });
   }
 };
+

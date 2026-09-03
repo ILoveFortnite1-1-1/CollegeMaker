@@ -152,3 +152,25 @@ async def test_api_knowledge_endpoints():
         resp_raw = await client.get("/api/knowledge/raw?format=markdown")
         assert resp_raw.status_code == 200
         assert "content" in resp_raw.json()
+
+
+@pytest.mark.asyncio
+async def test_api_bulk_tracker_endpoint():
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as client:
+        # Save a college
+        save_resp = await client.post("/api/portfolio/colleges", json={"college_id": "166027"})
+        assert save_resp.status_code == 200
+
+        # Bulk update tracker
+        bulk_resp = await client.put(
+            "/api/portfolio/tracker/bulk",
+            json={"transcripts_submitted": True, "test_scores_sent": True}
+        )
+        assert bulk_resp.status_code == 200
+        data = bulk_resp.json()
+        assert len(data.get("saved_colleges", [])) >= 1
+        item = next(it for it in data["saved_colleges"] if str(it.get("college_id") or it.get("id")) == "166027")
+        assert item["tracker"]["transcripts_submitted"] is True
+        assert item["tracker"]["test_scores_sent"] is True
+

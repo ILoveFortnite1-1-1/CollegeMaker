@@ -195,6 +195,23 @@ class PortfolioService:
             await self._save_portfolio(portfolio)
         return portfolio
 
+    async def bulk_update_tracker(
+        self,
+        portfolio_id: str,
+        tracker_data: Dict[str, Any],
+    ) -> StudentPortfolio:
+        """Update application tracker milestone progress across ALL saved colleges."""
+        portfolio, pid, _ = await self.get_or_create_portfolio(portfolio_id)
+        from server.models.portfolio import ApplicationTracker
+        for item in portfolio.colleges:
+            current_dict = item.tracker.model_dump() if hasattr(item, "tracker") and item.tracker else {}
+            current_dict.update({k: v for k, v in tracker_data.items() if v is not None})
+            item.tracker = ApplicationTracker(**current_dict)
+        portfolio.updated_at = datetime.now(timezone.utc).isoformat()
+        await self._save_portfolio(portfolio)
+        return portfolio
+
+
     async def remove_college(self, portfolio_id: str, college_id: str) -> StudentPortfolio:
         """Remove a saved college from the student's portfolio."""
         portfolio, pid, _ = await self.get_or_create_portfolio(portfolio_id)

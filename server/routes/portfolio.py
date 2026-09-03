@@ -146,6 +146,26 @@ async def update_college_tracker(
     )
 
 
+@router.put("/tracker/bulk")
+@router.post("/tracker/bulk")
+async def bulk_update_tracker(
+    payload: Dict[str, Any],
+    request: Request,
+    response: Response,
+):
+    """Bulk update application milestones across all saved colleges."""
+    pid = _ensure_cookie(request, response)
+    updated_portfolio = await portfolio_service.bulk_update_tracker(
+        portfolio_id=pid,
+        tracker_data=payload,
+    )
+    summary = await portfolio_service.get_summary(pid)
+    return _format_portfolio_response(
+        updated_portfolio, summary, pid, message="All college applications updated."
+    )
+
+
+
 @router.delete("/colleges/{college_id}")
 async def remove_college_from_portfolio(college_id: str, request: Request, response: Response):
     """Remove a college from guest student portfolio."""
