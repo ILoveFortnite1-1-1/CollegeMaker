@@ -17,9 +17,6 @@ services:
         value: 3.11.0
       - key: GEMINI_API_KEY
         sync: false
-      - key: COLLEGE_SCORECARD_API_KEY
-        sync: false
-      - key: PORT
-        value: 8000
       - key: APP_ENV
         value: production
+
