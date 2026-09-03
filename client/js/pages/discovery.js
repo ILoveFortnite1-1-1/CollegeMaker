@@ -34,7 +34,7 @@ export const DiscoveryPage = {
       <div class="page-header">
         <div class="page-title-group">
           <h1>Explore Premier Colleges</h1>
-          <p class="page-subtitle">Search 165+ premier universities across all D1 FBS conferences and Florida with verified Scorecard data and multi-dimensional fit scoring.</p>
+          <p class="page-subtitle">Search 165+ premier universities with verified Scorecard data and multi-dimensional fit scoring.</p>
         </div>
       </div>
 
