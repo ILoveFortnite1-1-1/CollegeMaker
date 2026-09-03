@@ -45,14 +45,17 @@ function _horizontalBars({ data, width, height, barColor, format, subtitle }) {
   }).join('');
 
   return `
-    <div style="width:100%; overflow:visible;">
+    <div style="width:100%;">
       ${subtitle ? `<p style="font-size:0.75rem;color:#64748b;margin:0 0 10px;">${subtitle}</p>` : ''}
-      <svg width="100%" height="${totalH}" viewBox="0 0 ${width} ${totalH}" style="overflow:visible; display:block;">
-        ${bars}
-      </svg>
+      <div class="custom-scrollbar" style="max-height: 320px; overflow-y: auto; overflow-x: hidden; padding-right: 6px;">
+        <svg width="100%" height="${totalH}" viewBox="0 0 ${width} ${totalH}" style="overflow:visible; display:block;">
+          ${bars}
+        </svg>
+      </div>
     </div>
   `;
 }
+
 
 /** Net price bar chart — sorted cheapest first */
 export function renderNetPriceBarChart(colleges = [], width = 360) {

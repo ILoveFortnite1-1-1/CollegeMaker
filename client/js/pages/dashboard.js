@@ -294,7 +294,7 @@ export const DashboardPage = {
                     <p style="font-size: 0.75rem; color: #64748b; margin: 2px 0 0 0;">10-year post-enrollment median compensation</p>
                   </div>
                   
-                  <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
+                  <div class="custom-scrollbar" style="flex: 1; display: flex; flex-direction: column; gap: 8px; max-height: 320px; overflow-y: auto; padding-right: 6px;">
                     ${[...savedColleges].sort((a, b) => (b.median_earnings || 0) - (a.median_earnings || 0)).map((col, idx) => `
                       <div style="display: flex; align-items: center; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid #f1f5f9; font-size: 0.8125rem;">
                         <div style="display: flex; align-items: center; gap: 8px; min-width: 0;">
@@ -342,27 +342,29 @@ export const DashboardPage = {
                       </div>
                     </div>
 
-                    <!-- Per-College Application Progress Bars (Extends to show all colleges) -->
-                    <div style="margin-top: 16px; display: flex; flex-direction: column; gap: 8px;">
-                      <div style="font-size: 0.75rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px;">
+                    <!-- Per-College Application Progress Bars (Scrollable with all colleges) -->
+                    <div style="margin-top: 16px;">
+                      <div style="font-size: 0.75rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px;">
                         All Schools (${savedColleges.length})
                       </div>
-                      ${savedColleges.map(c => {
-                        const tracker = c.tracker || c.application_tracker || {};
-                        const pct = tracker.completion_percentage ?? 0;
-                        const cname = c.college_name || c.canonical_name || c.name || 'College';
-                        return `
-                          <div style="padding: 6px 0; border-bottom: 1px solid #f1f5f9;">
-                            <div style="display: flex; justify-content: space-between; font-size: 0.8125rem; font-weight: 600; color: #0f172a; margin-bottom: 4px;">
-                              <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 210px;">${cname}</span>
-                              <span style="color: ${pct >= 100 ? '#10b981' : pct > 0 ? '#2563eb' : '#94a3b8'}; font-weight: 700;">${pct}%</span>
+                      <div class="custom-scrollbar" style="display: flex; flex-direction: column; gap: 8px; max-height: 220px; overflow-y: auto; padding-right: 6px;">
+                        ${savedColleges.map(c => {
+                          const tracker = c.tracker || c.application_tracker || {};
+                          const pct = tracker.completion_percentage ?? 0;
+                          const cname = c.college_name || c.canonical_name || c.name || 'College';
+                          return `
+                            <div style="padding: 6px 0; border-bottom: 1px solid #f1f5f9;">
+                              <div style="display: flex; justify-content: space-between; font-size: 0.8125rem; font-weight: 600; color: #0f172a; margin-bottom: 4px;">
+                                <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 200px;">${cname}</span>
+                                <span style="color: ${pct >= 100 ? '#10b981' : pct > 0 ? '#2563eb' : '#94a3b8'}; font-weight: 700;">${pct}%</span>
+                              </div>
+                              <div style="height: 6px; background: #e2e8f0; border-radius: 9999px; overflow: hidden;">
+                                <div style="width: ${pct}%; height: 100%; background: ${pct >= 100 ? '#10b981' : pct > 0 ? '#2563eb' : '#cbd5e1'}; border-radius: 9999px;"></div>
+                              </div>
                             </div>
-                            <div style="height: 6px; background: #e2e8f0; border-radius: 9999px; overflow: hidden;">
-                              <div style="width: ${pct}%; height: 100%; background: ${pct >= 100 ? '#10b981' : pct > 0 ? '#2563eb' : '#cbd5e1'}; border-radius: 9999px;"></div>
-                            </div>
-                          </div>
-                        `;
-                      }).join('')}
+                          `;
+                        }).join('')}
+                      </div>
                     </div>
                   </div>
 
@@ -370,6 +372,7 @@ export const DashboardPage = {
                     Manage Application Tracker
                   </a>
                 </div>
+
 
 
               </div>
