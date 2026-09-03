@@ -234,6 +234,13 @@ class ApiClient {
   getKnowledgeExportUrl(format = 'md') {
     return `${this.baseUrl}/knowledge/export?format=${encodeURIComponent(format)}`;
   }
+  /**
+   * Record page visit (increment unique hit counter)
+   */
+  async recordVisit() {
+    return this.request('/stats/visit', { method: 'POST' });
+  }
 }
 
 export const API = new ApiClient();
+

@@ -54,10 +54,29 @@ class CollegePortfolioApp {
       console.warn('Initial portfolio sync notice:', err.message);
     }
 
+    // Record visitor page load hit
+    this.recordPageVisit();
+
     // Initialize routing
     window.addEventListener('hashchange', () => this.handleRoute());
     this.handleRoute();
   }
+
+  /**
+   * Record page visit hit and update visitor counter in footer
+   */
+  async recordPageVisit() {
+    try {
+      const res = await API.recordVisit();
+      const countEl = document.getElementById('visitor-count-num');
+      if (countEl && res.total_visits) {
+        countEl.textContent = res.total_visits.toLocaleString();
+      }
+    } catch (err) {
+      console.warn('Visit count record notice:', err.message);
+    }
+  }
+
 
   /**
    * Parse current hash route and render the appropriate page component

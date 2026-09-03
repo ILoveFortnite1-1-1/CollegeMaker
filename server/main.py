@@ -11,6 +11,7 @@ from server.routes.compare import router as compare_router
 from server.routes.health import router as health_router
 from server.routes.knowledge import router as knowledge_router
 from server.routes.portfolio import router as portfolio_router
+from server.routes.stats import router as stats_router
 from server.services.scorecard import scorecard_service
 
 
@@ -39,6 +40,8 @@ def create_app() -> FastAPI:
     app.include_router(portfolio_router)
     app.include_router(compare_router)
     app.include_router(knowledge_router)
+    app.include_router(stats_router, prefix="/api")
+
 
     # Global Exception Handlers
     @app.exception_handler(404)
