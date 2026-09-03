@@ -255,4 +255,7 @@ class ApiClient {
 }
 
 export const API = new ApiClient();
+if (typeof window !== 'undefined') {
+  window.API = API;
+}
 

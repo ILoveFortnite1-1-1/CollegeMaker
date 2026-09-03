@@ -3,8 +3,9 @@
  * Based on the Application Tracker Template spreadsheet.
  * Allows students to track application plans, deadlines, requirements, and decisions.
  */
-import { API } from '../api.js';
+import { API } from '../api.js?v=3.2';
 import { getCollegeImageUrl, getCampusSvgDataUri } from '../utils/college-images.js';
+
 
 export const TrackerPage = {
 
@@ -139,8 +140,8 @@ export const TrackerPage = {
             <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
               <div>
                 <div style="display: flex; align-items: center; gap: 8px;">
-                  <span style="font-size: 1.15rem;">⚡</span>
-                  <h3 style="margin: 0; font-size: 1rem; font-weight: 700; color: #0f172a;">Bulk Apply Milestone to All Schools</h3>
+                  <span style="font-weight: 800; font-size: 0.8125rem; color: #2563eb; background: #dbeafe; padding: 2px 8px; border-radius: 4px;">BULK</span>
+                  <h3 style="margin: 0; font-size: 1rem; font-weight: 700; color: #0f172a;">Apply Milestone to All Schools</h3>
                 </div>
                 <p style="margin: 3px 0 0 0; font-size: 0.8125rem; color: #64748b;">
                   Sent transcripts or test scores to all schools? Click YES for all to apply at once.
@@ -175,19 +176,20 @@ export const TrackerPage = {
             <div style="margin-top: 14px; padding-top: 12px; border-top: 1px dashed #e2e8f0; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
               <span style="font-size: 0.75rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;">Quick Presets:</span>
               <button type="button" class="btn btn-sm btn-ghost bulk-preset-btn" data-field="transcripts_submitted" style="font-size: 0.75rem; padding: 4px 12px; background: #fff; border: 1px solid #cbd5e1; border-radius: 9999px; font-weight: 500;">
-                📄 Sent Transcripts to All
+                Sent Transcripts to All
               </button>
               <button type="button" class="btn btn-sm btn-ghost bulk-preset-btn" data-field="test_scores_sent" style="font-size: 0.75rem; padding: 4px 12px; background: #fff; border: 1px solid #cbd5e1; border-radius: 9999px; font-weight: 500;">
-                📊 Sent SAT/ACT to All
+                Sent SAT/ACT to All
               </button>
               <button type="button" class="btn btn-sm btn-ghost bulk-preset-btn" data-field="counselor_rec_requested" style="font-size: 0.75rem; padding: 4px 12px; background: #fff; border: 1px solid #cbd5e1; border-radius: 9999px; font-weight: 500;">
-                ✉️ Counselor Rec Sent to All
+                Counselor Rec Sent to All
               </button>
               <button type="button" class="btn btn-sm btn-ghost bulk-preset-btn" data-field="financial_aid_submitted" style="font-size: 0.75rem; padding: 4px 12px; background: #fff; border: 1px solid #cbd5e1; border-radius: 9999px; font-weight: 500;">
-                💰 Financial Aid / FAFSA Done
+                Financial Aid / FAFSA Done
               </button>
             </div>
           </div>
+
 
           <!-- Application Cards / Table List -->
           <div style="display: flex; flex-direction: column; gap: 20px;" id="tracker-colleges-list">
@@ -427,7 +429,23 @@ export const TrackerPage = {
 
     // 3. Send background bulk API update (zero page refresh!)
     try {
-      const updated = await API.bulkUpdateApplicationTracker({ [field]: isChecked });
+      let updated;
+      if (typeof API !== 'undefined' && typeof API.bulkUpdateApplicationTracker === 'function') {
+        updated = await API.bulkUpdateApplicationTracker({ [field]: isChecked });
+      } else if (typeof API !== 'undefined' && typeof API.request === 'function') {
+        updated = await API.request('/portfolio/tracker/bulk', {
+          method: 'PUT',
+          body: { [field]: isChecked }
+        });
+      } else {
+        const resp = await fetch('/api/portfolio/tracker/bulk', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ [field]: isChecked })
+        });
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        updated = await resp.json();
+      }
       if (window.app?.setPortfolio) window.app.setPortfolio(updated);
       window.app?.showToast(
         isChecked ? `Marked "${milestoneTitle}" complete for all schools!` : `Cleared "${milestoneTitle}" for all schools.`,
@@ -437,6 +455,7 @@ export const TrackerPage = {
       window.app?.showToast(`Bulk update error: ${err.message}`, 'error');
     }
   },
+
 
   bindEvents(container, state) {
     // 1. Individual Checkbox Toggles (Instant In-Place UI Update, Zero Reload)
