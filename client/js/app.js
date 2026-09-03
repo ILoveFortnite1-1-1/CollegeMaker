@@ -377,8 +377,15 @@ class CollegePortfolioApp {
     const container = document.getElementById('toast-container');
     if (!container) return;
 
+    // Cap active notifications on screen at once to at most 2
+    while (container.children.length >= 2) {
+      const oldest = container.firstElementChild;
+      if (oldest) oldest.remove();
+    }
+
     const toast = document.createElement('div');
     toast.className = `toast toast-${type}`;
+
     
     let icon = 'ℹ️';
     if (type === 'success') icon = '✅';

@@ -211,8 +211,19 @@ class PortfolioService:
         await self._save_portfolio(portfolio)
         return portfolio
 
+    async def reset_all_tracker(self, portfolio_id: str) -> StudentPortfolio:
+        """Reset application tracker milestones and decisions across ALL saved colleges."""
+        portfolio, pid, _ = await self.get_or_create_portfolio(portfolio_id)
+        from server.models.portfolio import ApplicationTracker
+        for item in portfolio.colleges:
+            item.tracker = ApplicationTracker()
+        portfolio.updated_at = datetime.now(timezone.utc).isoformat()
+        await self._save_portfolio(portfolio)
+        return portfolio
+
 
     async def remove_college(self, portfolio_id: str, college_id: str) -> StudentPortfolio:
+
         """Remove a saved college from the student's portfolio."""
         portfolio, pid, _ = await self.get_or_create_portfolio(portfolio_id)
         cid = str(college_id).strip()

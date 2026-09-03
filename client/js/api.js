@@ -212,6 +212,16 @@ class ApiClient {
     });
   }
 
+  /**
+   * Reset application milestones across ALL saved colleges
+   */
+  async resetApplicationTracker() {
+    return this.request('/portfolio/tracker/reset', {
+      method: 'POST'
+    });
+  }
+
+
 
   // ==========================================
   // Multi-College Comparison

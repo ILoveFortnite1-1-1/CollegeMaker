@@ -86,9 +86,13 @@ export const TrackerPage = {
               <h1 style="font-size: 2rem; font-weight: 800; color: #0f172a; margin: 4px 0;">College Application Tracker</h1>
               <p style="color: #64748b; margin: 0; font-size: 0.95rem;">Track deadlines, requirements, essays, and decisions across all ${totalTracked} saved schools.</p>
             </div>
-            <div style="display: flex; gap: 10px;">
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <button type="button" id="btn-reset-all-tracker" class="btn btn-secondary btn-sm" style="color: #dc2626; border-color: #fecaca; background: #fff; font-weight: 600;">
+                Clear All Inputs
+              </button>
               <a href="#/colleges" class="btn btn-secondary btn-sm">+ Add More Schools</a>
             </div>
+
           </div>
 
           <!-- Top Stats Strip -->
@@ -597,6 +601,65 @@ export const TrackerPage = {
         }
       });
     });
+
+    // 10. Clear All Inputs (Reset completed milestones across all colleges)
+    container.querySelector('#btn-reset-all-tracker')?.addEventListener('click', async () => {
+      const confirmed = window.confirm('Are you sure you want to reset all completed milestones and inputs across all saved colleges?');
+      if (!confirmed) return;
+
+      const cards = container.querySelectorAll('.tracker-college-card');
+      cards.forEach(card => {
+        card.querySelectorAll('.tracker-checkbox').forEach(cb => {
+          cb.checked = false;
+          const label = cb.closest('label');
+          if (label) {
+            label.style.background = '#fff';
+            label.style.borderColor = '#e2e8f0';
+            label.style.color = '#475569';
+            const span = label.querySelector('span');
+            if (span) span.style.fontWeight = 'normal';
+          }
+        });
+
+        const pctText = card.querySelector('.tracker-card-pct-text');
+        const pctBar = card.querySelector('.tracker-card-pct-bar');
+        if (pctText) {
+          pctText.textContent = '0% Done';
+          pctText.style.color = '#2563eb';
+        }
+        if (pctBar) {
+          pctBar.style.width = '0%';
+          pctBar.style.background = '#2563eb';
+        }
+
+        const planSel = card.querySelector('.tracker-input-plan');
+        if (planSel) planSel.value = 'Regular Decision';
+        const decSel = card.querySelector('.tracker-input-decision');
+        if (decSel) decSel.value = 'Pending';
+        const notesInput = card.querySelector('.tracker-input-notes');
+        if (notesInput) notesInput.value = '';
+      });
+
+      this.updateTopStats(container);
+
+      try {
+        let updated;
+        if (typeof API !== 'undefined' && typeof API.resetApplicationTracker === 'function') {
+          updated = await API.resetApplicationTracker();
+        } else if (typeof API !== 'undefined' && typeof API.request === 'function') {
+          updated = await API.request('/portfolio/tracker/reset', { method: 'POST' });
+        } else {
+          const resp = await fetch('/api/portfolio/tracker/reset', { method: 'POST' });
+          if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+          updated = await resp.json();
+        }
+        if (window.app?.setPortfolio) window.app.setPortfolio(updated);
+        window.app?.showToast('All college application inputs have been reset.', 'info');
+      } catch (err) {
+        window.app?.showToast(`Reset error: ${err.message}`, 'error');
+      }
+    });
   }
 };
+
 

@@ -165,6 +165,19 @@ async def bulk_update_tracker(
     )
 
 
+@router.post("/tracker/reset")
+@router.put("/tracker/reset")
+async def reset_all_college_trackers(request: Request, response: Response):
+    """Reset application progress checklist and decisions across all saved colleges."""
+    pid = _ensure_cookie(request, response)
+    updated_portfolio = await portfolio_service.reset_all_tracker(portfolio_id=pid)
+    summary = await portfolio_service.get_summary(pid)
+    return _format_portfolio_response(
+        updated_portfolio, summary, pid, message="All college application milestones have been reset."
+    )
+
+
+
 
 @router.delete("/colleges/{college_id}")
 async def remove_college_from_portfolio(college_id: str, request: Request, response: Response):
