@@ -2,8 +2,10 @@
  * College Campus Photography & Visual Assets
  * Provides curated, high-resolution campus photography with bulletproof SVG architecture fallback.
  */
+import { SPECIALIZED_CAMPUS_PHOTOS } from '../data/campus-photos-data.js';
 
 // Specific iconic campus photographs for major institutions (all verified unique HTTP 200 URLs)
+
 const SPECIFIC_COLLEGE_PHOTOS = {
   // Florida Universities
   '134130': 'https://images.unsplash.com/photo-1592280771190-3e2e4d571952?auto=format&fit=crop&q=80', // UF
@@ -218,9 +220,8 @@ export function getCollegeImageUrl(college, format = 'card') {
   const id = String(college.id || college.unitid || college.college_id || (typeof college === 'string' ? college : '')).trim();
   const name = String(college.canonical_name || college.name || college.college_name || (typeof college === 'string' ? college : '')).toLowerCase();
 
-  // 1. Match by UnitID / ID
-  let baseUrl = SPECIFIC_COLLEGE_PHOTOS[id];
-
+  // 1. Match by specialized 165-college institutional catalog, then specific photo map
+  let baseUrl = SPECIALIZED_CAMPUS_PHOTOS[id] || SPECIFIC_COLLEGE_PHOTOS[id];
 
   // 2. Match by institution keywords
   if (!baseUrl) {
@@ -273,11 +274,18 @@ export function getCollegeImageUrl(college, format = 'card') {
     baseUrl = CURATED_CAMPUS_POOL[idx];
   }
 
-
-  // Append sizing query parameters
-  if (format === 'hero') {
-    return `${baseUrl}&w=1600&h=420`;
+  // Append sizing parameters appropriately
+  if (baseUrl.includes('wikimedia.org')) {
+    const w = format === 'hero' ? 1400 : 800;
+    const sep = baseUrl.includes('?') ? '&' : '?';
+    return `${baseUrl}${sep}width=${w}`;
   }
-  return `${baseUrl}&w=600&h=300`;
+
+  if (baseUrl.includes('unsplash.com')) {
+    return format === 'hero' ? `${baseUrl}&w=1600&h=420` : `${baseUrl}&w=600&h=300`;
+  }
+
+  return baseUrl;
 }
+
 
