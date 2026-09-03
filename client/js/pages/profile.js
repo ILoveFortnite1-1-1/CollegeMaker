@@ -415,6 +415,26 @@ function renderDimensionBars(dimensions) {
     return '<p style="font-size: 0.8125rem; color: var(--text-muted);">Standard fit dimension weights applied.</p>';
   }
 
+  const ALIAS_MAP = {
+    career: 'career_outcomes',
+    career_outcomes: 'career_outcomes',
+    roi: 'roi_value',
+    roi_value: 'roi_value',
+    academic: 'academic_fit',
+    academic_fit: 'academic_fit',
+    admissions: 'admissions_fit',
+    admissions_fit: 'admissions_fit',
+    admissions_probability: 'admissions_fit',
+    experience: 'student_experience',
+    student_experience: 'student_experience',
+    strength: 'academic_strength',
+    academic_strength: 'academic_strength',
+    location: 'location',
+    location_setting: 'location',
+    cost: 'cost_affordability',
+    cost_affordability: 'cost_affordability'
+  };
+
   const dimensionLabels = {
     career_outcomes: 'Career Outcomes',
     roi_value: 'ROI & Value',
@@ -426,17 +446,32 @@ function renderDimensionBars(dimensions) {
     cost_affordability: 'Cost & Affordability'
   };
 
-  return Object.entries(dimensions).map(([key, data]) => {
-    const label = dimensionLabels[key] || key.replace('_', ' ').toUpperCase();
-    const score = Math.round(data?.score ?? (typeof data === 'number' ? data : 75));
-    const weight = data?.weight ? `${data.weight}%` : '';
+  const seen = new Set();
+  const items = [];
 
-    return `
+  for (const [key, data] of Object.entries(dimensions)) {
+    const canonicalKey = ALIAS_MAP[key.toLowerCase()] || key;
+    if (seen.has(canonicalKey)) continue;
+    seen.add(canonicalKey);
+
+    const label = dimensionLabels[canonicalKey] || canonicalKey.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase());
+    const score = Math.round(data?.score ?? (typeof data === 'number' ? data : 75));
+    
+    let weightStr = '';
+    const rawWeight = data?.weight;
+    if (rawWeight !== undefined && rawWeight !== null && rawWeight !== '') {
+      const w = (typeof rawWeight === 'number' && rawWeight > 0 && rawWeight <= 1) ? rawWeight * 100 : parseFloat(rawWeight);
+      if (!isNaN(w)) {
+        weightStr = `${Math.round(w)}%`;
+      }
+    }
+
+    items.push(`
       <div class="dimension-bar-item">
         <div class="dimension-bar-header">
           <span class="dimension-name">${label}</span>
           <div>
-            ${weight ? `<span class="dimension-weight-badge">${weight}</span>` : ''}
+            ${weightStr ? `<span class="dimension-weight-badge">${weightStr}</span>` : ''}
             <span class="dimension-score-val">${score}</span>
           </div>
         </div>
@@ -444,9 +479,12 @@ function renderDimensionBars(dimensions) {
           <div class="progress-fill" style="width: ${score}%;"></div>
         </div>
       </div>
-    `;
-  }).join('');
+    `);
+  }
+
+  return items.join('');
 }
+
 
 function renderIncomeTiersTable(tiers) {
   if (!tiers) {
