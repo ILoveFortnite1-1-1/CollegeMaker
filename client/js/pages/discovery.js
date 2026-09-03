@@ -51,9 +51,10 @@ export const DiscoveryPage = {
               value="${this.params.q}"
               style="width: 100%; padding: 12px 16px 12px 42px; font-size: 1rem;"
             />
-            <span style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-size: 1.1rem; color: var(--text-muted);">
-              🔍
+            <span style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); display: flex; align-items: center; color: var(--text-muted);">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             </span>
+
           </div>
 
           <!-- Faceted Filter Controls -->
@@ -291,8 +292,11 @@ export const DiscoveryPage = {
       if (items.length === 0) {
         grid.innerHTML = `
           <div class="card" style="grid-column: 1 / -1; text-align: center; padding: 48px 20px;">
-            <div style="font-size: 2.5rem; margin-bottom: 12px;">🔍</div>
+            <div style="display: inline-flex; align-items: center; justify-content: center; width: 56px; height: 56px; border-radius: 14px; background: #eff6ff; color: #2563eb; margin-bottom: 14px;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </div>
             <h3 style="font-size: 1.25rem; font-weight: 700;">No colleges match your filters</h3>
+
             <p style="color: var(--text-secondary); margin: 8px 0 16px;">Try adjusting your price slider, admit rate, or state search.</p>
           </div>
         `;

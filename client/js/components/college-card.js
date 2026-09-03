@@ -4,6 +4,7 @@
  */
 import { formatMetricValue } from './metric-card.js';
 import { renderSourceBadge } from './source-badge.js';
+import { getCollegeImageUrl } from '../utils/college-images.js';
 
 export function renderCollegeCard(college, options = {}) {
   const {
@@ -49,38 +50,43 @@ export function renderCollegeCard(college, options = {}) {
   // Extract tracker completion if saved
   const tracker = college.tracker || college.application_tracker || null;
   const trackerPct = tracker ? (tracker.completion_percentage ?? 0) : null;
-  const trackerPlan = tracker?.plan || null;
 
-  // Generate university initial monogram
-  const initials = name.split(' ').map(w => w[0]).filter(Boolean).slice(0, 2).join('');
+  // University campus photo
+  const imageUrl = getCollegeImageUrl(college, 'card');
 
   return `
     <article class="college-card ${variant === 'compact' ? 'college-card-compact' : ''}" data-college-id="${id}">
+      <!-- Campus Photography Banner -->
+      <div class="college-card-media">
+        <img 
+          src="${imageUrl}" 
+          alt="${name} campus" 
+          loading="lazy"
+          onerror="this.style.opacity='0'"
+        />
+        <div class="college-card-media-overlay"></div>
+        <div class="college-card-media-badge">
+          <span class="category-tag ${categoryTagClass}">${matchCategory}</span>
+        </div>
+      </div>
+
       <div class="college-card-top">
-        <div style="display: flex; gap: 12px; align-items: flex-start; flex: 1;">
-          <div class="college-avatar" style="width: 44px; height: 44px; border-radius: 8px; background: linear-gradient(135deg, #1e293b, #0f172a); color: #fff; font-weight: 700; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.06); border: 1px solid #cbd5e1;">
-            ${initials}
+        <div style="flex: 1; min-width: 0;">
+          <h3 class="college-card-name" style="margin: 0 0 4px 0; font-size: 1.05rem; font-weight: 700; line-height: 1.35;">
+            <a href="#/colleges/${id}" style="color: inherit; text-decoration: none;">${name}</a>
+          </h3>
+          <div class="college-card-location" style="color: #64748b; font-size: 0.8125rem;">
+            <span>${locationStr}</span>
+            ${typeLabel ? `<span>•</span><span>${typeLabel}</span>` : ''}
           </div>
-          <div class="college-card-info" style="flex: 1; min-width: 0;">
-            <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 2px;">
-              <h3 class="college-card-name" style="margin: 0; font-size: 1.05rem; font-weight: 700; line-height: 1.3;">
-                <a href="#/colleges/${id}" style="color: inherit; text-decoration: none;">${name}</a>
-              </h3>
-              <span class="category-tag ${categoryTagClass}" style="flex-shrink: 0;">${matchCategory}</span>
-            </div>
-            <div class="college-card-location" style="color: #64748b; font-size: 0.8125rem;">
-              <span>${locationStr}</span>
-              ${typeLabel ? `<span>•</span><span>${typeLabel}</span>` : ''}
-            </div>
-            ${trackerPct !== null ? `
-              <div style="margin-top: 6px; display: flex; align-items: center; gap: 6px;">
-                <div style="flex: 1; height: 5px; background: #e2e8f0; border-radius: 9999px; overflow: hidden;">
-                  <div style="width: ${trackerPct}%; height: 100%; background: ${trackerPct >= 100 ? '#10b981' : '#3b82f6'}; border-radius: 9999px;"></div>
-                </div>
-                <span style="font-size: 0.7rem; font-weight: 600; color: #475569;">${trackerPct}% App</span>
+          ${trackerPct !== null ? `
+            <div style="margin-top: 8px; display: flex; align-items: center; gap: 6px;">
+              <div style="flex: 1; height: 5px; background: #e2e8f0; border-radius: 9999px; overflow: hidden;">
+                <div style="width: ${trackerPct}%; height: 100%; background: ${trackerPct >= 100 ? '#10b981' : '#3b82f6'}; border-radius: 9999px;"></div>
               </div>
-            ` : ''}
-          </div>
+              <span style="font-size: 0.7rem; font-weight: 600; color: #475569;">${trackerPct}% App</span>
+            </div>
+          ` : ''}
         </div>
       </div>
 
@@ -124,7 +130,7 @@ export function renderCollegeCard(college, options = {}) {
             data-college-id="${id}"
             aria-label="${isSaved ? 'Remove from portfolio' : 'Save to portfolio'}"
           >
-            <span>${isSaved ? '★' : '☆'}</span>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="${isSaved ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2.5" style="display: inline-block; vertical-align: middle; margin-right: 3px;"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
             <span>${isSaved ? 'Saved' : 'Save'}</span>
           </button>
           <a href="#/colleges/${id}" class="btn btn-sm btn-secondary">View Profile</a>

@@ -6,6 +6,7 @@ import { API } from '../api.js';
 import { renderSourceBadge } from '../components/source-badge.js';
 import { renderMetricCard, formatMetricValue } from '../components/metric-card.js';
 import { renderEnrichmentBanner } from '../components/enrichment-banner.js';
+import { getCollegeImageUrl } from '../utils/college-images.js';
 
 export const ProfilePage = {
   activeTab: 'overview',
@@ -35,6 +36,7 @@ export const ProfilePage = {
       const typeStr = (college.type || 'public').replace('_', ' ').toUpperCase();
       const score = college.fit?.overall_score ?? 85;
       const category = college.fit?.category ?? 'Target';
+      const heroImageUrl = getCollegeImageUrl(college, 'hero');
 
       container.innerHTML = `
         <!-- Breadcrumbs -->
@@ -44,15 +46,39 @@ export const ProfilePage = {
           <span style="color: var(--text-primary); font-weight: 600;">${name}</span>
         </nav>
 
+        <!-- Campus Photography Hero Banner -->
+        <div class="profile-hero-banner" style="position: relative; height: 260px; border-radius: 16px; overflow: hidden; margin-bottom: 24px; background: #0f172a; box-shadow: 0 4px 16px rgba(0,0,0,0.08);">
+          <img 
+            src="${heroImageUrl}" 
+            alt="${name} campus" 
+            style="width: 100%; height: 100%; object-fit: cover; opacity: 0.88;"
+          />
+          <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(15,23,42,0.15) 0%, rgba(15,23,42,0.85) 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 24px 32px;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+              <span class="category-tag tag-${category.toLowerCase()}">${category}</span>
+              <span style="color: rgba(255,255,255,0.8); font-size: 0.8125rem;">• ${typeStr}</span>
+              ${college.carnegie_classification ? `<span style="color: rgba(255,255,255,0.8); font-size: 0.8125rem;">• ${college.carnegie_classification}</span>` : ''}
+            </div>
+            <h1 style="color: #ffffff; font-size: 2.2rem; font-weight: 800; margin: 0 0 6px 0; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">${name}</h1>
+            <div style="color: rgba(255,255,255,0.9); font-size: 0.9375rem; display: flex; align-items: center; gap: 8px;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              <span>${city}, ${stateCode}</span>
+              ${college.year_founded ? `<span>• Founded ${college.year_founded}</span>` : ''}
+            </div>
+          </div>
+        </div>
+
         <!-- Profile Hero Section -->
-        <section class="profile-hero" aria-label="College Profile Header">
+        <section class="profile-hero" aria-label="College Profile Header" style="margin-top: 0;">
           <div class="profile-hero-top">
             <div class="profile-title-area">
-              <h1>${name}</h1>
-              <div class="profile-meta-row">
-                <span>📍 ${city}, ${stateCode}</span>
+              <div class="profile-meta-row" style="margin-top: 0;">
+                <span style="display: flex; align-items: center; gap: 6px;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  ${city}, ${stateCode}
+                </span>
                 <span>•</span>
-                <span>🏛️ ${typeStr}</span>
+                <span>${typeStr}</span>
                 ${college.carnegie_classification ? `<span>•</span> <span>${college.carnegie_classification}</span>` : ''}
                 ${college.year_founded ? `<span>•</span> <span>Founded ${college.year_founded}</span>` : ''}
               </div>
@@ -65,7 +91,8 @@ export const ProfilePage = {
                 data-action="toggle-save" 
                 data-college-id="${college.id}"
               >
-                <span>${isSaved ? '★ Saved to Portfolio' : '☆ Save College'}</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="${isSaved ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2.5" style="display: inline-block; vertical-align: middle; margin-right: 4px;"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                <span>${isSaved ? 'Saved to Portfolio' : 'Save College'}</span>
               </button>
 
               <button 
@@ -74,7 +101,7 @@ export const ProfilePage = {
                 data-action="toggle-compare" 
                 data-college-id="${college.id}"
               >
-                <span>${inCompare ? '✓ In Compare Matrix' : '➕ Add to Compare'}</span>
+                <span>${inCompare ? '✓ In Compare' : '+ Add to Compare'}</span>
               </button>
 
               ${college.url ? `
@@ -84,6 +111,7 @@ export const ProfilePage = {
               ` : ''}
             </div>
           </div>
+
 
           <!-- Key Stats Strip -->
           <div class="profile-stats-strip">

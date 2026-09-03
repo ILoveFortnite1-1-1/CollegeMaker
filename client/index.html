@@ -31,7 +31,10 @@
   <header class="app-header" role="banner">
     <div class="nav-container">
       <a href="#/" class="nav-brand" aria-label="College Portfolio Home">
-        <span class="brand-logo">🎓</span>
+        <span class="brand-logo" style="display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 8px; background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #ffffff;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+        </span>
+
         <div class="brand-text">
           <span class="brand-title">College Portfolio</span>
           <span class="brand-badge">PROVENANCE AI</span>
@@ -82,9 +85,10 @@
   <div class="mobile-nav-backdrop" id="mobile-nav-backdrop"></div>
   <div class="mobile-nav" id="mobile-nav" aria-hidden="true">
     <div class="mobile-nav-header">
-      <span class="brand-title">🎓 College Portfolio</span>
+      <span class="brand-title">College Portfolio</span>
       <button class="btn-close" id="mobile-nav-close" aria-label="Close menu">&times;</button>
     </div>
+
     <nav class="mobile-nav-links">
       <a href="#/" class="mobile-nav-link" data-route="dashboard">Dashboard</a>
       <a href="#/colleges" class="mobile-nav-link" data-route="colleges">Explore Colleges</a>
@@ -132,8 +136,9 @@
       <div class="footer-grid">
         <div class="footer-brand-col">
           <div class="footer-logo">
-            <span>🎓</span> <strong>College Portfolio</strong>
+            <strong>College Portfolio</strong>
           </div>
+
           <p class="footer-desc">
             Empowering students with transparent data, verifiable provenance, and personalized 8-dimension fit scoring. No account required.
           </p>

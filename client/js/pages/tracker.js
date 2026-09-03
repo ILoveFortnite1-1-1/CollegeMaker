@@ -4,8 +4,10 @@
  * Allows students to track application plans, deadlines, requirements, and decisions.
  */
 import { API } from '../api.js';
+import { getCollegeImageUrl } from '../utils/college-images.js';
 
 export const TrackerPage = {
+
   async render(container, state) {
     container.innerHTML = `
       <div class="loading-screen">
@@ -27,7 +29,9 @@ export const TrackerPage = {
       if (savedColleges.length === 0) {
         container.innerHTML = `
           <div class="empty-state" style="padding: 60px 20px; text-align: center; max-width: 600px; margin: 0 auto;">
-            <div style="font-size: 3rem; margin-bottom: 16px;">📋</div>
+            <div style="display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 64px; border-radius: 16px; background: #eff6ff; color: #2563eb; margin-bottom: 16px;">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+            </div>
             <h2 style="font-size: 1.5rem; font-weight: 700; color: #0f172a; margin-bottom: 8px;">Your Application Tracker is Empty</h2>
             <p style="color: #64748b; margin-bottom: 24px; line-height: 1.5;">
               Save colleges to your portfolio to track deadlines, supplemental essays, transcript submissions, recommendation letters, and admissions decisions in one place.
@@ -87,7 +91,7 @@ export const TrackerPage = {
             <div class="stat-card" style="background: #fff; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
               <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
                 <span style="font-size: 0.8125rem; font-weight: 600; color: #64748b;">Applications Tracked</span>
-                <span style="font-size: 1.25rem;">🏛️</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
               </div>
               <div style="font-size: 1.75rem; font-weight: 800; color: #0f172a;">${totalTracked} Schools</div>
               <div style="font-size: 0.75rem; color: #64748b; margin-top: 4px;">In your portfolio list</div>
@@ -96,7 +100,7 @@ export const TrackerPage = {
             <div class="stat-card" style="background: #fff; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
               <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
                 <span style="font-size: 0.8125rem; font-weight: 600; color: #64748b;">Overall Completion</span>
-                <span style="font-size: 1.25rem;">📊</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
               </div>
               <div style="display: flex; align-items: baseline; gap: 8px;">
                 <span style="font-size: 1.75rem; font-weight: 800; color: #2563eb;">${overallProgress}%</span>
@@ -110,7 +114,7 @@ export const TrackerPage = {
             <div class="stat-card" style="background: #fff; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
               <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
                 <span style="font-size: 0.8125rem; font-weight: 600; color: #64748b;">Submitted</span>
-                <span style="font-size: 1.25rem;">🚀</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
               </div>
               <div style="font-size: 1.75rem; font-weight: 800; color: #059669;">${submittedCount} <span style="font-size: 1rem; font-weight: 500; color: #64748b;">of ${totalTracked}</span></div>
               <div style="font-size: 0.75rem; color: #059669; margin-top: 4px;">${totalTracked - submittedCount} in progress</div>
@@ -119,12 +123,13 @@ export const TrackerPage = {
             <div class="stat-card" style="background: #fff; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
               <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
                 <span style="font-size: 0.8125rem; font-weight: 600; color: #64748b;">Decisions Received</span>
-                <span style="font-size: 1.25rem;">📬</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
               </div>
-              <div style="font-size: 1.75rem; font-weight: 800; color: #7c3aed;">${acceptedCount > 0 ? `${acceptedCount} Accepted 🎉` : 'Pending'}</div>
+              <div style="font-size: 1.75rem; font-weight: 800; color: #7c3aed;">${acceptedCount > 0 ? `${acceptedCount} Accepted` : 'Pending'}</div>
               <div style="font-size: 0.75rem; color: #64748b; margin-top: 4px;">Record outcomes as they arrive</div>
             </div>
           </div>
+
 
           <!-- Application Cards / Table List -->
           <div style="display: flex; flex-direction: column; gap: 20px;" id="tracker-colleges-list">
@@ -163,16 +168,12 @@ export const TrackerPage = {
     if (cat === 'Reach') catBadgeClass = 'tag-reach';
     if (cat === 'Likely') catBadgeClass = 'tag-likely';
 
-    const initials = cname.split(' ').map(w => w[0]).filter(Boolean).slice(0, 2).join('');
-
     return `
       <div class="tracker-college-card" data-college-id="${cid}" style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
         <!-- Top bar -->
         <div style="padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; background: #f8fafc; border-bottom: 1px solid #e2e8f0; flex-wrap: wrap; gap: 12px;">
           <div style="display: flex; align-items: center; gap: 12px;">
-            <div style="width: 40px; height: 40px; border-radius: 8px; background: #0f172a; color: #fff; font-weight: 700; display: flex; align-items: center; justify-content: center; font-size: 0.95rem;">
-              ${initials}
-            </div>
+            <img src="${getCollegeImageUrl(college, 'card')}" alt="${cname}" style="width: 44px; height: 44px; border-radius: 8px; object-fit: cover; flex-shrink: 0; background: #0f172a;" onerror="this.style.opacity='0'" />
             <div>
               <div style="display: flex; align-items: center; gap: 8px;">
                 <h3 style="margin: 0; font-size: 1.15rem; font-weight: 700; color: #0f172a;">
@@ -200,15 +201,15 @@ export const TrackerPage = {
           </div>
         </div>
 
-        <!-- Quick Info Row -->
-        <div style="padding: 14px 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; background: #fff; border-bottom: 1px solid #f1f5f9; font-size: 0.8125rem;">
+        <!-- Plan & Deadlines Quick Row -->
+        <div style="padding: 12px 20px; display: flex; align-items: center; gap: 20px; font-size: 0.8125rem; flex-wrap: wrap; background: #fff; border-bottom: 1px dashed #e2e8f0;">
           <div>
             <span style="color: #64748b;">Plan:</span>
             <select class="tracker-input-plan" data-college-id="${cid}" style="margin-left: 6px; padding: 2px 6px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.8125rem; font-weight: 600; color: #0f172a;">
-              <option value="Early Decision" ${plan === 'Early Decision' ? 'selected' : ''}>Early Decision (ED)</option>
-              <option value="Early Action" ${plan === 'Early Action' ? 'selected' : ''}>Early Action (EA)</option>
-              <option value="Regular Decision" ${plan === 'Regular Decision' ? 'selected' : ''}>Regular Decision (RD)</option>
-              <option value="Rolling" ${plan === 'Rolling' ? 'selected' : ''}>Rolling Admission</option>
+              <option value="Regular Decision" ${plan === 'Regular Decision' ? 'selected' : ''}>Regular Decision</option>
+              <option value="Early Action" ${plan === 'Early Action' ? 'selected' : ''}>Early Action</option>
+              <option value="Early Decision" ${plan === 'Early Decision' ? 'selected' : ''}>Early Decision</option>
+              <option value="Rolling Admissions" ${plan === 'Rolling Admissions' ? 'selected' : ''}>Rolling Admissions</option>
             </select>
           </div>
 
@@ -225,11 +226,11 @@ export const TrackerPage = {
           <div>
             <span style="color: #64748b;">Decision:</span>
             <select class="tracker-input-decision" data-college-id="${cid}" style="margin-left: 6px; padding: 2px 6px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.8125rem; font-weight: 600; color: #0f172a;">
-              <option value="Pending" ${decision === 'Pending' ? 'selected' : ''}>⏳ Pending</option>
-              <option value="Accepted" ${decision === 'Accepted' ? 'selected' : ''}>🎉 Accepted</option>
-              <option value="Deferred" ${decision === 'Deferred' ? 'selected' : ''}>⚠️ Deferred</option>
-              <option value="Waitlisted" ${decision === 'Waitlisted' ? 'selected' : ''}>⏸️ Waitlisted</option>
-              <option value="Denied" ${decision === 'Denied' ? 'selected' : ''}>❌ Denied</option>
+              <option value="Pending" ${decision === 'Pending' ? 'selected' : ''}>Pending</option>
+              <option value="Accepted" ${decision === 'Accepted' ? 'selected' : ''}>Accepted</option>
+              <option value="Deferred" ${decision === 'Deferred' ? 'selected' : ''}>Deferred</option>
+              <option value="Waitlisted" ${decision === 'Waitlisted' ? 'selected' : ''}>Waitlisted</option>
+              <option value="Denied" ${decision === 'Denied' ? 'selected' : ''}>Denied</option>
             </select>
           </div>
         </div>

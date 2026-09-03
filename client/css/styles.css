@@ -949,7 +949,40 @@ img, svg {
   transform: translateY(-2px);
 }
 
+.college-card-media {
+  position: relative;
+  height: 140px;
+  margin: -24px -24px 16px -24px;
+  overflow: hidden;
+  background-color: #0f172a;
+}
+
+.college-card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.35s ease;
+}
+
+.college-card:hover .college-card-media img {
+  transform: scale(1.05);
+}
+
+.college-card-media-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.05) 0%, rgba(15, 23, 42, 0.6) 100%);
+}
+
+.college-card-media-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+}
+
 .college-card-top {
+
   display: flex;
   align-items: flex-start;
   justify-content: space-between;

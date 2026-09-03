@@ -174,7 +174,7 @@ export const SettingsPage = {
 
             <div style="margin-top: 28px; display: flex; justify-content: flex-end; gap: 12px;">
               <button type="submit" id="save-settings-btn" class="btn btn-primary btn-lg">
-                <span>💾</span> Save Preferences &amp; Recalibrate Scores
+                Save Preferences &amp; Recalibrate Scores
               </button>
             </div>
           </div>
@@ -204,13 +204,14 @@ export const SettingsPage = {
 
           <div style="display: flex; gap: 14px; flex-wrap: wrap;">
             <button type="button" id="export-portfolio-json-btn" class="btn btn-secondary">
-              <span>📤</span> Export Portfolio (JSON)
+              Export Portfolio (JSON)
             </button>
             <button type="button" id="clear-all-portfolio-btn" class="btn btn-destructive">
-              <span>🗑️</span> Clear Portfolio &amp; Reset Session
+              Clear Portfolio &amp; Reset Session
             </button>
           </div>
         </div>
+
       `;
 
       SettingsPage.bindEvents(container, state, portfolio);
@@ -303,8 +304,9 @@ export const SettingsPage = {
       } finally {
         if (saveBtn) {
           saveBtn.disabled = false;
-          saveBtn.innerHTML = '<span>💾</span> Save Preferences &amp; Recalibrate Scores';
+          saveBtn.innerHTML = 'Save Preferences &amp; Recalibrate Scores';
         }
+
       }
     });
 

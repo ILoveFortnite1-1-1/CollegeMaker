@@ -34,7 +34,8 @@ class CollegePortfolioApp {
   }
 
   async init() {
-    console.log('🚀 Initializing College Portfolio SPA...');
+    console.log('Initializing College Portfolio SPA...');
+
 
     // Initialize drawer & modals
     ProvenanceDrawer.init();

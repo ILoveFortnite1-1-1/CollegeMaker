@@ -109,7 +109,7 @@ export const DashboardPage = {
             <div class="stat-card" id="saved-schools-stat-card" style="background: #fff; padding: 18px; border-radius: 12px; border: 1px solid #93c5fd; box-shadow: 0 1px 4px rgba(37,99,235,0.08); cursor: pointer; transition: all 0.2s ease;" title="Click to view all saved colleges in detail">
               <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
                 <span style="font-size: 1.5rem; font-weight: 800; color: #2563eb;">${savedColleges.length}</span>
-                <span style="font-size: 1.25rem;">🏛️</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
               </div>
               <div style="font-size: 0.8125rem; font-weight: 700; color: #1e293b;">Saved Schools</div>
               <div style="font-size: 0.75rem; color: #2563eb; font-weight: 600; margin-top: 2px; display: flex; align-items: center; gap: 4px;">
@@ -122,7 +122,7 @@ export const DashboardPage = {
             <div class="stat-card" style="background: #fff; padding: 18px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
               <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
                 <span style="font-size: 1.5rem; font-weight: 800; color: #0f172a;">${formatMetricValue(avgPrice, 'currency')}</span>
-                <span style="font-size: 1.25rem;">💵</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
               </div>
               <div style="font-size: 0.8125rem; font-weight: 600; color: #1e293b;">Average Net Price</div>
               <div style="font-size: 0.75rem; color: #64748b;">(Est. after aid)</div>
@@ -132,7 +132,7 @@ export const DashboardPage = {
             <div class="stat-card" style="background: #fff; padding: 18px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
               <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
                 <span style="font-size: 1.5rem; font-weight: 800; color: #0f172a;">${formatMetricValue(avgEarnings, 'currency')}</span>
-                <span style="font-size: 1.25rem;">📈</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
               </div>
               <div style="font-size: 0.8125rem; font-weight: 600; color: #1e293b;">Avg. 10-Yr Earnings</div>
               <div style="font-size: 0.75rem; color: #64748b;">(Post-grad outcome)</div>
@@ -142,11 +142,12 @@ export const DashboardPage = {
             <div class="stat-card" style="background: #fff; padding: 18px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
               <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
                 <span style="font-size: 1.5rem; font-weight: 800; color: #0f172a;">${formatMetricValue(avgAdmit, 'percent')}</span>
-                <span style="font-size: 1.25rem;">⏱️</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
               </div>
               <div style="font-size: 0.8125rem; font-weight: 600; color: #1e293b;">Average Acceptance Rate</div>
               <div style="font-size: 0.75rem; color: #64748b;">Admissions selectivity</div>
             </div>
+
 
             <!-- Card 5: Reach / Target / Likely Mix -->
             <div class="stat-card" style="background: #fff; padding: 18px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
@@ -177,9 +178,10 @@ export const DashboardPage = {
           <!-- Application Tracker Callout Strip -->
           <div style="background: linear-gradient(135deg, #1e293b, #0f172a); color: #fff; padding: 18px 24px; border-radius: 12px; margin-bottom: 32px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
             <div style="display: flex; align-items: center; gap: 16px;">
-              <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
-                📋
+              <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; color: #60a5fa;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
               </div>
+
               <div>
                 <div style="font-size: 0.8125rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #60a5fa;">Application Tracker</div>
                 <div style="font-size: 1.15rem; font-weight: 700;">
@@ -293,7 +295,7 @@ export const DashboardPage = {
                     ${[...savedColleges].sort((a, b) => (b.median_earnings || 0) - (a.median_earnings || 0)).slice(0, 5).map((col, idx) => `
                       <div style="display: flex; align-items: center; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid #f1f5f9; font-size: 0.8125rem;">
                         <div style="display: flex; align-items: center; gap: 8px; min-width: 0;">
-                          <span style="font-weight: 700; color: ${idx === 0 ? '#f59e0b' : idx === 1 ? '#94a3b8' : idx === 2 ? '#b45309' : '#cbd5e1'}; width: 18px; text-align: center; font-size: 0.9rem;">${idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : idx + 1}</span>
+                          <span style="font-weight: 700; color: ${idx === 0 ? '#2563eb' : '#64748b'}; background: ${idx === 0 ? '#eff6ff' : '#f8fafc'}; width: 22px; height: 22px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem; flex-shrink: 0;">#${idx + 1}</span>
                           <span style="font-weight: 600; color: #0f172a; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                             ${col.college_name || col.name}
                           </span>
@@ -328,23 +330,24 @@ export const DashboardPage = {
 
                     <div style="display: flex; flex-direction: column; gap: 6px; font-size: 0.8125rem;">
                       <div style="display: flex; justify-content: space-between; padding: 5px 8px; background: #f8fafc; border-radius: 6px;">
-                        <span>✅ Apps Submitted</span>
+                        <span>Submitted Apps</span>
                         <span style="font-weight: 700; color: #059669;">${appsSubmitted} / ${savedColleges.length}</span>
                       </div>
                       <div style="display: flex; justify-content: space-between; padding: 5px 8px; background: #f8fafc; border-radius: 6px;">
-                        <span>📋 Milestones Done</span>
+                        <span>Milestones Done</span>
                         <span style="font-weight: 700; color: #0f172a;">${appMilestonesDone} / ${appMilestonesTotal}</span>
                       </div>
                       <div style="display: flex; justify-content: space-between; padding: 5px 8px; background: #fff7ed; border-radius: 6px; border: 1px solid #fed7aa;">
-                        <span>📅 Priority Deadlines</span>
+                        <span>Priority Deadlines</span>
                         <span style="font-weight: 700; color: #ea580c;">Nov 1, 2025</span>
                       </div>
                       <div style="display: flex; justify-content: space-between; padding: 5px 8px; background: #eff6ff; border-radius: 6px; border: 1px solid #bfdbfe;">
-                        <span>📅 Regular Decision</span>
+                        <span>Regular Decision</span>
                         <span style="font-weight: 700; color: #2563eb;">Jan 1, 2026</span>
                       </div>
                     </div>
                   </div>
+
 
                   <a href="#/tracker" class="btn btn-sm btn-primary" style="margin-top: 14px; text-align: center;">
                     Manage Application Tracker
@@ -354,17 +357,19 @@ export const DashboardPage = {
               </div>
             </section>
           ` : `
-            <!-- Empty State -->
             <div class="card" style="text-align: center; padding: 64px 24px; background: #fff; border-radius: 12px; border: 1px solid #e2e8f0;">
-              <div style="font-size: 3rem; margin-bottom: 16px;">🏛️</div>
+              <div style="display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 64px; border-radius: 16px; background: #eff6ff; color: #2563eb; margin-bottom: 16px;">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+              </div>
               <h3 style="font-size: 1.5rem; font-weight: 800; color: #0f172a; margin-bottom: 8px;">Your College List is Empty</h3>
               <p style="font-size: 1rem; color: #64748b; max-width: 500px; margin: 0 auto 24px;">
                 Explore our comprehensive database of 50+ U.S. flagship universities. Save schools to build your list, track application milestones, and compare earnings.
               </p>
               <a href="#/colleges" class="btn btn-lg btn-primary">
-                <span>🔍</span> Explore Flagship Colleges
+                Explore Flagship Colleges
               </a>
             </div>
+
           `}
 
           <!-- Quick Add / Search Row -->
@@ -443,8 +448,9 @@ export const DashboardPage = {
                 <div>
                   <strong><a href="#/colleges/${col.id}">${col.canonical_name || col.name}</a></strong>
                   <span style="font-size: 0.8125rem; color: var(--text-muted); margin-left: 8px;">
-                    📍 ${col.location?.city || ''}, ${col.location?.state || ''}
+                    ${col.location?.city || ''}, ${col.location?.state || ''}
                   </span>
+
                 </div>
                 <button 
                   type="button" 

@@ -12,35 +12,29 @@ export function renderSourceBadge(fieldData, fieldName = 'Metric') {
 
   let label = 'Reported';
   let badgeClass = 'badge-reported';
-  let icon = '🏛️';
 
   switch (status) {
     case 'reported':
       label = 'Reported';
       badgeClass = 'badge-reported';
-      icon = '🏛️';
       break;
     case 'calculated':
       label = 'Calculated';
       badgeClass = 'badge-calculated';
-      icon = '📐';
       break;
     case 'ai_derived':
     case 'ai-derived':
       label = 'AI-derived';
       badgeClass = 'badge-ai-derived';
-      icon = '✨';
       break;
     case 'estimated':
     case 'projected':
       label = 'Estimated';
       badgeClass = 'badge-estimated';
-      icon = '📊';
       break;
     case 'qualitative':
       label = 'Qualitative';
       badgeClass = 'badge-qualitative';
-      icon = '💬';
       break;
   }
 
@@ -58,7 +52,7 @@ export function renderSourceBadge(fieldData, fieldName = 'Metric') {
       title="Click to view full provenance and data audit"
       aria-label="${label} data from ${fieldData.source || 'Scorecard'}"
     >
-      <span class="source-badge-icon">${icon}</span>
+      <span class="source-badge-dot" style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: 0.8; margin-right: 4px;"></span>
       <span>${label}${year}</span>
     </button>
   `;

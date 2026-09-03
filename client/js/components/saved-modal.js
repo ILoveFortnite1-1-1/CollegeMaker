@@ -3,20 +3,24 @@
  * Opens an interactive overlay showing all currently saved colleges with quick profile, compare, and remove controls.
  */
 import { API } from '../api.js';
+import { getCollegeImageUrl } from '../utils/college-images.js';
 
 export const SavedModal = {
+  initialized: false,
+
   init() {
-    if (document.getElementById('saved-colleges-modal')) return;
+    if (this.initialized) return;
+    this.initialized = true;
 
     const modalHtml = `
-      <div id="saved-colleges-modal" class="modal-overlay hidden" style="position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px;">
+      <div id="saved-colleges-modal" class="modal-overlay hidden" style="position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); z-index: 9999; display: none; align-items: center; justify-content: center; padding: 20px;">
         <div class="modal-card" style="background: #ffffff; width: 100%; max-width: 620px; max-height: 85vh; border-radius: 16px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); display: flex; flex-direction: column; overflow: hidden; border: 1px solid #e2e8f0;">
           
           <!-- Modal Header -->
           <div style="padding: 20px 24px; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; background: #f8fafc;">
             <div>
               <h3 id="saved-modal-title" style="font-size: 1.25rem; font-weight: 800; color: #0f172a; margin: 0;">Saved Colleges</h3>
-              <p style="font-size: 0.8125rem; color: #64748b; margin: 2px 0 0 0;">Your current portfolio list (${window.app?.getSavedColleges()?.length || 0} saved)</p>
+              <p style="font-size: 0.8125rem; color: #64748b; margin: 2px 0 0 0;">Your current portfolio list</p>
             </div>
             <button id="close-saved-modal" style="background: none; border: none; font-size: 1.5rem; color: #64748b; cursor: pointer; padding: 4px 8px; border-radius: 6px; line-height: 1;" aria-label="Close saved modal">&times;</button>
           </div>
@@ -29,7 +33,7 @@ export const SavedModal = {
           <!-- Modal Footer -->
           <div style="padding: 16px 24px; border-top: 1px solid #e2e8f0; background: #f8fafc; display: flex; justify-content: space-between; align-items: center;">
             <a href="#/compare" id="saved-modal-compare-link" class="btn btn-secondary btn-sm" style="font-weight: 600;">
-              📊 Compare All Saved
+              Compare All Saved
             </a>
             <button id="close-saved-modal-btn" class="btn btn-primary btn-sm">
               Done
@@ -95,19 +99,24 @@ export const SavedModal = {
             if (tag === 'Reach') { tagBg = '#ffedd5'; tagColor = '#c2410c'; }
             else if (tag === 'Likely') { tagBg = '#dcfce7'; tagColor = '#15803d'; }
 
+            const imgUrl = getCollegeImageUrl(c, 'card');
+
             return `
-              <div class="saved-item-row" style="display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border: 1px solid #e2e8f0; border-radius: 10px; background: #ffffff; gap: 12px; flex-wrap: wrap;">
-                <div style="flex: 1; min-width: 200px;">
-                  <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-                    <a href="#/colleges/${cid}" class="saved-college-link" data-cid="${cid}" style="font-size: 1rem; font-weight: 700; color: #0f172a; text-decoration: none;">
-                      ${name}
-                    </a>
-                    <span style="font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: ${tagBg}; color: ${tagColor}; text-transform: uppercase;">
-                      ${tag}
-                    </span>
-                  </div>
-                  <div style="font-size: 0.8125rem; color: #64748b;">
-                    ${city}${state ? `, ${state}` : ''} • Admit: ${admit ? `${Math.round(admit * 100)}%` : '—'} • Net Price: ${price ? `$${price.toLocaleString()}` : '—'}
+              <div class="saved-item-row" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border: 1px solid #e2e8f0; border-radius: 10px; background: #ffffff; gap: 14px; flex-wrap: wrap;">
+                <div style="display: flex; align-items: center; gap: 12px; flex: 1; min-width: 200px;">
+                  <img src="${imgUrl}" alt="${name}" style="width: 48px; height: 48px; border-radius: 8px; object-fit: cover; flex-shrink: 0; background: #0f172a;" onerror="this.style.opacity='0'" />
+                  <div style="flex: 1; min-width: 0;">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 2px;">
+                      <a href="#/colleges/${cid}" class="saved-college-link" data-cid="${cid}" style="font-size: 0.95rem; font-weight: 700; color: #0f172a; text-decoration: none;">
+                        ${name}
+                      </a>
+                      <span style="font-size: 0.6875rem; font-weight: 700; padding: 2px 7px; border-radius: 999px; background: ${tagBg}; color: ${tagColor}; text-transform: uppercase;">
+                        ${tag}
+                      </span>
+                    </div>
+                    <div style="font-size: 0.8125rem; color: #64748b;">
+                      ${city}${state ? `, ${state}` : ''} • Admit: ${admit ? `${Math.round(admit * 100)}%` : '—'} • Net Price: ${price ? `$${price.toLocaleString()}` : '—'}
+                    </div>
                   </div>
                 </div>
 
@@ -116,11 +125,12 @@ export const SavedModal = {
                     View Profile ↗
                   </a>
                   <button class="btn btn-sm btn-outline-danger remove-saved-btn" data-cid="${cid}" style="font-size: 0.8125rem; padding: 4px 10px; border: 1px solid #f87171; color: #dc2626; background: #fff; border-radius: 6px; cursor: pointer;">
-                    Remove 🗑️
+                    Remove
                   </button>
                 </div>
               </div>
             `;
+
           }).join('')}
         </div>
       `;
@@ -154,8 +164,9 @@ export const SavedModal = {
           } catch (err) {
             window.app.showToast(`Error removing: ${err.message}`, 'error');
             btn.disabled = false;
-            btn.textContent = 'Remove 🗑️';
+            btn.textContent = 'Remove';
           }
+
         });
       });
     }

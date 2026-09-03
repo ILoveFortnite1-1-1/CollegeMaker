@@ -44,8 +44,10 @@ export const ComparePage = {
           </div>
           <div class="page-actions">
             <button type="button" id="export-csv-btn" class="btn btn-secondary">
-              <span>📥</span> Export CSV Matrix
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block; vertical-align:middle; margin-right:4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Export CSV Matrix
             </button>
+
             <button type="button" id="clear-compare-btn" class="btn btn-ghost">
               Clear All
             </button>
@@ -270,7 +272,9 @@ export const ComparePage = {
       </div>
 
       <div class="card" style="text-align: center; padding: 64px 24px;">
-        <div style="font-size: 3rem; margin-bottom: 16px;">📊</div>
+        <div style="display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 64px; border-radius: 16px; background: #eff6ff; color: #2563eb; margin-bottom: 16px;">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        </div>
         <h3 style="font-size: 1.5rem; font-weight: 800; color: var(--text-primary); margin-bottom: 8px;">Select Colleges to Compare</h3>
         <p style="font-size: 1rem; color: var(--text-secondary); max-width: 520px; margin: 0 auto 28px;">
           You need at least 2 colleges to generate a side-by-side comparison matrix. Choose from your saved portfolio or search our database.
@@ -294,11 +298,12 @@ export const ComparePage = {
         ` : `
           <div style="display: flex; justify-content: center; gap: 12px;">
             <a href="#/colleges" class="btn btn-primary">
-              <span>🔍</span> Explore Flagship Colleges
+              Explore Flagship Colleges
             </a>
           </div>
         `}
       </div>
+
     `;
 
     container.querySelector('#start-compare-btn')?.addEventListener('click', () => {
