@@ -13,13 +13,16 @@ import { SavedModal } from '../components/saved-modal.js';
 
 
 export const DashboardPage = {
-  async render(container, state) {
-    container.innerHTML = `
-      <div class="loading-screen">
-        <div class="spinner"></div>
-        <p class="loading-text">Loading your college portfolio…</p>
-      </div>
-    `;
+  async render(container, state, options = {}) {
+    if (!options?.silent) {
+      container.innerHTML = `
+        <div class="loading-screen">
+          <div class="spinner"></div>
+          <p class="loading-text">Loading your college portfolio…</p>
+        </div>
+      `;
+    }
+
 
     try {
       const portfolioData = await API.getPortfolio();
@@ -521,9 +524,12 @@ export const DashboardPage = {
           if (window.app?.setPortfolio) window.app.setPortfolio(updated);
           if (window.app?.updatePortfolioIndicators) window.app.updatePortfolioIndicators();
           window.app?.showToast('College added to your portfolio!', 'success');
-          // Re-render dashboard
-          DashboardPage.render(container, state);
+          // Re-render dashboard silently without flash or scroll jump
+          const currentScrollY = window.scrollY;
+          await DashboardPage.render(container, state, { silent: true });
+          window.scrollTo({ top: currentScrollY, behavior: 'instant' });
         } catch (err) {
+
           window.app?.showToast(`Failed to save: ${err.message}`, 'error');
           btn.disabled = false;
           btn.textContent = 'Save';

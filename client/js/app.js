@@ -283,17 +283,23 @@ class CollegePortfolioApp {
             if (btn.classList.contains('btn-save')) {
               btn.classList.toggle('saved', newlySaved);
               btn.setAttribute('aria-label', newlySaved ? 'Remove from portfolio' : 'Save to portfolio');
-              btn.innerHTML = `<span>${newlySaved ? '★' : '☆'}</span><span>${newlySaved ? 'Saved' : 'Save'}</span>`;
+              btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="${newlySaved ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2.5" style="display: inline-block; vertical-align: middle; margin-right: 3px;"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg><span>${newlySaved ? 'Saved' : 'Save'}</span>`;
             } else {
               btn.className = `btn ${newlySaved ? 'btn-primary' : 'btn-secondary'}`;
-              btn.innerHTML = `<span>${newlySaved ? '★ Saved to Portfolio' : '☆ Save College'}</span>`;
+              btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="${newlySaved ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2.5" style="display: inline-block; vertical-align: middle; margin-right: 4px;"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg><span>${newlySaved ? 'Saved to Portfolio' : 'Save College'}</span>`;
             }
           });
 
-          // If on dashboard, re-render so saved institutions list & charts update
+          // If on dashboard, update saved institutions list & charts silently in-place without reloading route or scrolling
           if (this.state.currentRoute === 'dashboard' || this.state.currentRoute === '') {
-            await this.handleRoute();
+            const appRoot = document.getElementById('app-root');
+            if (appRoot) {
+              const currentScrollY = window.scrollY;
+              await DashboardPage.render(appRoot, this.state, { silent: true });
+              window.scrollTo({ top: currentScrollY, behavior: 'instant' });
+            }
           }
+
         } catch (err) {
           this.showToast(`Error updating portfolio: ${err.message}`, 'error');
         } finally {

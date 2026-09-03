@@ -160,17 +160,40 @@ export const SavedModal = {
             if (window.app?.setPortfolio) window.app.setPortfolio(updated);
             if (window.app?.updatePortfolioIndicators) window.app.updatePortfolioIndicators();
             window.app.showToast('College removed from your portfolio', 'info');
-            // Re-open/refresh modal
+
+            // Re-open/refresh modal content in place
             SavedModal.open();
-            // Trigger route re-render if on dashboard or profile
+
+            // Update any matching save buttons on the current page in-place
+            document.querySelectorAll(`[data-action="toggle-save"][data-college-id="${cid}"]`).forEach(b => {
+              if (b.classList.contains('btn-save')) {
+                b.classList.remove('saved');
+                b.setAttribute('aria-label', 'Save to portfolio');
+                b.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="display: inline-block; vertical-align: middle; margin-right: 3px;"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg><span>Save</span>`;
+              } else {
+                b.className = 'btn btn-secondary';
+                b.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="display: inline-block; vertical-align: middle; margin-right: 4px;"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg><span>Save College</span>`;
+              }
+            });
+
+            // Update dashboard silently if visible without full page refresh or scroll reset
             if (window.location.hash === '' || window.location.hash === '#/' || window.location.hash === '#/dashboard') {
-              window.dispatchEvent(new HashChangeEvent('hashchange'));
+              const appRoot = document.getElementById('app-root');
+              if (appRoot && window.app?.state) {
+                const currentScrollY = window.scrollY;
+                import('../pages/dashboard.js').then(({ DashboardPage }) => {
+                  DashboardPage.render(appRoot, window.app.state, { silent: true }).then(() => {
+                    window.scrollTo({ top: currentScrollY, behavior: 'instant' });
+                  });
+                });
+              }
             }
           } catch (err) {
             window.app.showToast(`Error removing: ${err.message}`, 'error');
             btn.disabled = false;
             btn.textContent = 'Remove';
           }
+
 
         });
       });
