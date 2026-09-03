@@ -35,10 +35,11 @@ export const ProfilePage = {
       const city = college.location?.city || '';
       const stateCode = college.location?.state || '';
       const typeStr = (college.type || 'public').replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase());
-
+      const category = college.fit?.category ?? 'Target';
       const score = college.fit?.overall_score ?? 85;
       const heroImageUrl = getCollegeImageUrl(college, 'hero');
       const fallbackHeroSvg = getCampusSvgDataUri(name, college.id || college.unitid);
+
 
       container.innerHTML = `
         <!-- Breadcrumbs -->
