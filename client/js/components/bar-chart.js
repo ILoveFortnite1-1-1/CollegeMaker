@@ -45,7 +45,7 @@ function _horizontalBars({ data, width, height, barColor, format, subtitle }) {
   }).join('');
 
   return `
-    <div style="width:100%; max-height:460px; overflow-y:auto; overflow-x:hidden; padding-right: 4px;">
+    <div style="width:100%; overflow:visible;">
       ${subtitle ? `<p style="font-size:0.75rem;color:#64748b;margin:0 0 10px;">${subtitle}</p>` : ''}
       <svg width="100%" height="${totalH}" viewBox="0 0 ${width} ${totalH}" style="overflow:visible; display:block;">
         ${bars}
@@ -55,16 +55,19 @@ function _horizontalBars({ data, width, height, barColor, format, subtitle }) {
 }
 
 /** Net price bar chart — sorted cheapest first */
-export function renderNetPriceBarChart(colleges = [], width = 340) {
+export function renderNetPriceBarChart(colleges = [], width = 360) {
   if (!colleges || colleges.length === 0) {
     return _horizontalBars({ data: [], width, format: 'currency' });
   }
   const data = colleges
-    .map(c => ({
-      name: c.college_name || c.name || 'College',
-      value: c.net_price ?? c.average_net_price ?? 0,
-      color: CAT_COLORS[c.category] || '#3b82f6'
-    }))
+    .map(c => {
+      const val = c.net_price ?? c.average_net_price ?? c.college?.costs?.net_price_average?.value ?? c.summary?.average_net_price?.value ?? c.cost?.average_net_price ?? 0;
+      return {
+        name: c.college_name || c.canonical_name || c.name || 'College',
+        value: Number(val) || 0,
+        color: CAT_COLORS[c.category || c.tag] || '#3b82f6'
+      };
+    })
     .filter(d => d.value > 0)
     .sort((a, b) => a.value - b.value);
 
@@ -77,16 +80,19 @@ export function renderNetPriceBarChart(colleges = [], width = 340) {
 }
 
 /** 10-yr earnings bar chart — sorted highest first */
-export function renderEarningsBarChart(colleges = [], width = 340) {
+export function renderEarningsBarChart(colleges = [], width = 360) {
   if (!colleges || colleges.length === 0) {
     return _horizontalBars({ data: [], width, format: 'currency' });
   }
   const data = colleges
-    .map(c => ({
-      name: c.college_name || c.name || 'College',
-      value: c.median_earnings ?? c.median_earnings_10yr ?? 0,
-      color: CAT_COLORS[c.category] || '#10b981'
-    }))
+    .map(c => {
+      const val = c.median_earnings ?? c.median_earnings_10yr ?? c.college?.outcomes?.median_earnings_10yr?.value ?? c.summary?.median_earnings_10yr?.value ?? 0;
+      return {
+        name: c.college_name || c.canonical_name || c.name || 'College',
+        value: Number(val) || 0,
+        color: CAT_COLORS[c.category || c.tag] || '#10b981'
+      };
+    })
     .filter(d => d.value > 0)
     .sort((a, b) => b.value - a.value);
 
@@ -99,17 +105,17 @@ export function renderEarningsBarChart(colleges = [], width = 340) {
 }
 
 /** Graduation rate bar chart — sorted highest first */
-export function renderGradRateBarChart(colleges = [], width = 340) {
+export function renderGradRateBarChart(colleges = [], width = 360) {
   if (!colleges || colleges.length === 0) {
     return _horizontalBars({ data: [], width, format: 'percent' });
   }
   const data = colleges
     .map(c => {
-      const gr = c.graduation_rate ?? c.summary?.graduation_rate?.value ?? null;
+      const gr = c.graduation_rate ?? c.summary?.graduation_rate?.value ?? c.college?.outcomes?.completion_rate_6yr?.value ?? null;
       return {
-        name: c.college_name || c.name || 'College',
-        value: gr,
-        color: CAT_COLORS[c.category] || '#8b5cf6'
+        name: c.college_name || c.canonical_name || c.name || 'College',
+        value: gr !== null && gr !== undefined ? Number(gr) : null,
+        color: CAT_COLORS[c.category || c.tag] || '#8b5cf6'
       };
     })
     .filter(d => d.value !== null && d.value > 0)
@@ -124,16 +130,19 @@ export function renderGradRateBarChart(colleges = [], width = 340) {
 }
 
 /** Acceptance rate comparison bar chart — sorted most selective first */
-export function renderAdmitRateBarChart(colleges = [], width = 340) {
+export function renderAdmitRateBarChart(colleges = [], width = 360) {
   if (!colleges || colleges.length === 0) {
     return _horizontalBars({ data: [], width, format: 'percent' });
   }
   const data = colleges
-    .map(c => ({
-      name: c.college_name || c.name || 'College',
-      value: c.admit_rate ?? c.acceptance_rate ?? null,
-      color: CAT_COLORS[c.category] || '#f97316'
-    }))
+    .map(c => {
+      const val = c.admit_rate ?? c.acceptance_rate ?? c.college?.admissions?.acceptance_rate?.value ?? c.summary?.acceptance_rate?.value ?? null;
+      return {
+        name: c.college_name || c.canonical_name || c.name || 'College',
+        value: val !== null && val !== undefined ? Number(val) : null,
+        color: CAT_COLORS[c.category || c.tag] || '#f97316'
+      };
+    })
     .filter(d => d.value !== null && d.value > 0)
     .sort((a, b) => a.value - b.value);
 
@@ -144,4 +153,5 @@ export function renderAdmitRateBarChart(colleges = [], width = 340) {
     subtitle: 'Acceptance rate (most selective first)'
   });
 }
+
 

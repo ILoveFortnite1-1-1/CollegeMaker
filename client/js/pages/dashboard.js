@@ -261,7 +261,7 @@ export const DashboardPage = {
                     <p style="font-size: 0.75rem; color: #64748b; margin: 2px 0 0 0;">After grants & aid applied</p>
                   </div>
                   <div style="margin-top: 10px;">
-                    ${renderNetPriceBarChart(savedColleges, 300)}
+                    ${renderNetPriceBarChart(savedColleges, 360)}
                   </div>
                 </div>
 
@@ -272,7 +272,7 @@ export const DashboardPage = {
                     <p style="font-size: 0.75rem; color: #64748b; margin: 2px 0 0 0;">Estimated 10-yr post-grad earnings</p>
                   </div>
                   <div style="margin-top: 10px;">
-                    ${renderEarningsBarChart(savedColleges, 300)}
+                    ${renderEarningsBarChart(savedColleges, 360)}
                   </div>
                 </div>
 
@@ -283,7 +283,7 @@ export const DashboardPage = {
                     <p style="font-size: 0.75rem; color: #64748b; margin: 2px 0 0 0;">Most selective first</p>
                   </div>
                   <div style="margin-top: 10px;">
-                    ${renderAdmitRateBarChart(savedColleges, 300)}
+                    ${renderAdmitRateBarChart(savedColleges, 360)}
                   </div>
                 </div>
 
@@ -294,7 +294,7 @@ export const DashboardPage = {
                     <p style="font-size: 0.75rem; color: #64748b; margin: 2px 0 0 0;">10-year post-enrollment median compensation</p>
                   </div>
                   
-                  <div style="flex: 1; display: flex; flex-direction: column; gap: 8px; max-height: 440px; overflow-y: auto; padding-right: 4px;">
+                  <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
                     ${[...savedColleges].sort((a, b) => (b.median_earnings || 0) - (a.median_earnings || 0)).map((col, idx) => `
                       <div style="display: flex; align-items: center; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid #f1f5f9; font-size: 0.8125rem;">
                         <div style="display: flex; align-items: center; gap: 8px; min-width: 0;">
@@ -310,13 +310,12 @@ export const DashboardPage = {
                     `).join('')}
                   </div>
 
-
                   <a href="#/compare" style="margin-top: 14px; font-size: 0.8125rem; font-weight: 600; color: #2563eb; text-decoration: none;">
                     View Full Comparisons →
                   </a>
                 </div>
 
-                <!-- Chart 6: Application Checklist Summary -->
+                <!-- Chart 6: Application Checklist Summary & Progress -->
                 <div class="card" style="background: #fff; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; justify-content: space-between;">
                   <div>
                     <h3 style="font-size: 0.95rem; font-weight: 700; color: #0f172a; margin: 0;">Application Progress</h3>
@@ -341,22 +340,37 @@ export const DashboardPage = {
                         <span>Milestones Done</span>
                         <span style="font-weight: 700; color: #0f172a;">${appMilestonesDone} / ${appMilestonesTotal}</span>
                       </div>
-                      <div style="display: flex; justify-content: space-between; padding: 5px 8px; background: #fff7ed; border-radius: 6px; border: 1px solid #fed7aa;">
-                        <span>Priority Deadlines</span>
-                        <span style="font-weight: 700; color: #ea580c;">Nov 1, 2025</span>
+                    </div>
+
+                    <!-- Per-College Application Progress Bars (Extends to show all colleges) -->
+                    <div style="margin-top: 16px; display: flex; flex-direction: column; gap: 8px;">
+                      <div style="font-size: 0.75rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px;">
+                        All Schools (${savedColleges.length})
                       </div>
-                      <div style="display: flex; justify-content: space-between; padding: 5px 8px; background: #eff6ff; border-radius: 6px; border: 1px solid #bfdbfe;">
-                        <span>Regular Decision</span>
-                        <span style="font-weight: 700; color: #2563eb;">Jan 1, 2026</span>
-                      </div>
+                      ${savedColleges.map(c => {
+                        const tracker = c.tracker || c.application_tracker || {};
+                        const pct = tracker.completion_percentage ?? 0;
+                        const cname = c.college_name || c.canonical_name || c.name || 'College';
+                        return `
+                          <div style="padding: 6px 0; border-bottom: 1px solid #f1f5f9;">
+                            <div style="display: flex; justify-content: space-between; font-size: 0.8125rem; font-weight: 600; color: #0f172a; margin-bottom: 4px;">
+                              <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 210px;">${cname}</span>
+                              <span style="color: ${pct >= 100 ? '#10b981' : pct > 0 ? '#2563eb' : '#94a3b8'}; font-weight: 700;">${pct}%</span>
+                            </div>
+                            <div style="height: 6px; background: #e2e8f0; border-radius: 9999px; overflow: hidden;">
+                              <div style="width: ${pct}%; height: 100%; background: ${pct >= 100 ? '#10b981' : pct > 0 ? '#2563eb' : '#cbd5e1'}; border-radius: 9999px;"></div>
+                            </div>
+                          </div>
+                        `;
+                      }).join('')}
                     </div>
                   </div>
-
 
                   <a href="#/tracker" class="btn btn-sm btn-primary" style="margin-top: 14px; text-align: center;">
                     Manage Application Tracker
                   </a>
                 </div>
+
 
               </div>
             </section>
