@@ -72,10 +72,23 @@ def create_app() -> FastAPI:
     if client_dir.exists():
         css_dir = client_dir / "css"
         js_dir = client_dir / "js"
+        assets_dir = client_dir / "assets"
         if css_dir.exists():
             app.mount("/css", StaticFiles(directory=str(css_dir)), name="css")
         if js_dir.exists():
             app.mount("/js", StaticFiles(directory=str(js_dir)), name="js")
+        if assets_dir.exists():
+            app.mount("/assets", StaticFiles(directory=str(assets_dir)), name="assets")
+
+        # Favicon routes
+        @app.api_route("/favicon.ico", methods=["GET", "HEAD"], include_in_schema=False)
+        @app.api_route("/favicon.svg", methods=["GET", "HEAD"], include_in_schema=False)
+        async def serve_favicon():
+            fav = client_dir / "assets" / "favicon.svg"
+            if fav.exists():
+                return FileResponse(fav, media_type="image/svg+xml")
+            return JSONResponse(status_code=404, content={"error": "Not Found"})
+
 
         # Root and SPA fallback route
         @app.get("/", include_in_schema=False)
@@ -83,6 +96,7 @@ def create_app() -> FastAPI:
             index_path = client_dir / "index.html"
             if index_path.exists():
                 return FileResponse(index_path)
+
             return JSONResponse(
                 content={"message": "College Portfolio API is running. Client build in progress."}
             )
