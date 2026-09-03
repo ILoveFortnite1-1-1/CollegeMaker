@@ -145,8 +145,10 @@ class CanonicalCollege(BaseModel):
     fit_category: Optional[str] = None  # Reach, Target, Likely
     fit_score: Optional[float] = None
     fit_breakdown: Optional[dict] = None
+    image_url: Optional[str] = None
     
     created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+
     updated_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 
     def to_api_dict(self) -> dict:
@@ -482,9 +484,11 @@ class CanonicalCollege(BaseModel):
             "act_25": act25.get("value") if isinstance(act25, dict) else act25,
             "act_75": act75.get("value") if isinstance(act75, dict) else act75,
             "carnegie_classification": "Doctoral University: Very High Research Activity" if school_type == "public" else "Private Doctoral / Research University",
+            "image_url": self.image_url,
             "url": f"https://www.{self.alias.lower().replace(' ', '') if self.alias else self.name.lower().replace(' ', '').replace('-', '')}.edu",
             "last_refreshed": self.updated_at,
             "refreshed_at": self.updated_at,
         }
         return res
+
 
