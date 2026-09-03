@@ -9,12 +9,13 @@ router = APIRouter(prefix="/stats", tags=["Statistics"])
 @router.get("/visit")
 async def record_visit():
     """Increment and return the total visitor count for each page load."""
-    total_visits = stats_service.record_visit()
+    total_visits = await stats_service.record_visit()
     return {"total_visits": total_visits}
 
 
 @router.get("/visits")
 async def get_visits():
     """Get current visitor count without incrementing."""
-    total_visits = stats_service.get_visit_count()
+    total_visits = await stats_service.get_visit_count()
     return {"total_visits": total_visits}
+
