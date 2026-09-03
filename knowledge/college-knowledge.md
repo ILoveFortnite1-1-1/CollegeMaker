@@ -9109,3 +9109,74 @@ This document is an append-only, human-readable audit log tracking all data prov
 - **Status**: success_seed
 - **Fields Updated**: qualitative.strengths, qualitative.upsides, qualitative.tradeoffs
 
+
+## College: Harvard University (166027)
+- **Timestamp**: 2026-09-03T00:19:33.706740+00:00
+- **Enrichment**: Gemini 3.5 Flash (run run_23c27ab14a)
+- **Status**: success_seed
+- **Fields Updated**: qualitative.strengths, qualitative.upsides, qualitative.tradeoffs
+
+| 2026-09-03T00:19:35.281689+00:00 | Test University (`test_school`) | `admissions.acceptance_rate` | `0.25` &rarr; `0.22` | government (Scorecard Ingestion) | reported |
+
+## College: Ohio State University-Main Campus (204796)
+- **Timestamp**: 2026-09-03T00:19:38.611141+00:00
+- **Enrichment**: Gemini 3.5 Flash (run run_cbaedf68c0)
+- **Status**: success_seed
+- **Fields Updated**: qualitative.strengths, qualitative.upsides, qualitative.tradeoffs
+
+
+## College: Massachusetts Institute of Technology (166683)
+- **Timestamp**: 2026-09-03T00:19:38.654445+00:00
+- **Enrichment**: Gemini 3.5 Flash (run run_be975b9737)
+- **Status**: success_seed
+- **Fields Updated**: qualitative.strengths, qualitative.upsides, qualitative.tradeoffs
+
+
+## College: Stanford University (243744)
+- **Timestamp**: 2026-09-03T00:19:38.702432+00:00
+- **Enrichment**: Gemini 3.5 Flash (run run_9446f3c09f)
+- **Status**: success_seed
+- **Fields Updated**: qualitative.strengths, qualitative.upsides, qualitative.tradeoffs
+
+
+## College: Ohio State University-Main Campus (204796)
+- **Timestamp**: 2026-09-03T00:19:38.759299+00:00
+- **Enrichment**: Gemini 3.5 Flash (run run_bd071843ff)
+- **Status**: success_seed
+- **Fields Updated**: qualitative.strengths, qualitative.upsides, qualitative.tradeoffs
+
+
+## College: Harvard University (166027)
+- **Timestamp**: 2026-09-03T00:19:39.075340+00:00
+- **Enrichment**: Gemini 3.5 Flash (run run_b621a4335e)
+- **Status**: success_seed
+- **Fields Updated**: qualitative.strengths, qualitative.upsides, qualitative.tradeoffs
+
+
+## College: Massachusetts Institute of Technology (166683)
+- **Timestamp**: 2026-09-03T00:19:39.097701+00:00
+- **Enrichment**: Gemini 3.5 Flash (run run_f9b68cb480)
+- **Status**: success_seed
+- **Fields Updated**: qualitative.strengths, qualitative.upsides, qualitative.tradeoffs
+
+
+## College: Harvard University (166027)
+- **Timestamp**: 2026-09-03T00:19:46.756475+00:00
+- **Enrichment**: Gemini 3.5 Flash (run run_b672c42bec)
+- **Status**: success_seed
+- **Fields Updated**: qualitative.strengths, qualitative.upsides, qualitative.tradeoffs
+
+
+## College: Stanford University (243744)
+- **Timestamp**: 2026-09-03T00:19:52.085480+00:00
+- **Enrichment**: Gemini 3.5 Flash (run run_7487979c06)
+- **Status**: success_seed
+- **Fields Updated**: qualitative.strengths, qualitative.upsides, qualitative.tradeoffs
+
+
+## College: University of California-Berkeley (110635)
+- **Timestamp**: 2026-09-03T00:19:52.108018+00:00
+- **Enrichment**: Gemini 3.5 Flash (run run_61ca43abda)
+- **Status**: success_seed
+- **Fields Updated**: qualitative.strengths, qualitative.upsides, qualitative.tradeoffs
+
