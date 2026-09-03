@@ -52,13 +52,15 @@ export class ProvenanceDrawer {
     const confNum = parseInt(confStr, 10) || 100;
     const retrievedDate = data.retrieved_at ? new Date(data.retrieved_at).toLocaleString() : 'Recent Ingestion';
     const sourceUrl = data.source_url ? `<a href="${data.source_url}" target="_blank" rel="noopener" class="text-link">View External Source ↗</a>` : 'Standard Regulatory Ingestion';
+    const statusLabel = (data.status || 'reported').replace('_', ' ').replace('-', ' ').replace(/\b\w/g, c => c.toUpperCase());
 
     content.innerHTML = `
       <div class="provenance-meta-box">
         <div class="provenance-row">
           <span class="provenance-label">Field Classification</span>
-          <span class="provenance-value font-mono">${(data.status || 'reported').toUpperCase()}</span>
+          <span class="provenance-value font-mono">${statusLabel}</span>
         </div>
+
         <div class="provenance-row">
           <span class="provenance-label">Source Provider</span>
           <span class="provenance-value">${data.source || 'U.S. Department of Education Scorecard'}</span>
@@ -105,7 +107,8 @@ export class ProvenanceDrawer {
       </div>
 
       <div class="card" style="background-color: #0f172a; color: #ffffff;">
-        <h4 style="font-size: 0.875rem; font-weight: 700; color: #38bdf8; margin-bottom: 8px;">AUDIT LEDGER STREAM</h4>
+        <h4 style="font-size: 0.875rem; font-weight: 700; color: #38bdf8; margin-bottom: 8px;">Audit Ledger Stream</h4>
+
         <p style="font-size: 0.75rem; color: #94a3b8; line-height: 1.5;">
           Every ingestion and AI enrichment run is permanently committed to <code>/knowledge/college-knowledge.md</code> and <code>/knowledge/college-knowledge.jsonl</code> with atomic timestamps.
         </p>

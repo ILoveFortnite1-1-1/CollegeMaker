@@ -395,8 +395,9 @@ function renderMetricCells(colleges, getter, format = 'number', bestType = 'none
     return `
       <td class="${isBest ? 'best-in-class' : ''}" style="text-align: center; font-weight: 600;">
         ${formatted}
-        ${isBest ? '<span class="best-badge">BEST</span>' : ''}
+        ${isBest ? '<span class="best-badge">Best</span>' : ''}
       </td>
+
     `;
   }).join('');
 }

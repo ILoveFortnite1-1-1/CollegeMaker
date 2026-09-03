@@ -34,7 +34,8 @@ export const ProfilePage = {
       const name = college.canonical_name || college.name;
       const city = college.location?.city || '';
       const stateCode = college.location?.state || '';
-      const typeStr = (college.type || 'public').replace('_', ' ').toUpperCase();
+      const typeStr = (college.type || 'public').replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase());
+
       const score = college.fit?.overall_score ?? 85;
       const heroImageUrl = getCollegeImageUrl(college, 'hero');
       const fallbackHeroSvg = getCampusSvgDataUri(name, college.id || college.unitid);
@@ -494,9 +495,10 @@ function renderTopProgramsList(programs) {
         ${programs.slice(0, 6).map(p => `
           <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.875rem;">
             <span style="font-weight: 600; color: var(--text-primary);">${p.program_name || p.name}</span>
-            <span style="font-weight: 700; color: var(--color-primary);">${p.percentage ? `${Math.round(p.percentage * 100)}%` : ''}</span>
+            <span style="font-weight: 700; color: var(--color-primary);">${p.percentage ? formatMetricValue(p.percentage, 'percent') : ''}</span>
           </div>
         `).join('')}
+
       </div>
     `;
   }
@@ -543,17 +545,21 @@ function renderProvenanceTable(college) {
         </tr>
       </thead>
       <tbody>
-        ${rows.map(r => `
+        ${rows.map(r => {
+          const statusLabel = r.status.replace('_', ' ').replace('-', ' ').replace(/\b\w/g, c => c.toUpperCase());
+          return `
           <tr style="border-bottom: 1px solid var(--color-border-subtle);">
             <td style="padding: 10px 14px; font-weight: 700; color: var(--text-primary);">${r.metric}</td>
             <td style="padding: 10px 14px;">
-              <span class="source-badge badge-${r.status.replace('_', '-')}">${r.status.toUpperCase()}</span>
+              <span class="source-badge badge-${r.status.replace('_', '-')}">${statusLabel}</span>
             </td>
             <td style="padding: 10px 14px; color: var(--text-secondary);">${r.source}</td>
             <td style="padding: 10px 14px; font-weight: 600; color: var(--color-primary);">${r.confidence}</td>
             <td style="padding: 10px 14px; color: var(--text-muted);">${r.retrieved}</td>
           </tr>
-        `).join('')}
+        `;
+        }).join('')}
+
       </tbody>
     </table>
   `;

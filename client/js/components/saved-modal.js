@@ -4,8 +4,10 @@
  */
 import { API } from '../api.js';
 import { getCollegeImageUrl, getCampusSvgDataUri } from '../utils/college-images.js';
+import { formatMetricValue } from './metric-card.js';
 
 export const SavedModal = {
+
 
   initialized: false,
 
@@ -112,13 +114,14 @@ export const SavedModal = {
                       <a href="#/colleges/${cid}" class="saved-college-link" data-cid="${cid}" style="font-size: 0.95rem; font-weight: 700; color: #0f172a; text-decoration: none;">
                         ${name}
                       </a>
-                      <span style="font-size: 0.6875rem; font-weight: 700; padding: 2px 7px; border-radius: 999px; background: ${tagBg}; color: ${tagColor}; text-transform: uppercase;">
+                      <span style="font-size: 0.6875rem; font-weight: 700; padding: 2px 7px; border-radius: 999px; background: ${tagBg}; color: ${tagColor};">
                         ${tag}
                       </span>
                     </div>
                     <div style="font-size: 0.8125rem; color: #64748b;">
-                      ${city}${state ? `, ${state}` : ''} • Admit: ${admit ? `${Math.round(admit * 100)}%` : '—'} • Net Price: ${price ? `$${price.toLocaleString()}` : '—'}
+                      ${city}${state ? `, ${state}` : ''} • Admit: ${formatMetricValue(admit, 'percent')} • Net Price: ${price ? `$${price.toLocaleString()}` : '—'}
                     </div>
+
                   </div>
                 </div>
 

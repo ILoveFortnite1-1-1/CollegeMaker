@@ -9,6 +9,12 @@ export function formatMetricValue(value, format = 'number') {
     return '—';
   }
 
+  // Handle wrapped MetricField objects { value: ..., ... }
+  if (value && typeof value === 'object' && 'value' in value) {
+    value = value.value;
+    if (value === null || value === undefined) return '—';
+  }
+
   // If already formatted ratio or string
   if (typeof value === 'string') {
     const trimmed = value.trim();
@@ -17,6 +23,14 @@ export function formatMetricValue(value, format = 'number') {
       return trimmed.includes(':') ? trimmed : `${trimmed}:1`;
     }
     if (format === 'text') return trimmed;
+    if (format === 'percent' || format === 'percentage') {
+      const parsed = parseFloat(trimmed.replace('%', ''));
+      if (!isNaN(parsed)) {
+        const p = (parsed > 0 && parsed <= 1) ? parsed * 100 : parsed;
+        return `${Math.round(p)}%`;
+      }
+      return trimmed;
+    }
     const num = Number(trimmed);
     if (isNaN(num)) return trimmed;
     value = num;
@@ -35,9 +49,12 @@ export function formatMetricValue(value, format = 'number') {
       }).format(value);
 
     case 'percent':
-    case 'percentage':
-      const percentVal = value <= 1 ? value * 100 : value;
+    case 'percentage': {
+      const num = typeof value === 'number' ? value : parseFloat(value);
+      if (isNaN(num)) return '—';
+      const percentVal = (num > 0 && num <= 1) ? num * 100 : num;
       return `${Math.round(percentVal)}%`;
+    }
 
     case 'ratio':
       return typeof value === 'string' && value.includes(':') ? value : `${value}:1`;
@@ -58,7 +75,8 @@ export function formatConfidence(conf) {
   if (conf === null || conf === undefined) return '100%';
   if (typeof conf === 'number') {
     if (isNaN(conf)) return '100%';
-    return `${Math.round(conf <= 1 ? conf * 100 : conf)}%`;
+    const p = (conf > 0 && conf <= 1) ? conf * 100 : conf;
+    return `${Math.round(p)}%`;
   }
   const str = String(conf).toLowerCase().trim();
   if (str === 'reported' || str === 'verified' || str === 'high') return '100%';
@@ -66,9 +84,10 @@ export function formatConfidence(conf) {
   if (str === 'ai_derived' || str === 'ai-derived') return '85%';
   if (str === 'qualitative') return '80%';
   if (str === 'estimated' || str === 'projected') return '75%';
-  const parsed = parseFloat(str);
+  const parsed = parseFloat(str.replace('%', ''));
   if (!isNaN(parsed)) {
-    return `${Math.round(parsed <= 1 ? parsed * 100 : parsed)}%`;
+    const p = (parsed > 0 && parsed <= 1) ? parsed * 100 : parsed;
+    return `${Math.round(p)}%`;
   }
   return '100%';
 }

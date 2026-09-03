@@ -269,8 +269,8 @@ img, svg {
   font-weight: 700;
   letter-spacing: 0.08em;
   color: #38bdf8;
-  text-transform: uppercase;
 }
+
 
 /* Navigation Links */
 .nav-menu {
@@ -672,12 +672,12 @@ img, svg {
   border-radius: var(--radius-full);
   font-size: 0.6875rem;
   font-weight: 700;
-  text-transform: uppercase;
   letter-spacing: 0.04em;
   border: 1px solid transparent;
   cursor: pointer;
   transition: opacity var(--transition-fast), transform var(--transition-fast);
 }
+
 
 .source-badge:hover {
   opacity: 0.85;
@@ -781,12 +781,12 @@ img, svg {
   font-size: 0.78125rem;
   font-weight: 700;
   color: var(--text-muted);
-  text-transform: uppercase;
   letter-spacing: 0.03em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
 
 .metric-value-row {
   display: flex;
@@ -859,9 +859,9 @@ img, svg {
   font-size: 0.6875rem;
   font-weight: 700;
   color: var(--text-muted);
-  text-transform: uppercase;
   margin-top: 2px;
 }
+
 
 /* Fit score colors */
 .score-high { stroke: #16a34a; color: #16a34a; }
@@ -1044,8 +1044,8 @@ img, svg {
   font-size: 0.6875rem;
   font-weight: 700;
   color: var(--text-muted);
-  text-transform: uppercase;
 }
+
 
 .college-stat-val {
   font-size: 1.05rem;
@@ -1133,9 +1133,9 @@ img, svg {
   font-size: 0.75rem;
   font-weight: 700;
   color: #94a3b8;
-  text-transform: uppercase;
   letter-spacing: 0.05em;
 }
+
 
 .hero-stat-val {
   font-size: 1.75rem;
@@ -1412,7 +1412,6 @@ img, svg {
   background-color: #f1f5f9;
   font-weight: 800;
   font-size: 0.8125rem;
-  text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--text-secondary);
   padding: 10px 20px;
@@ -1434,8 +1433,8 @@ img, svg {
   padding: 1px 6px;
   border-radius: var(--radius-full);
   margin-left: 6px;
-  text-transform: uppercase;
 }
+
 
 /* ==========================================================================
    SVG CHARTS & VISUALIZATIONS
