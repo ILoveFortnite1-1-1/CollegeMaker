@@ -1,9 +1,7 @@
-/**
- * Provenance Drawer Component
- * Manages the slide-out panel inspecting full data provenance and audit trail.
- */
+import { formatConfidence } from './metric-card.js';
 
 export class ProvenanceDrawer {
+
   static init() {
     const drawer = document.getElementById('provenance-drawer');
     const backdrop = document.getElementById('drawer-backdrop');
@@ -50,7 +48,8 @@ export class ProvenanceDrawer {
 
     title.textContent = data.fieldName || 'Metric Provenance';
 
-    const confidencePct = Math.round((data.confidence || 1.0) * 100);
+    const confStr = formatConfidence(data.confidence);
+    const confNum = parseInt(confStr, 10) || 100;
     const retrievedDate = data.retrieved_at ? new Date(data.retrieved_at).toLocaleString() : 'Recent Ingestion';
     const sourceUrl = data.source_url ? `<a href="${data.source_url}" target="_blank" rel="noopener" class="text-link">View External Source ↗</a>` : 'Standard Regulatory Ingestion';
 
@@ -82,11 +81,12 @@ export class ProvenanceDrawer {
         <h4 style="font-size: 0.9375rem; font-weight: 700; margin-bottom: 12px;">Confidence & Verification</h4>
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
           <span style="font-size: 0.8125rem; color: var(--text-muted);">Data Integrity Confidence</span>
-          <span style="font-size: 0.875rem; font-weight: 800; color: var(--color-primary);">${confidencePct}%</span>
+          <span style="font-size: 0.875rem; font-weight: 800; color: var(--color-primary);">${confStr}</span>
         </div>
         <div class="progress-track" style="height: 10px;">
-          <div class="progress-fill" style="width: ${confidencePct}%;"></div>
+          <div class="progress-fill" style="width: ${confNum}%;"></div>
         </div>
+
         <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 8px;">
           Adheres to strict precedence hierarchy: Government data is immutable and cannot be overwritten by automated models.
         </p>

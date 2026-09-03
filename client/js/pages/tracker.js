@@ -4,9 +4,10 @@
  * Allows students to track application plans, deadlines, requirements, and decisions.
  */
 import { API } from '../api.js';
-import { getCollegeImageUrl } from '../utils/college-images.js';
+import { getCollegeImageUrl, getCampusSvgDataUri } from '../utils/college-images.js';
 
 export const TrackerPage = {
+
 
   async render(container, state) {
     container.innerHTML = `
@@ -173,8 +174,9 @@ export const TrackerPage = {
         <!-- Top bar -->
         <div style="padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; background: #f8fafc; border-bottom: 1px solid #e2e8f0; flex-wrap: wrap; gap: 12px;">
           <div style="display: flex; align-items: center; gap: 12px;">
-            <img src="${getCollegeImageUrl(college, 'card')}" alt="${cname}" style="width: 44px; height: 44px; border-radius: 8px; object-fit: cover; flex-shrink: 0; background: #0f172a;" onerror="this.style.opacity='0'" />
+            <img src="${getCollegeImageUrl(college, 'card')}" alt="${cname}" style="width: 44px; height: 44px; border-radius: 8px; object-fit: cover; flex-shrink: 0; background: #0f172a;" onerror="this.onerror=null; this.src='${getCampusSvgDataUri(cname, cid)}';" />
             <div>
+
               <div style="display: flex; align-items: center; gap: 8px;">
                 <h3 style="margin: 0; font-size: 1.15rem; font-weight: 700; color: #0f172a;">
                   <a href="#/colleges/${cid}" style="color: inherit; text-decoration: none;">${cname}</a>

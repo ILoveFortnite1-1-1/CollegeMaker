@@ -1,10 +1,7 @@
-/**
- * Fit Ring Component
- * Renders a circular SVG progress ring displaying the 0-100 fit score with score-based coloring.
- * Matches original reference UI styling.
- */
+import { formatConfidence } from './metric-card.js';
 
 export function renderFitRing(score, size = 68, strokeWidth = 5, showLabel = true, confidence = null) {
+
   // Extract number safely from number, string, or nested object
   let rawVal = score;
   if (typeof rawVal === 'object' && rawVal !== null) {
@@ -34,8 +31,9 @@ export function renderFitRing(score, size = 68, strokeWidth = 5, showLabel = tru
   }
 
   const confidenceBadge = confidence !== null ? `
-    <span class="fit-confidence-dot" title="Data Confidence: ${Math.round(confidence * 100)}%"></span>
+    <span class="fit-confidence-dot" title="Data Confidence: ${formatConfidence(confidence)}"></span>
   ` : '';
+
 
   return `
     <div class="fit-ring-wrapper" style="display: flex; flex-direction: column; align-items: center; gap: 4px;">

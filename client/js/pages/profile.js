@@ -4,9 +4,10 @@
  */
 import { API } from '../api.js';
 import { renderSourceBadge } from '../components/source-badge.js';
-import { renderMetricCard, formatMetricValue } from '../components/metric-card.js';
+import { renderMetricCard, formatMetricValue, formatConfidence } from '../components/metric-card.js';
 import { renderEnrichmentBanner } from '../components/enrichment-banner.js';
-import { getCollegeImageUrl } from '../utils/college-images.js';
+
+import { getCollegeImageUrl, getCampusSvgDataUri } from '../utils/college-images.js';
 
 export const ProfilePage = {
   activeTab: 'overview',
@@ -35,8 +36,8 @@ export const ProfilePage = {
       const stateCode = college.location?.state || '';
       const typeStr = (college.type || 'public').replace('_', ' ').toUpperCase();
       const score = college.fit?.overall_score ?? 85;
-      const category = college.fit?.category ?? 'Target';
       const heroImageUrl = getCollegeImageUrl(college, 'hero');
+      const fallbackHeroSvg = getCampusSvgDataUri(name, college.id || college.unitid);
 
       container.innerHTML = `
         <!-- Breadcrumbs -->
@@ -52,7 +53,9 @@ export const ProfilePage = {
             src="${heroImageUrl}" 
             alt="${name} campus" 
             style="width: 100%; height: 100%; object-fit: cover; opacity: 0.88;"
+            onerror="this.onerror=null; this.src='${fallbackHeroSvg}';"
           />
+
           <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(15,23,42,0.15) 0%, rgba(15,23,42,0.85) 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 24px 32px;">
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
               <span class="category-tag tag-${category.toLowerCase()}">${category}</span>
@@ -511,9 +514,10 @@ function renderProvenanceTable(college) {
       value: field.value ?? '—',
       status: field.status || 'reported',
       source: field.source || 'U.S. Dept of Ed Scorecard',
-      confidence: field.confidence ? `${Math.round(field.confidence * 100)}%` : '100%',
+      confidence: formatConfidence(field.confidence),
       retrieved: field.retrieved_at ? new Date(field.retrieved_at).toLocaleDateString() : 'Active Ingestion'
     });
+
   };
 
   addRow('Enrollment', college.summary?.enrollment ?? college.undergrad_size);

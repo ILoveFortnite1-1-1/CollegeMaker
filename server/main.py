@@ -102,7 +102,7 @@ def create_app() -> FastAPI:
                 return JSONResponse(status_code=404, content={"error": "Not Found"})
             file_path = client_dir / full_path
             if file_path.is_file():
-                return FileResponse(file_path)
+                return FileResponse(file_path, headers={"Cache-Control": "no-cache, must-revalidate"})
             # Only serve index.html for known client SPA pages
             known_spa_prefixes = ["", "search", "colleges", "portfolio", "compare", "knowledge", "settings", "tracker"]
             first_segment = full_path.split("/")[0]
@@ -110,8 +110,9 @@ def create_app() -> FastAPI:
             if first_segment in known_spa_prefixes:
                 index_path = client_dir / "index.html"
                 if index_path.exists():
-                    return FileResponse(index_path)
+                    return FileResponse(index_path, headers={"Cache-Control": "no-cache, must-revalidate"})
             return JSONResponse(status_code=404, content={"error": "Not Found"})
+
 
     return app
 

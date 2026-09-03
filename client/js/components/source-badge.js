@@ -1,14 +1,13 @@
-/**
- * Source Badge Component
- * Renders semantic badges for data classification with click-to-inspect provenance.
- */
+import { formatConfidence } from './metric-card.js';
 
 export function renderSourceBadge(fieldData, fieldName = 'Metric') {
   if (!fieldData) return '';
 
   const status = (fieldData.status || 'reported').toLowerCase().replace('-', '_');
   const year = fieldData.year ? ` '${String(fieldData.year).slice(-2)}` : '';
-  const confidence = fieldData.confidence ? ` (${Math.round(fieldData.confidence * 100)}%)` : '';
+  const confStr = formatConfidence(fieldData.confidence);
+  const confidence = confStr ? ` (${confStr})` : '';
+
 
   let label = 'Reported';
   let badgeClass = 'badge-reported';

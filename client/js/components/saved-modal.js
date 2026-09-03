@@ -3,9 +3,10 @@
  * Opens an interactive overlay showing all currently saved colleges with quick profile, compare, and remove controls.
  */
 import { API } from '../api.js';
-import { getCollegeImageUrl } from '../utils/college-images.js';
+import { getCollegeImageUrl, getCampusSvgDataUri } from '../utils/college-images.js';
 
 export const SavedModal = {
+
   initialized: false,
 
   init() {
@@ -104,8 +105,9 @@ export const SavedModal = {
             return `
               <div class="saved-item-row" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border: 1px solid #e2e8f0; border-radius: 10px; background: #ffffff; gap: 14px; flex-wrap: wrap;">
                 <div style="display: flex; align-items: center; gap: 12px; flex: 1; min-width: 200px;">
-                  <img src="${imgUrl}" alt="${name}" style="width: 48px; height: 48px; border-radius: 8px; object-fit: cover; flex-shrink: 0; background: #0f172a;" onerror="this.style.opacity='0'" />
+                  <img src="${imgUrl}" alt="${name}" style="width: 48px; height: 48px; border-radius: 8px; object-fit: cover; flex-shrink: 0; background: #0f172a;" onerror="this.onerror=null; this.src='${getCampusSvgDataUri(name, cid)}';" />
                   <div style="flex: 1; min-width: 0;">
+
                     <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 2px;">
                       <a href="#/colleges/${cid}" class="saved-college-link" data-cid="${cid}" style="font-size: 0.95rem; font-weight: 700; color: #0f172a; text-decoration: none;">
                         ${name}

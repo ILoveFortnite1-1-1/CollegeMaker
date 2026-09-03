@@ -4,7 +4,7 @@
  */
 import { formatMetricValue } from './metric-card.js';
 import { renderSourceBadge } from './source-badge.js';
-import { getCollegeImageUrl } from '../utils/college-images.js';
+import { getCollegeImageUrl, getCampusSvgDataUri } from '../utils/college-images.js';
 
 export function renderCollegeCard(college, options = {}) {
   const {
@@ -18,41 +18,44 @@ export function renderCollegeCard(college, options = {}) {
 
   const id = college.id || college.unitid;
   const name = college.name || college.canonical_name;
-  const city = college.city || college.location?.city || '';
-  const state = college.state || college.location?.state || '';
-  const locationStr = [city, state].filter(Boolean).join(', ');
   
-  // Type formatting
-  const rawType = college.type || (college.ownership === 1 ? 'public' : 'private_nonprofit');
-  const typeLabel = rawType.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase());
-
-  // Metrics extraction (handles both flat search item & full canonical model)
-  const admitRate = college.acceptance_rate ?? college.summary?.acceptance_rate?.value ?? college.admissions?.acceptance_rate?.value;
-  const netPrice = college.average_net_price ?? college.summary?.average_net_price?.value ?? college.cost?.average_net_price?.value;
-  const earnings = college.median_earnings_10yr ?? college.summary?.median_earnings_10yr?.value ?? college.outcomes?.median_earnings?.value;
-  const gradRate = college.graduation_rate ?? college.summary?.graduation_rate?.value ?? college.outcomes?.graduation_rate?.value;
-
-  // Fit & Category
-  let rawScore = fitScore ?? college.fit?.overall_score ?? college.fit_score ?? college.composite_score ?? null;
-  if (typeof rawScore === 'object' && rawScore !== null) {
-    rawScore = rawScore.overall ?? rawScore.score ?? rawScore.overall_score ?? null;
+  // Extract location display
+  let locationStr = 'Location Not Specified';
+  if (college.location) {
+    if (typeof college.location === 'string') {
+      locationStr = college.location;
+    } else if (college.location.city && college.location.state) {
+      locationStr = `${college.location.city}, ${college.location.state}`;
+    } else if (college.location.state) {
+      locationStr = college.location.state;
+    }
+  } else if (college.city || college.state) {
+    locationStr = [college.city, college.state].filter(Boolean).join(', ');
   }
-  const score = (rawScore !== null && !isNaN(Number(rawScore))) ? Number(rawScore) : 80;
 
-  const matchCategory = category ?? college.fit?.category ?? college.category ?? college.tag ?? (
-    admitRate !== null && admitRate !== undefined ? (admitRate < 0.18 ? 'Reach' : (admitRate > 0.48 ? 'Likely' : 'Target')) : 'Target'
-  );
+  // Institution Type
+  const rawType = college.type || college.control || (college.ownership === 1 ? 'public' : 'private_nonprofit');
+  const typeLabel = rawType.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+
+  // Category Tag
+  const matchCategory = category || college.fit_category || college.fit?.category || 'Target';
 
   let categoryTagClass = 'tag-target';
   if (matchCategory === 'Reach') categoryTagClass = 'tag-reach';
   if (matchCategory === 'Likely') categoryTagClass = 'tag-likely';
 
+  // Metrics extraction
+  const netPrice = college.average_net_price ?? college.net_price ?? college.cost?.average_net_price ?? college.cost?.net_price_average;
+  const admitRate = college.acceptance_rate ?? college.admissions?.acceptance_rate ?? college.admit_rate;
+  const earnings = college.median_earnings_10yr ?? college.median_earnings ?? college.outcomes?.median_earnings_10yr ?? college.outcomes?.median_earnings;
+
   // Extract tracker completion if saved
   const tracker = college.tracker || college.application_tracker || null;
   const trackerPct = tracker ? (tracker.completion_percentage ?? 0) : null;
 
-  // University campus photo
+  // University campus photo with SVG fallback
   const imageUrl = getCollegeImageUrl(college, 'card');
+  const fallbackSvg = getCampusSvgDataUri(name, id);
 
   return `
     <article class="college-card ${variant === 'compact' ? 'college-card-compact' : ''}" data-college-id="${id}">
@@ -62,9 +65,10 @@ export function renderCollegeCard(college, options = {}) {
           src="${imageUrl}" 
           alt="${name} campus" 
           loading="lazy"
-          onerror="this.style.opacity='0'"
+          onerror="this.onerror=null; this.src='${fallbackSvg}';"
         />
         <div class="college-card-media-overlay"></div>
+
         <div class="college-card-media-badge">
           <span class="category-tag ${categoryTagClass}">${matchCategory}</span>
         </div>

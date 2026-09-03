@@ -54,6 +54,25 @@ export function formatMetricValue(value, format = 'number') {
 }
 
 
+export function formatConfidence(conf) {
+  if (conf === null || conf === undefined) return '100%';
+  if (typeof conf === 'number') {
+    if (isNaN(conf)) return '100%';
+    return `${Math.round(conf <= 1 ? conf * 100 : conf)}%`;
+  }
+  const str = String(conf).toLowerCase().trim();
+  if (str === 'reported' || str === 'verified' || str === 'high') return '100%';
+  if (str === 'calculated') return '95%';
+  if (str === 'ai_derived' || str === 'ai-derived') return '85%';
+  if (str === 'qualitative') return '80%';
+  if (str === 'estimated' || str === 'projected') return '75%';
+  const parsed = parseFloat(str);
+  if (!isNaN(parsed)) {
+    return `${Math.round(parsed <= 1 ? parsed * 100 : parsed)}%`;
+  }
+  return '100%';
+}
+
 export function renderMetricCard(label, fieldData, format = 'number', helper = '') {
   const value = fieldData?.value ?? fieldData;
   const formattedVal = formatMetricValue(value, format);
@@ -72,3 +91,4 @@ export function renderMetricCard(label, fieldData, format = 'number', helper = '
     </div>
   `;
 }
+
