@@ -82,12 +82,29 @@ def create_app() -> FastAPI:
 
         # Favicon routes
         @app.api_route("/favicon.ico", methods=["GET", "HEAD"], include_in_schema=False)
+        async def serve_favicon_ico():
+            fav = client_dir / "favicon.ico"
+            if fav.exists():
+                return FileResponse(fav, media_type="image/x-icon")
+            fav_svg = client_dir / "assets" / "favicon.svg"
+            if fav_svg.exists():
+                return FileResponse(fav_svg, media_type="image/svg+xml")
+            return JSONResponse(status_code=404, content={"error": "Not Found"})
+
+        @app.api_route("/favicon.png", methods=["GET", "HEAD"], include_in_schema=False)
+        async def serve_favicon_png():
+            fav = client_dir / "assets" / "favicon.png"
+            if fav.exists():
+                return FileResponse(fav, media_type="image/png")
+            return JSONResponse(status_code=404, content={"error": "Not Found"})
+
         @app.api_route("/favicon.svg", methods=["GET", "HEAD"], include_in_schema=False)
-        async def serve_favicon():
+        async def serve_favicon_svg():
             fav = client_dir / "assets" / "favicon.svg"
             if fav.exists():
                 return FileResponse(fav, media_type="image/svg+xml")
             return JSONResponse(status_code=404, content={"error": "Not Found"})
+
 
 
         # Root and SPA fallback route
