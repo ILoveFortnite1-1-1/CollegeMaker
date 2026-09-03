@@ -30,18 +30,27 @@ export function renderScatterChart(colleges = [], width = 340, height = 240) {
   const innerW = width - padding.left - padding.right;
   const innerH = height - padding.top - padding.bottom;
 
-  // Scales
-  const minX = 35000;
-  const maxX = 105000;
+  // Dynamic scales based on colleges present
+  const earningsList = colleges.map(c => Number(c.median_earnings_10yr ?? c.median_earnings ?? c.earnings ?? 0)).filter(v => v > 0);
+  const costList = colleges.map(c => Number(c.average_net_price ?? c.net_price ?? 0)).filter(v => v > 0);
+
+  const rawMinX = earningsList.length ? Math.min(...earningsList) : 40000;
+  const rawMaxX = earningsList.length ? Math.max(...earningsList) : 100000;
+  const rawMaxY = costList.length ? Math.max(...costList) : 50000;
+
+  const minX = Math.max(0, Math.floor((rawMinX - 8000) / 10000) * 10000);
+  const maxX = Math.max(minX + 30000, Math.ceil((rawMaxX + 8000) / 10000) * 10000);
   const minY = 0;
-  const maxY = 55000;
+  const maxY = Math.max(35000, Math.ceil((rawMaxY + 6000) / 10000) * 10000);
 
   const scaleX = (val) => padding.left + ((val - minX) / (maxX - minX)) * innerW;
   const scaleY = (val) => padding.top + innerH - ((val - minY) / (maxY - minY)) * innerH;
 
   // Grid lines & labels
-  const yTicks = [0, 20000, 36000, 50000];
-  const xTicks = [40000, 60000, 80000, 100000];
+  const yStep = Math.round((maxY - minY) / 3 / 5000) * 5000 || 15000;
+  const yTicks = [0, minY + yStep, minY + yStep * 2, maxY];
+  const xStep = Math.round((maxX - minX) / 3 / 10000) * 10000 || 20000;
+  const xTicks = [minX + xStep, minX + xStep * 2, maxX];
 
   const yGrid = yTicks.map(t => {
     const y = scaleY(t);
@@ -58,6 +67,7 @@ export function renderScatterChart(colleges = [], width = 340, height = 240) {
       <text x="${x}" y="${padding.top + innerH + 16}" font-size="9" fill="#94a3b8" text-anchor="middle">$${Math.round(t / 1000)}K</text>
     `;
   }).join('');
+
 
   // Plot circles
   const dots = colleges.map(c => {

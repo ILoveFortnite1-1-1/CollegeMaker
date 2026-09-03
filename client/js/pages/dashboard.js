@@ -294,8 +294,8 @@ export const DashboardPage = {
                     <p style="font-size: 0.75rem; color: #64748b; margin: 2px 0 0 0;">10-year post-enrollment median compensation</p>
                   </div>
                   
-                  <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
-                    ${[...savedColleges].sort((a, b) => (b.median_earnings || 0) - (a.median_earnings || 0)).slice(0, 5).map((col, idx) => `
+                  <div style="flex: 1; display: flex; flex-direction: column; gap: 8px; max-height: 440px; overflow-y: auto; padding-right: 4px;">
+                    ${[...savedColleges].sort((a, b) => (b.median_earnings || 0) - (a.median_earnings || 0)).map((col, idx) => `
                       <div style="display: flex; align-items: center; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid #f1f5f9; font-size: 0.8125rem;">
                         <div style="display: flex; align-items: center; gap: 8px; min-width: 0;">
                           <span style="font-weight: 700; color: ${idx === 0 ? '#2563eb' : '#64748b'}; background: ${idx === 0 ? '#eff6ff' : '#f8fafc'}; width: 22px; height: 22px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem; flex-shrink: 0;">#${idx + 1}</span>
@@ -309,6 +309,7 @@ export const DashboardPage = {
                       </div>
                     `).join('')}
                   </div>
+
 
                   <a href="#/compare" style="margin-top: 14px; font-size: 0.8125rem; font-weight: 600; color: #2563eb; text-decoration: none;">
                     View Full Comparisons →

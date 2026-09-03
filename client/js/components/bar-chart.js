@@ -45,9 +45,9 @@ function _horizontalBars({ data, width, height, barColor, format, subtitle }) {
   }).join('');
 
   return `
-    <div style="width:100%;overflow:hidden;">
+    <div style="width:100%; max-height:460px; overflow-y:auto; overflow-x:hidden; padding-right: 4px;">
       ${subtitle ? `<p style="font-size:0.75rem;color:#64748b;margin:0 0 10px;">${subtitle}</p>` : ''}
-      <svg width="100%" height="${totalH}" viewBox="0 0 ${width} ${totalH}" style="overflow:visible;">
+      <svg width="100%" height="${totalH}" viewBox="0 0 ${width} ${totalH}" style="overflow:visible; display:block;">
         ${bars}
       </svg>
     </div>
@@ -66,8 +66,7 @@ export function renderNetPriceBarChart(colleges = [], width = 340) {
       color: CAT_COLORS[c.category] || '#3b82f6'
     }))
     .filter(d => d.value > 0)
-    .sort((a, b) => a.value - b.value)
-    .slice(0, 8);
+    .sort((a, b) => a.value - b.value);
 
   return _horizontalBars({
     data,
@@ -89,8 +88,7 @@ export function renderEarningsBarChart(colleges = [], width = 340) {
       color: CAT_COLORS[c.category] || '#10b981'
     }))
     .filter(d => d.value > 0)
-    .sort((a, b) => b.value - a.value)
-    .slice(0, 8);
+    .sort((a, b) => b.value - a.value);
 
   return _horizontalBars({
     data,
@@ -115,8 +113,7 @@ export function renderGradRateBarChart(colleges = [], width = 340) {
       };
     })
     .filter(d => d.value !== null && d.value > 0)
-    .sort((a, b) => b.value - a.value)
-    .slice(0, 8);
+    .sort((a, b) => b.value - a.value);
 
   return _horizontalBars({
     data,
@@ -138,8 +135,7 @@ export function renderAdmitRateBarChart(colleges = [], width = 340) {
       color: CAT_COLORS[c.category] || '#f97316'
     }))
     .filter(d => d.value !== null && d.value > 0)
-    .sort((a, b) => a.value - b.value)
-    .slice(0, 8);
+    .sort((a, b) => a.value - b.value);
 
   return _horizontalBars({
     data,
@@ -148,3 +144,4 @@ export function renderAdmitRateBarChart(colleges = [], width = 340) {
     subtitle: 'Acceptance rate (most selective first)'
   });
 }
+
