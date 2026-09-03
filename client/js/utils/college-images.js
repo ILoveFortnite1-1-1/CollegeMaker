@@ -31,13 +31,37 @@ const SPECIFIC_COLLEGE_PHOTOS = {
   '136950': 'https://images.unsplash.com/photo-1618218168350-6e7c81151b64?auto=format&fit=crop&q=80', // Rollins
   'rollins': 'https://images.unsplash.com/photo-1618218168350-6e7c81151b64?auto=format&fit=crop&q=80',
 
-  // Flagships & Major Universities
-  '100751': 'https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?auto=format&fit=crop&q=80', // Alabama
-  'bama': 'https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?auto=format&fit=crop&q=80',
+  // Top National Universities & Flagships
+  '166683': 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&q=80', // Harvard
+  'harvard': 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&q=80',
+  '243744': 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&q=80', // Stanford
+  'stanford': 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&q=80',
+  '166629': 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&q=80', // MIT
+  'mit': 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&q=80',
+  '110635': 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80', // Berkeley
+  'berkeley': 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80',
+  '110662': 'https://images.unsplash.com/photo-1588072432836-e10032774350?auto=format&fit=crop&q=80', // UCLA
+  'ucla': 'https://images.unsplash.com/photo-1588072432836-e10032774350?auto=format&fit=crop&q=80',
+  '193900': 'https://images.unsplash.com/photo-1565034946487-077786996e27?auto=format&fit=crop&q=80', // NYU
+  'nyu': 'https://images.unsplash.com/photo-1565034946487-077786996e27?auto=format&fit=crop&q=80',
+  '190150': 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&q=80', // Columbia
+  'columbia': 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&q=80',
+  '186156': 'https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&q=80', // Princeton
+  'princeton': 'https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&q=80',
+  '130794': 'https://images.unsplash.com/photo-1571260899304-425eee4c7efc?auto=format&fit=crop&q=80', // Yale
+  'yale': 'https://images.unsplash.com/photo-1571260899304-425eee4c7efc?auto=format&fit=crop&q=80',
+  '190415': 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&q=80', // Cornell
+  'cornell': 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&q=80',
+  '198419': 'https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&q=80', // Duke
+  'duke': 'https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&q=80',
+  '234076': 'https://images.unsplash.com/photo-1508830524289-0adcbe822b40?auto=format&fit=crop&q=80', // UVA
+  'uva': 'https://images.unsplash.com/photo-1508830524289-0adcbe822b40?auto=format&fit=crop&q=80',
+  '199120': 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80', // UNC
+  'unc': 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80',
+  '170976': 'https://images.unsplash.com/photo-1492538368677-f6e0afe31dcc?auto=format&fit=crop&q=80', // UMich
+  'umich': 'https://images.unsplash.com/photo-1492538368677-f6e0afe31dcc?auto=format&fit=crop&q=80',
   '204796': 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80', // Ohio State
   'osu': 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80',
-  '170976': 'https://images.unsplash.com/photo-1492538368677-f6e0afe31dcc?auto=format&fit=crop&q=80', // Michigan
-  'umich': 'https://images.unsplash.com/photo-1492538368677-f6e0afe31dcc?auto=format&fit=crop&q=80',
   '214777': 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80', // Penn State
   'penn-state': 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80',
   '152080': 'https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?auto=format&fit=crop&q=80', // Notre Dame
@@ -48,37 +72,30 @@ const SPECIFIC_COLLEGE_PHOTOS = {
   'tamu': 'https://images.unsplash.com/photo-1513258496099-48168024aec0?auto=format&fit=crop&q=80',
   '139959': 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80', // Georgia
   'uga': 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80',
+  '100751': 'https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?auto=format&fit=crop&q=80', // Alabama
+  'bama': 'https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?auto=format&fit=crop&q=80',
   '159391': 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80', // LSU
   'lsu': 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80',
-  '243744': 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&q=80', // Stanford
-  'stanford': 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&q=80',
-  '166683': 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&q=80', // Harvard
-  'harvard': 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&q=80',
-  '166629': 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&q=80', // MIT
-  'mit': 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&q=80',
-  '110635': 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80', // UC Berkeley
-  'berkeley': 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80',
-  '110662': 'https://images.unsplash.com/photo-1588072432836-e10032774350?auto=format&fit=crop&q=80', // UCLA
-  'ucla': 'https://images.unsplash.com/photo-1588072432836-e10032774350?auto=format&fit=crop&q=80',
   '123961': 'https://images.unsplash.com/photo-1594608661623-aa0bd3a69d98?auto=format&fit=crop&q=80', // USC
   'usc': 'https://images.unsplash.com/photo-1594608661623-aa0bd3a69d98?auto=format&fit=crop&q=80',
-  '199120': 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80', // UNC
-  'unc': 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80',
-  '234076': 'https://images.unsplash.com/photo-1508830524289-0adcbe822b40?auto=format&fit=crop&q=80', // UVA
-  'uva': 'https://images.unsplash.com/photo-1508830524289-0adcbe822b40?auto=format&fit=crop&q=80',
-  '198419': 'https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&q=80', // Duke
-  'duke': 'https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&q=80',
-  '193900': 'https://images.unsplash.com/photo-1565034946487-077786996e27?auto=format&fit=crop&q=80', // NYU
-  'nyu': 'https://images.unsplash.com/photo-1565034946487-077786996e27?auto=format&fit=crop&q=80',
-  '190415': 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&q=80', // Cornell
-  'cornell': 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&q=80',
-  '190150': 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&q=80', // Columbia
-  'columbia': 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&q=80',
-  '186131': 'https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&q=80', // Princeton
-  'princeton': 'https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&q=80',
-  '130794': 'https://images.unsplash.com/photo-1571260899304-425eee4c7efc?auto=format&fit=crop&q=80', // Yale
-  'yale': 'https://images.unsplash.com/photo-1571260899304-425eee4c7efc?auto=format&fit=crop&q=80',
+  '139755': 'https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&q=80', // Georgia Tech
+  '236948': 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&q=80', // UW Seattle
+  '145637': 'https://images.unsplash.com/photo-1592280771190-3e2e4d571952?auto=format&fit=crop&q=80', // UIUC
+  '243780': 'https://images.unsplash.com/photo-1590012314607-cda9d9b699ae?auto=format&fit=crop&q=80', // Purdue
+  '215062': 'https://images.unsplash.com/photo-1525921429624-479b6a26d84d?auto=format&fit=crop&q=80', // UPenn
+  '147767': 'https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?auto=format&fit=crop&q=80', // Northwestern
+  '221999': 'https://images.unsplash.com/photo-1576495199011-eb94736d05d6?auto=format&fit=crop&q=80', // Vanderbilt
+  '162928': 'https://images.unsplash.com/photo-1607237138185-eedd9c632b0b?auto=format&fit=crop&q=80', // Johns Hopkins
+  '110404': 'https://images.unsplash.com/photo-1564981797816-1043664bf78d?auto=format&fit=crop&q=80', // Caltech
+  '211440': 'https://images.unsplash.com/photo-1519452635265-7b1fbfd1e4e0?auto=format&fit=crop&q=80', // Carnegie Mellon
+  '164924': 'https://images.unsplash.com/photo-1618218168350-6e7c81151b64?auto=format&fit=crop&q=80', // Boston University
+  '131496': 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80', // Georgetown
+  '227757': 'https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?auto=format&fit=crop&q=80', // Rice
+  '139658': 'https://images.unsplash.com/photo-1492538368677-f6e0afe31dcc?auto=format&fit=crop&q=80', // Emory
+  '179867': 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80', // WashU
+  '144050': 'https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?auto=format&fit=crop&q=80'  // UChicago
 };
+
 
 // Curated high-res university campus pool (35 distinct, verified HTTP 200 campus photos)
 const CURATED_CAMPUS_POOL = [
@@ -190,11 +207,20 @@ export function getCollegeImageUrl(college, format = 'card') {
     return CURATED_CAMPUS_POOL[0] + (format === 'hero' ? '&w=1600&h=420' : '&w=600&h=300');
   }
 
+  // 0. Support explicit image_url property if defined on college object
+  if (typeof college === 'object' && college !== null) {
+    const explicitUrl = college.image_url || college.photo_url || college.campus_photo;
+    if (explicitUrl && typeof explicitUrl === 'string' && explicitUrl.startsWith('http')) {
+      return explicitUrl;
+    }
+  }
+
   const id = String(college.id || college.unitid || college.college_id || (typeof college === 'string' ? college : '')).trim();
   const name = String(college.canonical_name || college.name || college.college_name || (typeof college === 'string' ? college : '')).toLowerCase();
 
   // 1. Match by UnitID / ID
   let baseUrl = SPECIFIC_COLLEGE_PHOTOS[id];
+
 
   // 2. Match by institution keywords
   if (!baseUrl) {
