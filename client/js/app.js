@@ -137,6 +137,17 @@ class CollegePortfolioApp {
       }
     });
 
+    // If an Extra dropdown item is active, highlight the Extra dropdown button
+    const extraRoutes = ['what-if', 'essays', 'settings'];
+    const extraBtn = document.getElementById('nav-extra-btn');
+    if (extraBtn) {
+      if (extraRoutes.includes(activeName)) {
+        extraBtn.classList.add('active');
+      } else {
+        extraBtn.classList.remove('active');
+      }
+    }
+
     // Close mobile drawer if open
     this.closeMobileNav();
 
@@ -258,6 +269,43 @@ class CollegePortfolioApp {
         });
       }
     });
+
+    // Top Navigation "Extra" Dropdown toggle
+    const extraDropdown = document.getElementById('nav-extra-dropdown');
+    const extraBtn = document.getElementById('nav-extra-btn');
+
+    if (extraDropdown && extraBtn) {
+      extraBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const isOpen = extraDropdown.classList.toggle('open');
+        extraBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      });
+
+      // Close dropdown when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!extraDropdown.contains(e.target)) {
+          extraDropdown.classList.remove('open');
+          extraBtn.setAttribute('aria-expanded', 'false');
+        }
+      });
+
+      // Close on Escape key
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          extraDropdown.classList.remove('open');
+          extraBtn.setAttribute('aria-expanded', 'false');
+        }
+      });
+
+      // Close dropdown when clicking any item inside
+      extraDropdown.querySelectorAll('.nav-dropdown-item').forEach(item => {
+        item.addEventListener('click', () => {
+          extraDropdown.classList.remove('open');
+          extraBtn.setAttribute('aria-expanded', 'false');
+        });
+      });
+    }
 
     // Global Action Delegation for Toggle Save
 
