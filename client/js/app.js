@@ -9,6 +9,10 @@ import { ProfilePage } from './pages/profile.js';
 import { ComparePage } from './pages/compare.js';
 import { TrackerPage } from './pages/tracker.js';
 import { SettingsPage } from './pages/settings.js';
+import { AidComparisonPage } from './pages/aid-comparison.js';
+import { CalendarPage } from './pages/calendar.js';
+import { EssaysPage } from './pages/essays.js';
+import { WhatIfPage } from './pages/what-if.js';
 import { ProvenanceDrawer } from './components/provenance-drawer.js';
 import { SavedModal } from './components/saved-modal.js';
 
@@ -29,7 +33,14 @@ class CollegePortfolioApp {
       'colleges': DiscoveryPage,
       'compare': ComparePage,
       'tracker': TrackerPage,
-      'settings': SettingsPage
+      'settings': SettingsPage,
+      'aid': AidComparisonPage,
+      'aid-comparison': AidComparisonPage,
+      'calendar': CalendarPage,
+      'deadlines': CalendarPage,
+      'essays': EssaysPage,
+      'what-if': WhatIfPage,
+      'scenario': WhatIfPage
     };
   }
 

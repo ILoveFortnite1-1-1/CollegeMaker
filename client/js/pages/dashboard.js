@@ -25,7 +25,11 @@ export const DashboardPage = {
 
 
     try {
-      const portfolioData = await API.getPortfolio();
+      const [portfolioData, chancesData] = await Promise.all([
+        API.getPortfolio(),
+        API.getPortfolioChances().catch(() => null)
+      ]);
+
       if (window.app?.setPortfolio) {
         window.app.setPortfolio(portfolioData);
       } else {
@@ -41,7 +45,12 @@ export const DashboardPage = {
         mix_breakdown: { reach_count: 0, target_count: 0, likely_count: 0 }
       };
 
-      const mix = summary.mix_breakdown || { reach_count: 0, target_count: 0, likely_count: 0 };
+      const dist = chancesData?.distribution || {
+        Reach: summary.mix_breakdown?.reach_count || 0,
+        Target: summary.mix_breakdown?.target_count || 0,
+        Likely: summary.mix_breakdown?.likely_count || 0,
+        Safety: 0
+      };
 
       // Calculate accurate stats
       let avgPrice = summary.average_net_price;
@@ -152,27 +161,36 @@ export const DashboardPage = {
             </div>
 
 
-            <!-- Card 5: Reach / Target / Likely Mix -->
+            <!-- Card 5: Admissions Chances 4-Tier Distribution (Feature R4) -->
             <div class="stat-card" style="background: #fff; padding: 18px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
-              <div style="font-size: 0.8125rem; font-weight: 600; color: #1e293b; margin-bottom: 8px;">List Balance</div>
-              <div style="display: flex; flex-direction: column; gap: 4px; font-size: 0.75rem;">
+              <div style="font-size: 0.8125rem; font-weight: 700; color: #1e293b; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+                <span>Admissions Chances</span>
+                <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 500;">4 Tiers</span>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 3px; font-size: 0.75rem;">
                 <div style="display: flex; align-items: center; justify-content: space-between;">
                   <span style="display: flex; align-items: center; gap: 6px;">
-                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #f97316;"></span> Reach
+                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #f59e0b;"></span> Reach
                   </span>
-                  <span style="font-weight: 700; color: #0f172a;">${mix.reach_count || 0}</span>
+                  <span style="font-weight: 700; color: #0f172a;">${dist.Reach || 0}</span>
                 </div>
                 <div style="display: flex; align-items: center; justify-content: space-between;">
                   <span style="display: flex; align-items: center; gap: 6px;">
-                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #10b981;"></span> Target
+                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #2563eb;"></span> Target
                   </span>
-                  <span style="font-weight: 700; color: #0f172a;">${mix.target_count || 0}</span>
+                  <span style="font-weight: 700; color: #0f172a;">${dist.Target || 0}</span>
                 </div>
                 <div style="display: flex; align-items: center; justify-content: space-between;">
                   <span style="display: flex; align-items: center; gap: 6px;">
-                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #3b82f6;"></span> Likely
+                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #0d9488;"></span> Likely
                   </span>
-                  <span style="font-weight: 700; color: #0f172a;">${mix.likely_count || 0}</span>
+                  <span style="font-weight: 700; color: #0f172a;">${dist.Likely || 0}</span>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                  <span style="display: flex; align-items: center; gap: 6px;">
+                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #16a34a;"></span> Safety
+                  </span>
+                  <span style="font-weight: 700; color: #0f172a;">${dist.Safety || 0}</span>
                 </div>
               </div>
             </div>

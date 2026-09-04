@@ -262,6 +262,231 @@ class ApiClient {
   async recordVisit() {
     return this.request('/stats/visit', { method: 'POST' });
   }
+
+  // ==========================================
+  // R1: Financial Aid Offer Comparison
+  // ==========================================
+  /**
+   * Get side-by-side financial aid comparison across saved colleges
+   */
+  async getAidComparison() {
+    return this.request('/portfolio/aid/comparison');
+  }
+
+  /**
+   * Save or update financial aid offer for a college
+   * @param {string} collegeId - College UnitID
+   * @param {Object} aidData - Financial aid offer details
+   */
+  async saveAidOffer(collegeId, aidData) {
+    return this.request(`/portfolio/aid/${encodeURIComponent(collegeId)}`, {
+      method: 'POST',
+      body: aidData
+    });
+  }
+
+  /**
+   * Delete financial aid offer for a college
+   * @param {string} collegeId - College UnitID
+   */
+  async deleteAidOffer(collegeId) {
+    return this.request(`/portfolio/aid/${encodeURIComponent(collegeId)}`, {
+      method: 'DELETE'
+    });
+  }
+
+  // ==========================================
+  // R2: Deadline Calendar
+  // ==========================================
+  /**
+   * Get aggregated deadlines across all saved colleges plus 14-day upcoming list
+   */
+  async getCalendar() {
+    return this.request('/portfolio/calendar');
+  }
+
+  // ==========================================
+  // R3: Essay Tracker
+  // ==========================================
+  /**
+   * List all essay entries in the student's portfolio
+   */
+  async getEssays() {
+    return this.request('/portfolio/essays');
+  }
+
+  /**
+   * Create a new essay entry
+   * @param {Object} essayData - Essay payload
+   */
+  async createEssay(essayData) {
+    return this.request('/portfolio/essays', {
+      method: 'POST',
+      body: essayData
+    });
+  }
+
+  /**
+   * Update an existing essay entry
+   * @param {string} essayId - Essay ID
+   * @param {Object} essayData - Updated essay payload
+   */
+  async updateEssay(essayId, essayData) {
+    return this.request(`/portfolio/essays/${encodeURIComponent(essayId)}`, {
+      method: 'PUT',
+      body: essayData
+    });
+  }
+
+  /**
+   * Delete an essay entry
+   * @param {string} essayId - Essay ID
+   */
+  async deleteEssay(essayId) {
+    return this.request(`/portfolio/essays/${encodeURIComponent(essayId)}`, {
+      method: 'DELETE'
+    });
+  }
+
+  // ==========================================
+  // R4: Admissions Chances Estimator
+  // ==========================================
+  /**
+   * Get admissions chances evaluation for a single college
+   * @param {string} collegeId - College UnitID
+   * @param {Object} params - Optional { gpa, sat, act } overrides
+   */
+  async getCollegeChances(collegeId, params = {}) {
+    const query = new URLSearchParams();
+    Object.entries(params).forEach(([key, val]) => {
+      if (val !== undefined && val !== null && val !== '') {
+        query.append(key, val);
+      }
+    });
+    const queryString = query.toString() ? `?${query.toString()}` : '';
+    return this.request(`/colleges/${encodeURIComponent(collegeId)}/chances${queryString}`);
+  }
+
+  /**
+   * Get admissions chances evaluation across all saved colleges
+   */
+  async getPortfolioChances() {
+    return this.request('/portfolio/chances');
+  }
+
+  // ==========================================
+  // R5: "What-If" Scenario Modeling
+  // ==========================================
+  /**
+   * Run in-memory what-if scenario simulation without persisting changes
+   * @param {Object} payload - Scenario overrides { college_id, hypothetical_major, is_in_state, annual_aid_amount, budget_max_annual, gpa, sat_score, act_score }
+   */
+  async simulateScenario(payload) {
+    return this.request('/portfolio/scenario', {
+      method: 'POST',
+      body: payload
+    });
+  }
+
+  // ==========================================
+  // R6: Alumni Outcomes Deep Dive
+  // ==========================================
+  /**
+   * Retrieve Scorecard field-of-study earnings by major for a college
+   * @param {string} collegeId - College UnitID
+   */
+  async getCollegeFieldOfStudy(collegeId) {
+    return this.request(`/colleges/${encodeURIComponent(collegeId)}/field-of-study`);
+  }
+
+  // ==========================================
+  // R7: Per-School Requirements Checklist
+  // ==========================================
+  /**
+   * Get requirements checklist for a specific college
+   * @param {string} collegeId - College UnitID
+   */
+  async getCollegeChecklist(collegeId) {
+    return this.request(`/portfolio/tracker/${encodeURIComponent(collegeId)}/checklist`);
+  }
+
+  /**
+   * Add a checklist item to a saved college
+   * @param {string} collegeId - College UnitID
+   * @param {Object} itemData - Checklist item { name, required, completed, deadline, notes }
+   */
+  async addChecklistItem(collegeId, itemData) {
+    return this.request(`/portfolio/tracker/${encodeURIComponent(collegeId)}/checklist`, {
+      method: 'POST',
+      body: itemData
+    });
+  }
+
+  /**
+   * Update or toggle a checklist item
+   * @param {string} collegeId - College UnitID
+   * @param {string} itemId - Checklist item ID
+   * @param {Object} itemData - Updated properties
+   */
+  async updateChecklistItem(collegeId, itemId, itemData) {
+    return this.request(`/portfolio/tracker/${encodeURIComponent(collegeId)}/checklist/${encodeURIComponent(itemId)}`, {
+      method: 'PUT',
+      body: itemData
+    });
+  }
+
+  /**
+   * Delete a checklist item
+   * @param {string} collegeId - College UnitID
+   * @param {string} itemId - Checklist item ID
+   */
+  async deleteChecklistItem(collegeId, itemId) {
+    return this.request(`/portfolio/tracker/${encodeURIComponent(collegeId)}/checklist/${encodeURIComponent(itemId)}`, {
+      method: 'DELETE'
+    });
+  }
+
+  /**
+   * Get cross-school requirement checklist matrix
+   */
+  async getRequirementsMatrix() {
+    return this.request('/portfolio/requirements-matrix');
+  }
+
+  /**
+   * Mark a requirement as done (or incomplete) across all saved colleges in one click
+   * @param {string} requirementName - Requirement name
+   * @param {boolean|null} completed - Target status (true = done, false = needed, null = auto-toggle)
+   */
+  async toggleRequirementAll(requirementName, completed = null) {
+    return this.request('/portfolio/requirements-matrix/toggle-all', {
+      method: 'POST',
+      body: { requirement_name: requirementName, completed },
+    });
+  }
+
+  /**
+   * Mark all requirements across all saved colleges as done (or incomplete) in one click
+   * @param {boolean} completed - Target status (default true)
+   */
+  async toggleAllRequirements(completed = true) {
+    return this.request('/portfolio/requirements-matrix/toggle-everything', {
+      method: 'POST',
+      body: { completed },
+    });
+  }
+
+  /**
+   * Mark all requirements for a single college as done (or incomplete) in one click
+   * @param {string} collegeId - College UnitID
+   * @param {boolean} completed - Target status (default true)
+   */
+  async toggleCollegeChecklistAll(collegeId, completed = true) {
+    return this.request(`/portfolio/tracker/${encodeURIComponent(collegeId)}/checklist/bulk`, {
+      method: 'POST',
+      body: { completed },
+    });
+  }
 }
 
 export const API = new ApiClient();

@@ -6,6 +6,8 @@ import { API } from '../api.js';
 import { renderSourceBadge } from '../components/source-badge.js';
 import { renderMetricCard, formatMetricValue, formatConfidence } from '../components/metric-card.js';
 import { renderEnrichmentBanner } from '../components/enrichment-banner.js';
+import { renderChancesGauge } from '../components/chances-gauge.js';
+import { renderOutcomesChart, initOutcomesInteractions } from '../components/outcomes-chart.js';
 
 import { getCollegeImageUrl, getCampusSvgDataUri } from '../utils/college-images.js';
 
@@ -26,7 +28,11 @@ export const ProfilePage = {
     `;
 
     try {
-      const college = await API.getCollege(collegeId, true);
+      const [college, chancesData, outcomesData] = await Promise.all([
+        API.getCollege(collegeId, true),
+        API.getCollegeChances(collegeId).catch(() => null),
+        API.getCollegeFieldOfStudy(collegeId).catch(() => null)
+      ]);
       const rawSaved = window.app?.getSavedColleges ? window.app.getSavedColleges() : (state.portfolio?.saved_colleges || state.portfolio?.colleges || state.portfolio?.items || []);
       const isSaved = rawSaved.some(c => String(c.college_id || c.id) === String(college.id));
       const inCompare = state.compareList.includes(String(college.id));
@@ -280,6 +286,12 @@ export const ProfilePage = {
 
         <!-- Tab 3: Admissions & Selectivity -->
         <div id="tab-admissions" class="tab-panel ${this.activeTab === 'admissions' ? 'active' : ''}">
+          <!-- Admissions Chances Estimator (Feature R4) -->
+          <div class="card" style="margin-bottom: 24px;">
+            <h3 class="card-title" style="margin-bottom: 16px;">Admissions Chances Estimator</h3>
+            ${renderChancesGauge(chancesData)}
+          </div>
+
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
             <div class="card">
               <h3 class="card-title" style="margin-bottom: 16px;">Selectivity & Admit Profile</h3>
@@ -331,7 +343,7 @@ export const ProfilePage = {
 
         <!-- Tab 4: Academics & Outcomes -->
         <div id="tab-academics" class="tab-panel ${this.activeTab === 'academics' ? 'active' : ''}">
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
             <div class="card">
               <h3 class="card-title" style="margin-bottom: 16px;">Top Degree Fields & Programs</h3>
               ${renderTopProgramsList(college.academics?.top_programs || college.academics?.notable_programs?.value)}
@@ -346,6 +358,17 @@ export const ProfilePage = {
                 ${renderMetricCard('Student-Faculty', college.summary?.student_faculty_ratio, 'ratio')}
               </div>
             </div>
+          </div>
+
+          <!-- Alumni Outcomes Deep Dive (Feature R6) -->
+          <div class="card outcomes-deep-dive-card" style="margin-top: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 8px;">
+              <div>
+                <h3 class="card-title" style="margin: 0 0 4px 0;">Alumni Outcomes Deep Dive (Earnings by Major)</h3>
+                <p class="card-subtitle" style="margin: 0;">Department of Education Scorecard program-level salary & debt data.</p>
+              </div>
+            </div>
+            ${renderOutcomesChart(outcomesData)}
           </div>
         </div>
 
@@ -406,6 +429,9 @@ export const ProfilePage = {
         if (activePanel) activePanel.classList.add('active');
       });
     });
+
+    // Initialize outcomes table search and sorting
+    initOutcomesInteractions(container);
   }
 };
 

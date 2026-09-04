@@ -2,6 +2,7 @@
 import os
 from pathlib import Path
 from fastapi import FastAPI, Request, status
+from pydantic import ValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
@@ -56,6 +57,13 @@ def create_app() -> FastAPI:
         if index_file.exists():
             return FileResponse(index_file)
         return JSONResponse(status_code=404, content={"error": "Not Found"})
+
+    @app.exception_handler(ValidationError)
+    async def validation_error_handler(request: Request, exc: ValidationError):
+        return JSONResponse(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            content={"error": "Unprocessable Entity", "detail": exc.errors()},
+        )
 
     @app.exception_handler(500)
     async def internal_error_handler(request: Request, exc):

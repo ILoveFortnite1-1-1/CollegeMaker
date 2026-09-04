@@ -5,6 +5,7 @@
  */
 import { API } from '../api.js?v=3.2';
 import { getCollegeImageUrl, getCampusSvgDataUri } from '../utils/college-images.js';
+import { renderRequirementsMatrix, bindRequirementsMatrixEvents } from '../components/requirements-matrix.js';
 
 
 export const TrackerPage = {
@@ -22,7 +23,11 @@ export const TrackerPage = {
 
 
     try {
-      const portfolioData = await API.getPortfolio();
+      const [portfolioData, matrixData] = await Promise.all([
+        API.getPortfolio(),
+        API.getRequirementsMatrix().catch(() => ({ matrix: [], colleges: [], summary_counts: {} }))
+      ]);
+
       if (window.app?.setPortfolio) {
         window.app.setPortfolio(portfolioData);
       } else {
@@ -137,6 +142,11 @@ export const TrackerPage = {
               <div id="tracker-stat-decisions" style="font-size: 1.75rem; font-weight: 800; color: #7c3aed;">${acceptedCount > 0 ? `${acceptedCount} Accepted` : 'Pending'}</div>
               <div style="font-size: 0.75rem; color: #64748b; margin-top: 4px;">Record outcomes as they arrive</div>
             </div>
+          </div>
+
+          <!-- Per-School Requirements Checklist Matrix & Summary Aggregates (Feature R7) -->
+          <div id="requirements-matrix-section">
+            ${renderRequirementsMatrix(matrixData)}
           </div>
 
           <!-- Bulk Update Toolbar: Change for All -->
@@ -304,16 +314,27 @@ export const TrackerPage = {
 
         <!-- Checklist Details (Collapsible) -->
         <div class="tracker-checklist-panel" id="checklist-${cid}" style="padding: 20px; background: #fdfdfe; border-top: 1px solid #e2e8f0; display: block;">
-          <h4 style="margin: 0 0 14px 0; font-size: 0.875rem; font-weight: 700; color: #334155; text-transform: uppercase; letter-spacing: 0.05em;">
-            Application Milestones Checklist
-          </h4>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
+            <h4 style="margin: 0; font-size: 0.875rem; font-weight: 700; color: #334155; text-transform: uppercase; letter-spacing: 0.05em;">
+              Application Milestones Checklist
+            </h4>
+            <div style="display: flex; gap: 6px;">
+              <button type="button" class="btn btn-sm btn-ghost mark-card-all-btn" data-college-id="${cid}" style="font-size: 0.75rem; padding: 3px 8px; color: #059669; font-weight: 600; border: 1px solid #bbf7d0; background: #f0fdf4; border-radius: 4px; cursor: pointer;" title="Check all milestones as done for this school in 1 click">
+                ✓ Check All
+              </button>
+              <button type="button" class="btn btn-sm btn-ghost clear-card-all-btn" data-college-id="${cid}" style="font-size: 0.75rem; padding: 3px 8px; color: #64748b; border: 1px solid #e2e8f0; background: #fff; border-radius: 4px; cursor: pointer;" title="Clear all milestones for this school">
+                Clear
+              </button>
+            </div>
+          </div>
 
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 10px;">
             ${this.renderCheckItem(cid, 'research_completed', 'Research college website & academic majors', tracker.research_completed)}
             ${this.renderCheckItem(cid, 'transcripts_requested', 'Request high school transcript', tracker.transcripts_requested)}
             ${this.renderCheckItem(cid, 'transcripts_submitted', 'Official transcript sent & verified', tracker.transcripts_submitted)}
             ${this.renderCheckItem(cid, 'test_scores_sent', 'Official SAT / ACT test scores sent', tracker.test_scores_sent)}
-            ${this.renderCheckItem(cid, 'essays_completed', 'Supplemental essays written & polished', tracker.essays_completed)}
+            ${this.renderCheckItem(cid, 'common_app_essay_completed', 'Common App main personal statement', tracker.common_app_essay_completed)}
+            ${this.renderCheckItem(cid, 'essays_completed', 'College supplemental essays written & polished', tracker.essays_completed)}
             ${this.renderCheckItem(cid, 'counselor_rec_requested', 'Counselor letter of recommendation', tracker.counselor_rec_requested)}
             ${this.renderCheckItem(cid, 'teacher_rec_requested', 'Teacher recommendation letters sent', tracker.teacher_rec_requested)}
             ${this.renderCheckItem(cid, 'application_fee_paid', 'Application fee paid or fee waiver verified', tracker.application_fee_paid)}
@@ -500,6 +521,44 @@ export const TrackerPage = {
       });
     });
 
+    // 1b. College Card Action: Check All or Clear All milestones for single school in 1 click
+    container.querySelectorAll('.mark-card-all-btn, .clear-card-all-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const isCheckAll = btn.classList.contains('mark-card-all-btn');
+        const cid = btn.getAttribute('data-college-id');
+        const card = btn.closest('.tracker-college-card');
+        if (!card || !cid) return;
+
+        const checkboxes = card.querySelectorAll('.tracker-checkbox');
+        const updatePayload = {};
+        checkboxes.forEach(cb => {
+          cb.checked = isCheckAll;
+          const field = cb.getAttribute('data-field');
+          if (field) updatePayload[field] = isCheckAll;
+
+          const label = cb.closest('label');
+          if (label) {
+            label.style.background = isCheckAll ? '#f0fdf4' : '#fff';
+            label.style.borderColor = isCheckAll ? '#bbf7d0' : '#e2e8f0';
+            label.style.color = isCheckAll ? '#0f172a' : '#475569';
+            const span = label.querySelector('span');
+            if (span) span.style.fontWeight = isCheckAll ? '600' : 'normal';
+          }
+        });
+
+        this.updateCardProgress(card);
+        this.updateTopStats(container);
+
+        try {
+          const updated = await API.updateApplicationTracker(cid, updatePayload);
+          if (window.app?.setPortfolio) window.app.setPortfolio(updated);
+          window.app?.showToast(isCheckAll ? 'All milestones marked done for school.' : 'Cleared milestones for school.', 'success');
+        } catch (err) {
+          window.app?.showToast(`Update error: ${err.message}`, 'error');
+        }
+      });
+    });
+
     // 2. Bulk Action: Mark YES for All
     const select = container.querySelector('#bulk-milestone-select');
     container.querySelector('#btn-bulk-complete')?.addEventListener('click', async () => {
@@ -658,6 +717,11 @@ export const TrackerPage = {
       } catch (err) {
         window.app?.showToast(`Reset error: ${err.message}`, 'error');
       }
+    });
+
+    // Bind requirements matrix interactive toggles
+    bindRequirementsMatrixEvents(container, () => {
+      this.render(container, state, { silent: true });
     });
   }
 };

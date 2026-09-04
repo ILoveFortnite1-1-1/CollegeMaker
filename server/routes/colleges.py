@@ -186,3 +186,59 @@ async def refresh_college_data(id: str, request: Request):
         "run": run,
         "events_recorded": len(all_events),
     }
+
+
+@router.get("/{id}/chances")
+async def get_college_chances(
+    id: str,
+    request: Request,
+    response: Response,
+    gpa: Optional[float] = Query(None),
+    sat: Optional[int] = Query(None),
+    sat_score: Optional[int] = Query(None),
+    act: Optional[int] = Query(None),
+    act_score: Optional[int] = Query(None),
+):
+    """Evaluate student admissions chances for this college (Reach/Target/Likely/Safety)."""
+    if ".." in id or "/" in id or "\\" in id:
+        raise HTTPException(status_code=400, detail="Invalid college ID.")
+    college = await scorecard_service.get_college_by_id(id)
+    if not college:
+        raise HTTPException(status_code=404, detail=f"College with ID '{id}' not found.")
+
+    from server.services.chances_service import chances_service
+    prefs = await _get_guest_preferences(request)
+    eff_sat = sat if sat is not None else sat_score
+    eff_act = act if act is not None else act_score
+
+    estimate = chances_service.estimate_chances(
+        college=college,
+        preferences=prefs,
+        custom_gpa=gpa,
+        custom_sat=eff_sat,
+        custom_act=eff_act,
+    )
+    return estimate.model_dump()
+
+
+@router.get("/{id}/field-of-study")
+@router.get("/{id}/outcomes/majors")
+async def get_college_field_of_study(
+    id: str,
+    request: Request,
+    response: Response,
+):
+    """Retrieve Scorecard field-of-study earnings by major, with preferred majors highlighted."""
+    if ".." in id or "/" in id or "\\" in id:
+        raise HTTPException(status_code=400, detail="Invalid college ID.")
+    college = await scorecard_service.get_college_by_id(id)
+    if not college:
+        raise HTTPException(status_code=404, detail=f"College with ID '{id}' not found.")
+
+    from server.services.college_service import college_service
+    prefs = await _get_guest_preferences(request)
+    preferred_majors = prefs.preferred_majors if prefs else []
+
+    data = await college_service.get_field_of_study(id, preferred_majors=preferred_majors)
+    return data
+

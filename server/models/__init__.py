@@ -10,6 +10,8 @@ from server.models.canonical import (
     QualitativeData,
     EvidenceClaim,
     CanonicalCollege,
+    FieldOfStudyItem,
+    ChancesEstimate,
 )
 from server.models.portfolio import (
     StudentPreferences,
@@ -19,6 +21,13 @@ from server.models.portfolio import (
     PortfolioItem,
     StudentPortfolio,
     PortfolioSummary,
+    ChecklistItem,
+    FinancialAidOffer,
+    CollegeAidComparison,
+    EssayEntry,
+    ScenarioOverrideRequest,
+    ScenarioResult,
+    Portfolio,
 )
 from server.models.ledger import (
     LedgerEvent,
@@ -38,6 +47,8 @@ __all__ = [
     "QualitativeData",
     "EvidenceClaim",
     "CanonicalCollege",
+    "FieldOfStudyItem",
+    "ChancesEstimate",
     "StudentPreferences",
     "FitWeights",
     "FitDimensionScore",
@@ -45,8 +56,16 @@ __all__ = [
     "PortfolioItem",
     "StudentPortfolio",
     "PortfolioSummary",
+    "ChecklistItem",
+    "FinancialAidOffer",
+    "CollegeAidComparison",
+    "EssayEntry",
+    "ScenarioOverrideRequest",
+    "ScenarioResult",
+    "Portfolio",
     "LedgerEvent",
     "EnrichmentRun",
     "AuditResponse",
     "CollegeKnowledgeEntry",
 ]
+

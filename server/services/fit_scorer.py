@@ -395,6 +395,9 @@ class FitScorerService:
                 net_price = bracket_val
 
         net_price = float(net_price)
+        if net_price <= 0:
+            return 100.0, "Full-ride or surplus financial aid coverage ($0 net out-of-pocket)."
+
         budget = getattr(prefs, "budget_max_annual", None) if prefs else None
         if budget is not None and budget > 0:
             budget = float(budget)

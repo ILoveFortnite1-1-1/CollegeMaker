@@ -1,8 +1,10 @@
 """Canonical College Data Model with Full Provenance."""
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Any, Generic, List, Optional, TypeVar
-from pydantic import BaseModel, Field
+from typing import Any, Dict, Generic, List, Optional, TypeVar
+
+from pydantic import BaseModel, Field, model_validator
+
 
 
 class SourceType(str, Enum):
@@ -490,5 +492,71 @@ class CanonicalCollege(BaseModel):
             "refreshed_at": self.updated_at,
         }
         return res
+
+
+class FieldOfStudyItem(BaseModel):
+    """Field of study / academic program with post-grad earnings and debt from Scorecard."""
+    cip_code: str
+    major_title: str
+    credential_level: str = "Bachelor's Degree"
+    median_earnings: Optional[int] = None
+    median_debt: Optional[int] = None
+    is_preferred: bool = False
+
+    @model_validator(mode="before")
+    @classmethod
+    def map_aliases(cls, data: Any) -> Any:
+        if isinstance(data, dict):
+            mapped = dict(data)
+            if "major_name" in mapped and "major_title" not in mapped:
+                mapped["major_title"] = mapped["major_name"]
+            if "major" in mapped and "major_title" not in mapped:
+                mapped["major_title"] = mapped["major"]
+            if "credential" in mapped and "credential_level" not in mapped:
+                mapped["credential_level"] = mapped["credential"]
+            if "is_preferred_major" in mapped and "is_preferred" not in mapped:
+                mapped["is_preferred"] = mapped["is_preferred_major"]
+            if "median_earnings_4yr" in mapped and mapped.get("median_earnings") is None:
+                mapped["median_earnings"] = mapped["median_earnings_4yr"]
+            elif "median_earnings_1yr" in mapped and mapped.get("median_earnings") is None:
+                mapped["median_earnings"] = mapped["median_earnings_1yr"]
+            elif "earnings" in mapped and mapped.get("median_earnings") is None:
+                mapped["median_earnings"] = mapped["earnings"]
+            if "debt" in mapped and mapped.get("median_debt") is None:
+                mapped["median_debt"] = mapped["debt"]
+            return mapped
+        return data
+
+
+class ChancesEstimate(BaseModel):
+    """Admissions chances estimation for a student relative to college percentiles."""
+    college_id: str
+    college_name: str
+    classification: str  # 'Reach', 'Target', 'Likely', 'Safety'
+    category: Optional[str] = None
+    gpa_status: Dict[str, Any] = Field(default_factory=dict)
+    test_status: Dict[str, Any] = Field(default_factory=dict)
+    overall_probability: float = 0.5
+    admissions_probability: Optional[float] = None
+    acceptance_rate: float = 0.5
+    summary: Optional[str] = None
+    rationale: Optional[str] = None
+
+    @model_validator(mode="before")
+    @classmethod
+    def sync_chances_aliases(cls, data: Any) -> Any:
+        if isinstance(data, dict):
+            mapped = dict(data)
+            if "category" in mapped and "classification" not in mapped:
+                mapped["classification"] = mapped["category"]
+            elif "classification" in mapped and "category" not in mapped:
+                mapped["category"] = mapped["classification"]
+            if "admissions_probability" in mapped and "overall_probability" not in mapped:
+                mapped["overall_probability"] = mapped["admissions_probability"]
+            elif "overall_probability" in mapped and "admissions_probability" not in mapped:
+                mapped["admissions_probability"] = mapped["overall_probability"]
+            return mapped
+        return data
+
 
 

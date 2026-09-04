@@ -23,3 +23,6 @@ data/college_portfolio.db
 
 # Logs
 *.log
+
+# Agent scratch
+.agents/
