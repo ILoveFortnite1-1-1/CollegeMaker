@@ -10,6 +10,54 @@ export const CalendarPage = {
   currentDate: new Date(),
   selectedYear: new Date().getFullYear(),
   selectedMonth: new Date().getMonth(), // 0-indexed
+  currentEvents: [],
+
+  getEventGroupInfo(evt) {
+    const rawTitle = (evt.title || '').trim();
+    const lower = rawTitle.toLowerCase();
+
+    let cleanTitle = rawTitle;
+    let groupKey = '';
+
+    if (lower.includes('early action') || lower.includes('priority / early') || lower.includes('early decision') || lower.includes('priority deadline')) {
+      cleanTitle = 'Early Action / Priority';
+      groupKey = 'early_action';
+    } else if (lower.includes('regular decision')) {
+      cleanTitle = 'Regular Decision';
+      groupKey = 'regular_decision';
+    } else if (lower.includes('fafsa')) {
+      cleanTitle = 'FAFSA Priority Aid';
+      groupKey = 'fafsa_aid';
+    } else if (lower.includes('css profile')) {
+      cleanTitle = 'CSS Profile Aid';
+      groupKey = 'css_profile';
+    } else if (lower.includes('merit scholarship')) {
+      cleanTitle = 'Merit Scholarships';
+      groupKey = 'merit_scholarships';
+    } else if (lower.includes('scholarship')) {
+      cleanTitle = rawTitle.replace(/\s*(Deadline|Milestone)$/i, '').trim() || 'Scholarships';
+      groupKey = cleanTitle.toLowerCase().replace(/[^a-z0-9]+/g, '_');
+    } else if (lower.includes('decision notification') || lower.includes('admissions decision') || lower.includes('decision date') || lower.includes('decision release')) {
+      cleanTitle = 'Admissions Decisions';
+      groupKey = 'admissions_decisions';
+    } else if (lower.includes('candidate reply') || lower.includes('decision day')) {
+      cleanTitle = 'Candidate Reply Date';
+      groupKey = 'reply_date';
+    } else if (lower.includes('common application opens') || lower.includes('common app open')) {
+      cleanTitle = 'Common App Opens';
+      groupKey = 'common_app';
+    } else {
+      cleanTitle = rawTitle.replace(/\s*(Deadline|Milestone)$/i, '').trim() || rawTitle;
+      groupKey = cleanTitle.toLowerCase().replace(/[^a-z0-9]+/g, '_');
+    }
+
+    const category = evt.deadline_type || evt.category || 'app_deadline';
+    return {
+      groupKey: `${category}::${groupKey}`,
+      cleanTitle,
+      category
+    };
+  },
 
   async render(container, state, options = {}) {
     if (!options?.silent) {
@@ -48,8 +96,29 @@ export const CalendarPage = {
         events = collegeEvents;
       }
       events.sort((a, b) => (a.date > b.date ? 1 : (a.date < b.date ? -1 : 0)));
+      this.currentEvents = events;
 
+      // Group upcoming deadlines falling on same date & same type
       const upcoming14 = events.filter(e => 0 <= e.days_remaining && e.days_remaining <= 14);
+      const upcomingGroupsMap = new Map();
+      upcoming14.forEach(evt => {
+        const info = this.getEventGroupInfo(evt);
+        const uKey = `${evt.date}::${info.groupKey}`;
+        if (!upcomingGroupsMap.has(uKey)) {
+          upcomingGroupsMap.set(uKey, {
+            key: uKey,
+            date: evt.date,
+            days_remaining: evt.days_remaining,
+            cleanTitle: info.cleanTitle,
+            category: info.category,
+            category_label: evt.category_label || (info.category === 'app_deadline' ? 'Application Deadline' : info.category === 'financial_aid' ? 'Financial Aid' : info.category === 'scholarship' ? 'Scholarship' : 'Admissions Decision'),
+            color: evt.color,
+            items: []
+          });
+        }
+        upcomingGroupsMap.get(uKey).items.push(evt);
+      });
+      const upcomingGroups = Array.from(upcomingGroupsMap.values());
 
       // If there are future events and user hasn't toggled month yet, default to first upcoming event's month
       if (events.length > 0 && !options.keepMonth) {
@@ -182,19 +251,19 @@ export const CalendarPage = {
                 </div>
 
                 <div class="upcoming-deadlines-list" style="display: flex; flex-direction: column; gap: 12px;">
-                  ${upcoming14.length === 0 ? `
+                  ${upcomingGroups.length === 0 ? `
                     <div style="text-align: center; padding: 28px 12px; color: var(--text-muted);">
                       <p style="font-size: 0.875rem; margin: 0 0 6px 0;">No upcoming deadlines in the next 14 days.</p>
                       <span style="font-size: 0.75rem;">All upcoming dates appear on the monthly grid.</span>
                     </div>
-                  ` : upcoming14.map(evt => {
+                  ` : upcomingGroups.map(group => {
                     let urgencyBadge = '';
-                    if (evt.days_remaining === 0) {
+                    if (group.days_remaining === 0) {
                       urgencyBadge = '<span style="background: #fee2e2; color: #dc2626; padding: 2px 6px; border-radius: 4px; font-weight: 800; font-size: 0.7rem;">DUE TODAY!</span>';
-                    } else if (evt.days_remaining === 1) {
+                    } else if (group.days_remaining === 1) {
                       urgencyBadge = '<span style="background: #fef3c7; color: #d97706; padding: 2px 6px; border-radius: 4px; font-weight: 800; font-size: 0.7rem;">TOMORROW</span>';
                     } else {
-                      urgencyBadge = `<span style="background: #f1f5f9; color: #475569; padding: 2px 6px; border-radius: 4px; font-weight: 600; font-size: 0.7rem;">In ${evt.days_remaining} days</span>`;
+                      urgencyBadge = `<span style="background: #f1f5f9; color: #475569; padding: 2px 6px; border-radius: 4px; font-weight: 600; font-size: 0.7rem;">In ${group.days_remaining} days</span>`;
                     }
 
                     const categoryColors = {
@@ -203,23 +272,46 @@ export const CalendarPage = {
                       scholarship: '#d97706',
                       decision: '#7c3aed'
                     };
-                    const borderLeft = categoryColors[evt.deadline_type || evt.category] || '#2563eb';
+                    const borderLeft = categoryColors[group.category] || '#2563eb';
 
                     return `
                       <div class="upcoming-item" style="padding: 10px 12px; background: #f8fafc; border-left: 3px solid ${borderLeft}; border-radius: 6px; border-top: 1px solid var(--color-border-subtle); border-right: 1px solid var(--color-border-subtle); border-bottom: 1px solid var(--color-border-subtle);">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                          <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-secondary);">${evt.date}</span>
+                          <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-secondary);">${group.date}</span>
                           ${urgencyBadge}
                         </div>
-                        <div style="font-size: 0.875rem; font-weight: 700; color: var(--text-primary); margin-bottom: 2px;">
-                          ${evt.title}
+                        <div style="font-size: 0.875rem; font-weight: 700; color: var(--text-primary); margin-bottom: 2px; display: flex; align-items: center; justify-content: space-between;">
+                          <span>${group.cleanTitle}</span>
+                          ${group.items.length > 1 ? `
+                            <span style="background: #e2e8f0; color: #334155; font-size: 0.6875rem; font-weight: 800; padding: 1px 6px; border-radius: 999px;">
+                              ${group.items.length} schools
+                            </span>
+                          ` : ''}
                         </div>
-                        <div style="font-size: 0.8125rem; color: var(--text-secondary); display: flex; align-items: center; justify-content: space-between;">
-                          <span>${evt.college_name}</span>
-                          ${evt.college_id !== 'national'
-                            ? `<a href="#/colleges/${evt.college_id}" style="font-size: 0.75rem; color: var(--color-primary); font-weight: 600;">View Profile →</a>`
-                            : `<span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">National Cycle</span>`
-                          }
+                        <div style="font-size: 0.8125rem; color: var(--text-secondary); margin-top: 4px;">
+                          ${group.items.length === 1 ? `
+                            <div style="display: flex; align-items: center; justify-content: space-between;">
+                              <span>${group.items[0].college_name}</span>
+                              ${group.items[0].college_id !== 'national'
+                                ? `<a href="#/colleges/${group.items[0].college_id}" style="font-size: 0.75rem; color: var(--color-primary); font-weight: 600;">View Profile →</a>`
+                                : `<span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">National Cycle</span>`
+                              }
+                            </div>
+                          ` : `
+                            <div style="display: flex; flex-wrap: wrap; gap: 4px; margin-top: 2px;">
+                              ${group.items.map(e => `
+                                ${e.college_id !== 'national' ? `
+                                  <a href="#/colleges/${e.college_id}" style="font-size: 0.72rem; background: #ffffff; border: 1px solid var(--color-border); color: var(--text-primary); padding: 1px 6px; border-radius: 4px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 2px;">
+                                    ${e.college_name.split(' ')[0]} <span style="color: var(--color-primary); font-size: 0.65rem;">→</span>
+                                  </a>
+                                ` : `
+                                  <span style="font-size: 0.72rem; background: #e2e8f0; color: #475569; padding: 1px 6px; border-radius: 4px; font-weight: 600;">
+                                    National
+                                  </span>
+                                `}
+                              `).join('')}
+                            </div>
+                          `}
                         </div>
                       </div>
                     `;
@@ -237,6 +329,23 @@ export const CalendarPage = {
             </div>
 
           </div>
+
+          <!-- Interactive Day Details Modal -->
+          <div id="calendar-day-modal" class="modal-backdrop" style="display: none; position: fixed; inset: 0; background: rgba(15,23,42,0.6); z-index: 9999; align-items: center; justify-content: center; padding: 20px;">
+            <div class="card modal-dialog" style="max-width: 520px; width: 100%; background: #ffffff; border-radius: 12px; padding: 24px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2); max-height: 85vh; overflow-y: auto;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--color-border-subtle);">
+                <h3 id="day-modal-title" style="margin: 0; font-size: 1.15rem; font-weight: 800; color: var(--text-primary);">Deadlines</h3>
+                <button type="button" id="btn-close-day-modal" class="btn btn-ghost" style="font-size: 1.25rem; padding: 4px 8px; line-height: 1;">✕</button>
+              </div>
+              <div id="day-modal-body" style="display: flex; flex-direction: column; gap: 10px;">
+                <!-- Populated dynamically on day click -->
+              </div>
+              <div style="margin-top: 20px; display: flex; justify-content: flex-end;">
+                <button type="button" id="btn-dismiss-day-modal" class="btn btn-secondary btn-sm">Close</button>
+              </div>
+            </div>
+          </div>
+
         </div>
       `;
 
@@ -304,21 +413,55 @@ export const CalendarPage = {
       const isToday = isCurrentMonth && day === todayDate;
       const dayEvents = eventsByDay[day] || [];
 
+      // Deduplicate generic national milestones if specific colleges already have that deadline on this day
+      const dayColleges = dayEvents.filter(e => !e.is_national);
+      const dayCollegesHasType = new Set(dayColleges.map(e => this.getEventGroupInfo(e).groupKey));
+      
+      const filteredDayEvents = dayEvents.filter(e => {
+        if (e.is_national && dayCollegesHasType.has(this.getEventGroupInfo(e).groupKey)) {
+          return false;
+        }
+        return true;
+      });
+
+      // Group multiple events of the same type on this day
+      const groupedMap = new Map();
+      filteredDayEvents.forEach(evt => {
+        const info = this.getEventGroupInfo(evt);
+        if (!groupedMap.has(info.groupKey)) {
+          groupedMap.set(info.groupKey, {
+            groupKey: info.groupKey,
+            cleanTitle: info.cleanTitle,
+            category: info.category,
+            items: []
+          });
+        }
+        groupedMap.get(info.groupKey).items.push(evt);
+      });
+      const dayGroups = Array.from(groupedMap.values());
+      const cellDateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
       html += `
-        <td style="padding: 6px; height: 95px; border: 1px solid var(--color-border); vertical-align: top; background: ${isToday ? '#f0fdf4' : '#fff'}; transition: background 0.15s ease;">
+        <td 
+          class="calendar-day-cell" 
+          data-day="${day}" 
+          data-date="${cellDateStr}"
+          data-has-events="${filteredDayEvents.length > 0}"
+          style="padding: 6px; height: 105px; min-height: 105px; border: 1px solid var(--color-border); vertical-align: top; background: ${isToday ? '#f0fdf4' : '#fff'}; transition: background 0.15s ease; ${filteredDayEvents.length > 0 ? 'cursor: pointer;' : ''}"
+        >
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
             <span style="font-size: 0.8125rem; font-weight: ${isToday ? '800' : '600'}; color: ${isToday ? '#15803d' : 'var(--text-primary)'}; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; ${isToday ? 'background: #dcfce7; border-radius: 50%;' : ''}">
               ${day}
             </span>
-            ${dayEvents.length > 0 ? `
-              <span style="font-size: 0.65rem; font-weight: 700; background: #f1f5f9; color: var(--text-secondary); padding: 1px 5px; border-radius: 4px;">
-                ${dayEvents.length}
+            ${filteredDayEvents.length > 0 ? `
+              <span style="font-size: 0.65rem; font-weight: 700; background: #f1f5f9; color: var(--text-secondary); padding: 1px 5px; border-radius: 4px;" title="${filteredDayEvents.length} total events on this date">
+                ${filteredDayEvents.length}
               </span>
             ` : ''}
           </div>
 
-          <div style="display: flex; flex-direction: column; gap: 3px; max-height: 65px; overflow-y: auto;">
-            ${dayEvents.map(evt => {
+          <div style="display: flex; flex-direction: column; gap: 3px; max-height: 75px; overflow-y: auto;">
+            ${dayGroups.map(group => {
               const bgColors = {
                 app_deadline: '#dbeafe',
                 financial_aid: '#dcfce7',
@@ -331,18 +474,58 @@ export const CalendarPage = {
                 scholarship: '#92400e',
                 decision: '#7e22ce'
               };
-              const bg = bgColors[evt.deadline_type || evt.category] || '#dbeafe';
-              const text = textColors[evt.deadline_type || evt.category] || '#1e40af';
+              const borderColors = {
+                app_deadline: '#2563eb',
+                financial_aid: '#059669',
+                scholarship: '#d97706',
+                decision: '#7c3aed'
+              };
+              const badgeBgs = {
+                app_deadline: '#bfdbfe',
+                financial_aid: '#bbf7d0',
+                scholarship: '#fde68a',
+                decision: '#e9d5ff'
+              };
+              const bg = bgColors[group.category] || '#dbeafe';
+              const text = textColors[group.category] || '#1e40af';
+              const border = borderColors[group.category] || '#2563eb';
+              const badgeBg = badgeBgs[group.category] || '#bfdbfe';
 
-              return `
-                <div 
-                  class="calendar-event-pill" 
-                  title="${evt.college_name}: ${evt.title}"
-                  style="background: ${bg}; color: ${text}; padding: 2px 5px; border-radius: 4px; font-size: 0.6875rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; border-left: 2px solid ${evt.color || text};"
-                >
-                  ${evt.is_national ? 'National' : (evt.college_name.split(' ')[0])}: ${evt.title.replace(' Deadline', '').replace(' Milestone', '')}
-                </div>
-              `;
+              if (group.items.length > 1) {
+                // Multiple colleges have the same deadline: display the name and count badge next to it!
+                const collegeList = group.items.map(e => e.is_national ? '• National Roadmap' : `• ${e.college_name}`).join('\n');
+                const tooltip = `${group.cleanTitle} (${group.items.length} schools):\n${collegeList}\n\nClick to view full details`;
+
+                return `
+                  <div 
+                    class="calendar-event-pill calendar-event-grouped" 
+                    data-day="${day}"
+                    data-date="${cellDateStr}"
+                    title="${tooltip}"
+                    style="background: ${bg}; color: ${text}; padding: 2px 6px; border-radius: 4px; font-size: 0.6875rem; font-weight: 700; cursor: pointer; border-left: 3px solid ${border}; display: flex; align-items: center; justify-content: space-between; gap: 4px; line-height: 1.3;"
+                  >
+                    <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${group.cleanTitle}</span>
+                    <span style="background: ${badgeBg}; color: ${text}; padding: 0.5px 5px; border-radius: 999px; font-size: 0.65rem; font-weight: 800; line-height: 1; flex-shrink: 0;">${group.items.length}</span>
+                  </div>
+                `;
+              } else {
+                // Single college event on this day
+                const evt = group.items[0];
+                const schoolShort = evt.is_national ? 'National' : evt.college_name.split(' ')[0];
+                const tooltip = `${evt.college_name}: ${evt.title}\n\nClick to view full details`;
+
+                return `
+                  <div 
+                    class="calendar-event-pill" 
+                    data-day="${day}"
+                    data-date="${cellDateStr}"
+                    title="${tooltip}"
+                    style="background: ${bg}; color: ${text}; padding: 2px 6px; border-radius: 4px; font-size: 0.6875rem; font-weight: 700; cursor: pointer; border-left: 3px solid ${border}; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; line-height: 1.3;"
+                  >
+                    ${schoolShort}: ${group.cleanTitle}
+                  </div>
+                `;
+              }
             }).join('')}
           </div>
         </td>
@@ -411,5 +594,87 @@ export const CalendarPage = {
         this.render(container, state, { silent: true, keepMonth: true });
       });
     }
+
+    // Day Details Modal setup
+    const dayModal = container.querySelector('#calendar-day-modal');
+    const dayModalTitle = container.querySelector('#day-modal-title');
+    const dayModalBody = container.querySelector('#day-modal-body');
+    const closeDayModalBtn = container.querySelector('#btn-close-day-modal');
+    const dismissDayModalBtn = container.querySelector('#btn-dismiss-day-modal');
+
+    const closeDayModal = () => {
+      if (dayModal) dayModal.style.display = 'none';
+    };
+
+    if (closeDayModalBtn) closeDayModalBtn.addEventListener('click', closeDayModal);
+    if (dismissDayModalBtn) dismissDayModalBtn.addEventListener('click', closeDayModal);
+    if (dayModal) {
+      dayModal.addEventListener('click', (e) => {
+        if (e.target === dayModal) closeDayModal();
+      });
+    }
+
+    const openDayModal = (targetDate) => {
+      if (!dayModal || !targetDate) return;
+      const dayEvents = (this.currentEvents || []).filter(e => e.date === targetDate);
+      if (dayEvents.length === 0) return;
+
+      const [yr, mo, da] = targetDate.split('-');
+      const monthNames = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+      ];
+      const formattedDate = `${monthNames[parseInt(mo, 10) - 1]} ${parseInt(da, 10)}, ${yr}`;
+
+      dayModalTitle.textContent = `${formattedDate} (${dayEvents.length} Event${dayEvents.length === 1 ? '' : 's'})`;
+
+      const categoryColors = {
+        app_deadline: { border: '#2563eb', bg: '#eff6ff', text: '#1e40af', label: 'Application Deadline' },
+        financial_aid: { border: '#059669', bg: '#f0fdf4', text: '#166534', label: 'Financial Aid' },
+        scholarship: { border: '#d97706', bg: '#fffbeb', text: '#92400e', label: 'Scholarship' },
+        decision: { border: '#7c3aed', bg: '#faf5ff', text: '#7e22ce', label: 'Admissions Decision' }
+      };
+
+      dayModalBody.innerHTML = dayEvents.map(evt => {
+        const cat = categoryColors[evt.deadline_type || evt.category] || categoryColors.app_deadline;
+        return `
+          <div style="padding: 12px 14px; background: ${cat.bg}; border-left: 4px solid ${cat.border}; border-radius: 8px; border-top: 1px solid var(--color-border-subtle); border-right: 1px solid var(--color-border-subtle); border-bottom: 1px solid var(--color-border-subtle); display: flex; justify-content: space-between; align-items: center; gap: 12px;">
+            <div>
+              <span style="display: inline-block; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; color: ${cat.text}; margin-bottom: 3px;">
+                ${evt.category_label || cat.label}
+              </span>
+              <h4 style="font-size: 0.9375rem; font-weight: 800; color: var(--text-primary); margin: 0 0 3px 0;">
+                ${evt.title}
+              </h4>
+              <p style="font-size: 0.8125rem; color: var(--text-secondary); margin: 0;">
+                ${evt.college_name}
+              </p>
+            </div>
+            <div>
+              ${evt.college_id !== 'national' ? `
+                <a href="#/colleges/${evt.college_id}" class="btn btn-sm btn-secondary" onclick="document.getElementById('calendar-day-modal').style.display='none';" style="font-size: 0.75rem; font-weight: 600; white-space: nowrap;">
+                  View Profile →
+                </a>
+              ` : `
+                <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; white-space: nowrap;">
+                  National
+                </span>
+              `}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      dayModal.style.display = 'flex';
+    };
+
+    // Attach click handlers to day cells that have events
+    const clickableCells = container.querySelectorAll('.calendar-day-cell[data-has-events="true"]');
+    clickableCells.forEach(cell => {
+      cell.addEventListener('click', () => {
+        const targetDate = cell.getAttribute('data-date');
+        openDayModal(targetDate);
+      });
+    });
   }
 };

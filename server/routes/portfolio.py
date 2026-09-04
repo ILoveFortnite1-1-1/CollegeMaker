@@ -299,11 +299,12 @@ async def get_portfolio_aid_comparison(
 async def get_portfolio_calendar(
     request: Request,
     response: Response,
+    auto_populate: bool = True,
 ):
     """Aggregate all application, financial aid, and scholarship deadlines across saved colleges."""
     pid = _ensure_cookie(request, response)
     portfolio, _, _ = await portfolio_service.get_or_create_portfolio(pid)
-    calendar_data = calendar_service.get_portfolio_calendar(portfolio)
+    calendar_data = calendar_service.get_portfolio_calendar(portfolio, auto_populate_defaults=auto_populate)
     return calendar_data
 
 

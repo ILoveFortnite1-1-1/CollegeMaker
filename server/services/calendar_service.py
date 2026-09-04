@@ -11,6 +11,7 @@ class CalendarService:
         self,
         portfolio: StudentPortfolio,
         reference_date: Optional[date] = None,
+        auto_populate_defaults: bool = False,
     ) -> Dict[str, Any]:
         """Collect all deadlines across saved colleges, sort chronologically, and find 14-day upcoming events."""
         today = reference_date or datetime.now(timezone.utc).date()
@@ -101,7 +102,7 @@ class CalendarService:
                         s_date = s_item.get("deadline")
                         _add_event(f"sch_{idx}", f"{name} Deadline", s_date, "scholarship", "#d97706", "Scholarship")
 
-            if not college_had_deadline:
+            if not college_had_deadline and auto_populate_defaults:
                 # Automatically pull important standard dates for the college so calendar doesn't start empty
                 app_fall_year = today.year if today.month >= 8 else today.year - 1
                 spring_year = app_fall_year + 1
