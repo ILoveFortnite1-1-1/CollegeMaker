@@ -2,7 +2,7 @@
  * Settings & Preferences Page View (Route: #/settings)
  * Student academic profile inputs, 8-dimension fit weight sliders, cookie privacy, and data management.
  */
-import { API } from '../api.js';
+import { API } from '../api.js?v=4.0';
 
 const US_STATES = [
   'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',

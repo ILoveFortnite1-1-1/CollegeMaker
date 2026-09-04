@@ -4,7 +4,7 @@
  * (priority, regular, FAFSA, CSS Profile, scholarships, decision dates)
  * with 4-tier color coding, month switcher, and 14-day upcoming deadlines sidebar.
  */
-import { API } from '../api.js';
+import { API } from '../api.js?v=4.0';
 
 export const CalendarPage = {
   currentDate: new Date(),

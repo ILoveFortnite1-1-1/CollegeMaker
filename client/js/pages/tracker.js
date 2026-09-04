@@ -3,7 +3,7 @@
  * Based on the Application Tracker Template spreadsheet.
  * Allows students to track application plans, deadlines, requirements, and decisions.
  */
-import { API } from '../api.js?v=3.2';
+import { API } from '../api.js?v=4.0';
 import { getCollegeImageUrl, getCampusSvgDataUri } from '../utils/college-images.js';
 import { renderRequirementsMatrix, bindRequirementsMatrixEvents } from '../components/requirements-matrix.js';
 

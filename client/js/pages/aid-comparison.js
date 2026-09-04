@@ -4,7 +4,7 @@
  * showing sticker price, total grants, net annual cost, 4-year total cost,
  * and estimated monthly loan payment at graduation with best-value highlight.
  */
-import { API } from '../api.js';
+import { API } from '../api.js?v=4.0';
 import { formatMetricValue } from '../components/metric-card.js';
 
 export const AidComparisonPage = {

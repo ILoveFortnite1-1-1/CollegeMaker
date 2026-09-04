@@ -3,7 +3,7 @@
  * Renders cross-school requirements checklist matrix (schools as columns, requirements as rows)
  * with aggregate summary counts and interactive 1-click status toggling for all schools.
  */
-import { API } from '../api.js';
+import { API } from '../api.js?v=4.0';
 
 export function renderRequirementsMatrix(data, options = {}) {
   const colleges = data?.colleges || [];

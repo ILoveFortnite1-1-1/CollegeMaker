@@ -4,7 +4,7 @@
  * draft status indicators ('Not Started', 'Drafting', 'Reviewing', 'Final'),
  * applied colleges reuse tracking, "Used for N schools" badge, and full CRUD modals.
  */
-import { API } from '../api.js';
+import { API } from '../api.js?v=4.0';
 
 export const EssaysPage = {
   statusFilter: 'all',

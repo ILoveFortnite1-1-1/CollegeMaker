@@ -2,7 +2,7 @@
  * Saved Colleges Modal Component
  * Opens an interactive overlay showing all currently saved colleges with quick profile, compare, and remove controls.
  */
-import { API } from '../api.js';
+import { API } from '../api.js?v=4.0';
 import { getCollegeImageUrl, getCampusSvgDataUri } from '../utils/college-images.js';
 import { formatMetricValue } from './metric-card.js';
 

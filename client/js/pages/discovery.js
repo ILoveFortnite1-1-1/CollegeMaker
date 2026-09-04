@@ -2,7 +2,7 @@
  * Discovery Page View (Route: #/colleges)
  * Search, faceted filters (State, Type, Cost, Admit Rate), sorting, and paginated results.
  */
-import { API } from '../api.js';
+import { API } from '../api.js?v=4.0';
 import { renderCollegeCard } from '../components/college-card.js';
 import { formatMetricValue } from '../components/metric-card.js';
 

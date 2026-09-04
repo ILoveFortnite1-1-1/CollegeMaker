@@ -2,7 +2,7 @@
  * College Profile Page View (Route: #/colleges/:id)
  * Detailed college profile with hero stats strip, 5 tabbed modules, and provenance audit drawer.
  */
-import { API } from '../api.js';
+import { API } from '../api.js?v=4.0';
 import { renderSourceBadge } from '../components/source-badge.js';
 import { renderMetricCard, formatMetricValue, formatConfidence } from '../components/metric-card.js';
 import { renderEnrichmentBanner } from '../components/enrichment-banner.js';

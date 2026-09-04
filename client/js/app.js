@@ -2,7 +2,7 @@
  * College Portfolio — Main SPA Application Entrypoint
  * Manages client-side routing, global state, toast notifications, guest cookie sync, and UI lifecycles.
  */
-import { API } from './api.js';
+import { API } from './api.js?v=4.0';
 import { DashboardPage } from './pages/dashboard.js';
 import { DiscoveryPage } from './pages/discovery.js';
 import { ProfilePage } from './pages/profile.js';

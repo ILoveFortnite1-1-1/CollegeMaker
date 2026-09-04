@@ -3,7 +3,7 @@
  * Matches image1.jpg: 5 hero stat cards, Cost vs Early Career Pay scatter plot,
  * Career Outlook donut chart, Rankings leaderboard, and College Application Tracker.
  */
-import { API } from '../api.js';
+import { API } from '../api.js?v=4.0';
 import { renderCollegeCard } from '../components/college-card.js';
 import { formatMetricValue } from '../components/metric-card.js';
 import { renderScatterChart } from '../components/scatter-chart.js';

@@ -492,5 +492,7 @@ class ApiClient {
 export const API = new ApiClient();
 if (typeof window !== 'undefined') {
   window.API = API;
+  window.API_VERSION = '4.0';
+  console.log('[College Portfolio] API Client v4.0 loaded with', Object.getOwnPropertyNames(Object.getPrototypeOf(API)).filter(m => m !== 'constructor').length, 'methods');
 }
 

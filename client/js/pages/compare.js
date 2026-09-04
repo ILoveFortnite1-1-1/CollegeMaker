@@ -2,7 +2,7 @@
  * Comparison Workspace Page View (Route: #/compare)
  * Side-by-side comparison matrix (2–6 colleges), sticky metrics, best-in-class highlights, visual charts, and CSV export.
  */
-import { API } from '../api.js';
+import { API } from '../api.js?v=4.0';
 import { formatMetricValue } from '../components/metric-card.js';
 import { renderFitRing } from '../components/fit-ring.js';
 import { renderSourceBadge } from '../components/source-badge.js';

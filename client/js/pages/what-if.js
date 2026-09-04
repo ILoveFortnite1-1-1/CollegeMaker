@@ -4,7 +4,7 @@
  * aid amounts, budget, test scores) and view current vs. what-if side-by-side with real-time
  * recalculated fit scores without persisting changes. Reuses fit-ring and metric-card components.
  */
-import { API } from '../api.js';
+import { API } from '../api.js?v=4.0';
 import { renderFitRing } from '../components/fit-ring.js';
 import { renderMetricCard, formatMetricValue } from '../components/metric-card.js';
 

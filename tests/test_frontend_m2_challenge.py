@@ -397,7 +397,7 @@ class TestEdgeCases:
     def test_edge_case_essay_boundary_conditions(self):
         """Essay tracker renders properly with word_limit=0, 5000-word limit, and long prompts."""
         essays_src = (PAGES_DIR / "essays.js").read_text(encoding="utf-8")
-        essays_src = essays_src.replace("import { API } from '../api.js';", "")
+        essays_src = re.sub(r"import\s*\{\s*API\s*\}\s*from\s*['\"][^'\"]*['\"];?", "", essays_src)
         essays_src = essays_src.replace("export const EssaysPage =", "const EssaysPage =")
 
         test_script = f"""
