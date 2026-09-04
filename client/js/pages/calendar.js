@@ -27,36 +27,31 @@ export const CalendarPage = {
         API.getPortfolio().catch(() => ({ saved_colleges: [] }))
       ]);
 
-      const savedColleges = portfolioData.saved_colleges || portfolioData.colleges || portfolioData.items || [];
-      const events = calendarData.events || [];
-      const upcoming14 = calendarData.upcoming_14_days || [];
+      const savedColleges = (portfolioData.portfolio && portfolioData.portfolio.colleges)
+        || portfolioData.saved_colleges
+        || portfolioData.colleges
+        || portfolioData.items
+        || (window.app?.getSavedColleges ? window.app.getSavedColleges() : [])
+        || [];
+      const collegeEvents = calendarData.events || [];
+      const nationalEvents = calendarData.national_milestones || [];
+      const hasSaved = savedColleges.length > 0;
 
-      // Handle empty saved list
-      if (savedColleges.length === 0) {
-        container.innerHTML = `
-          <div class="calendar-page" style="max-width: 1200px; margin: 0 auto; padding-bottom: 60px;">
-            <div class="page-header" style="margin-bottom: 28px;">
-              <span style="font-size: 0.8125rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-primary);">Admissions Roadmap</span>
-              <h1 style="font-size: 2rem; font-weight: 800; color: var(--text-primary); margin: 4px 0;">Application Deadline Calendar</h1>
-              <p style="color: var(--text-secondary); margin: 0; font-size: 0.95rem;">Track and visualize critical application, financial aid, and scholarship dates.</p>
-            </div>
-
-            <div class="empty-state card" style="padding: 60px 24px; text-align: center; max-width: 600px; margin: 40px auto; background: #fff;">
-              <div style="width: 64px; height: 64px; border-radius: 16px; background: #eff6ff; color: #2563eb; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 16px;">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-              </div>
-              <h3 style="font-size: 1.35rem; font-weight: 700; color: var(--text-primary); margin: 0 0 8px 0;">No Saved Colleges</h3>
-              <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; margin: 0 0 24px 0;">
-                Add colleges to your portfolio to view admissions deadlines on your calendar.
-              </p>
-              <a href="#/colleges" class="btn btn-primary">Discover Colleges</a>
-            </div>
-          </div>
-        `;
-        return;
+      // Determine which events to display: merge national roadmap milestones with college deadlines
+      const showNational = this.showNational !== false;
+      let events = [];
+      if (!hasSaved) {
+        events = nationalEvents;
+      } else if (showNational) {
+        events = [...collegeEvents, ...nationalEvents];
+      } else {
+        events = collegeEvents;
       }
+      events.sort((a, b) => (a.date > b.date ? 1 : (a.date < b.date ? -1 : 0)));
 
-      // If there are future events and user hasn't toggled month yet, default to first event's month
+      const upcoming14 = events.filter(e => 0 <= e.days_remaining && e.days_remaining <= 14);
+
+      // If there are future events and user hasn't toggled month yet, default to first upcoming event's month
       if (events.length > 0 && !options.keepMonth) {
         const upcomingFirst = events.find(e => !e.is_past) || events[0];
         if (upcomingFirst && upcomingFirst.date) {
@@ -82,38 +77,70 @@ export const CalendarPage = {
               <span style="font-size: 0.8125rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-primary);">Admissions Roadmap</span>
               <h1 style="font-size: 2rem; font-weight: 800; color: var(--text-primary); margin: 4px 0;">Application Deadline Calendar</h1>
               <p style="color: var(--text-secondary); margin: 0; font-size: 0.95rem;">
-                Aggregated deadlines across ${savedColleges.length} colleges: priority, regular, FAFSA, CSS Profile, and scholarships.
+                ${hasSaved
+                  ? `Important dates automatically pulled across ${savedColleges.length} colleges, plus key national financial aid & decision milestones.`
+                  : `Standard national admissions, FAFSA, and decision milestones pre-loaded below. Save colleges to track school-specific deadlines!`
+                }
               </p>
             </div>
 
             <div style="display: flex; align-items: center; gap: 10px;">
-              <a href="#/tracker" class="btn btn-secondary btn-sm" style="display: inline-flex; align-items: center; gap: 6px;">
-                <span>Set Dates in App Tracker</span> →
-              </a>
+              ${hasSaved ? `
+                <a href="#/tracker" class="btn btn-secondary btn-sm" style="display: inline-flex; align-items: center; gap: 6px;">
+                  <span>Set Dates in App Tracker</span> →
+                </a>
+              ` : `
+                <a href="#/colleges" class="btn btn-primary btn-sm" style="display: inline-flex; align-items: center; gap: 6px;">
+                  <span>+ Save Colleges to Track</span>
+                </a>
+              `}
             </div>
           </div>
 
+          ${!hasSaved ? `
+            <!-- Active National Roadmap Banner when no colleges saved -->
+            <div class="card" style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 14px 18px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: #16a34a; color: #fff; font-size: 0.85rem; font-weight: 700;">★</span>
+                <div>
+                  <strong style="color: #15803d; font-size: 0.9rem; display: block;">National Admissions & Financial Aid Calendar Active</strong>
+                  <span style="color: #166534; font-size: 0.8125rem;">Standard nationwide admissions deadlines, FAFSA, and decision dates are automatically loaded. Save colleges to track school-specific deadlines!</span>
+                </div>
+              </div>
+              <a href="#/colleges" class="btn btn-sm btn-primary" style="font-size: 0.8125rem;">+ Discover Colleges</a>
+            </div>
+          ` : ''}
+
           <!-- Color Legend Bar -->
           <div class="calendar-legend card" style="padding: 12px 18px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; background: #fff; border: 1px solid var(--color-border); border-radius: 10px;">
-            <span style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em;">Categories:</span>
-            <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap; font-size: 0.8125rem;">
-              <span style="display: inline-flex; align-items: center; gap: 6px;">
-                <span style="width: 10px; height: 10px; border-radius: 50%; background: #2563eb;"></span>
-                <strong style="color: #1e40af;">Application (ED/EA/RD)</strong>
-              </span>
-              <span style="display: inline-flex; align-items: center; gap: 6px;">
-                <span style="width: 10px; height: 10px; border-radius: 50%; background: #059669;"></span>
-                <strong style="color: #166534;">Financial Aid (FAFSA/CSS)</strong>
-              </span>
-              <span style="display: inline-flex; align-items: center; gap: 6px;">
-                <span style="width: 10px; height: 10px; border-radius: 50%; background: #d97706;"></span>
-                <strong style="color: #92400e;">Scholarships</strong>
-              </span>
-              <span style="display: inline-flex; align-items: center; gap: 6px;">
-                <span style="width: 10px; height: 10px; border-radius: 50%; background: #7c3aed;"></span>
-                <strong style="color: #6b21a8;">Decision Date</strong>
-              </span>
+            <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+              <span style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em;">Categories:</span>
+              <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap; font-size: 0.8125rem;">
+                <span style="display: inline-flex; align-items: center; gap: 6px;">
+                  <span style="width: 10px; height: 10px; border-radius: 50%; background: #2563eb;"></span>
+                  <strong style="color: #1e40af;">Application (ED/EA/RD)</strong>
+                </span>
+                <span style="display: inline-flex; align-items: center; gap: 6px;">
+                  <span style="width: 10px; height: 10px; border-radius: 50%; background: #059669;"></span>
+                  <strong style="color: #166534;">Financial Aid (FAFSA/CSS)</strong>
+                </span>
+                <span style="display: inline-flex; align-items: center; gap: 6px;">
+                  <span style="width: 10px; height: 10px; border-radius: 50%; background: #d97706;"></span>
+                  <strong style="color: #92400e;">Scholarships</strong>
+                </span>
+                <span style="display: inline-flex; align-items: center; gap: 6px;">
+                  <span style="width: 10px; height: 10px; border-radius: 50%; background: #7c3aed;"></span>
+                  <strong style="color: #6b21a8;">Decision Date</strong>
+                </span>
+              </div>
             </div>
+
+            ${hasSaved ? `
+              <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.8125rem; font-weight: 600; color: var(--text-secondary); cursor: pointer; user-select: none;">
+                <input type="checkbox" id="toggle-national-milestones" ${this.showNational !== false ? 'checked' : ''} style="cursor: pointer;" />
+                <span>Include National Roadmap Dates</span>
+              </label>
+            ` : ''}
           </div>
 
           <!-- Main 2-Column Layout (Calendar Grid + 14-Day Sidebar) -->
@@ -189,7 +216,10 @@ export const CalendarPage = {
                         </div>
                         <div style="font-size: 0.8125rem; color: var(--text-secondary); display: flex; align-items: center; justify-content: space-between;">
                           <span>${evt.college_name}</span>
-                          <a href="#/colleges/${evt.college_id}" style="font-size: 0.75rem; color: var(--color-primary); font-weight: 600;">View Profile →</a>
+                          ${evt.college_id !== 'national'
+                            ? `<a href="#/colleges/${evt.college_id}" style="font-size: 0.75rem; color: var(--color-primary); font-weight: 600;">View Profile →</a>`
+                            : `<span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">National Cycle</span>`
+                          }
                         </div>
                       </div>
                     `;
@@ -310,7 +340,7 @@ export const CalendarPage = {
                   title="${evt.college_name}: ${evt.title}"
                   style="background: ${bg}; color: ${text}; padding: 2px 5px; border-radius: 4px; font-size: 0.6875rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; border-left: 2px solid ${evt.color || text};"
                 >
-                  ${evt.college_name.split(' ')[0]}: ${evt.title.replace(' Deadline', '')}
+                  ${evt.is_national ? 'National' : (evt.college_name.split(' ')[0])}: ${evt.title.replace(' Deadline', '').replace(' Milestone', '')}
                 </div>
               `;
             }).join('')}
@@ -370,6 +400,14 @@ export const CalendarPage = {
         const now = new Date();
         this.selectedYear = now.getFullYear();
         this.selectedMonth = now.getMonth();
+        this.render(container, state, { silent: true, keepMonth: true });
+      });
+    }
+
+    const toggleNat = container.querySelector('#toggle-national-milestones');
+    if (toggleNat) {
+      toggleNat.addEventListener('change', () => {
+        this.showNational = toggleNat.checked;
         this.render(container, state, { silent: true, keepMonth: true });
       });
     }
